@@ -1,11 +1,10 @@
-const CACHE_NAME = 'star-t-cache-v4';
+const CACHE_NAME = 'star-t-cache-v7';
 const ASSETS = [
   './',
   './index.html',
   './index.css',
   './app.js',
   './manifest.json',
-  './start-t logo.jpg',
   './logo.svg',
   './asleep.svg'
 ];
@@ -14,7 +13,9 @@ const ASSETS = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return Promise.allSettled(
+        ASSETS.map(url => cache.add(url).catch(err => console.warn('Cache skip:', url, err)))
+      );
     }).then(() => self.skipWaiting())
   );
 });
@@ -34,9 +35,16 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Fetch Event (Cache-First or Network fallback)
+// Fetch Event (Cache-First with network fallback, bypass API)
 self.addEventListener('fetch', (e) => {
-  // Only cache GET requests and local files
+  const url = new URL(e.request.url);
+
+  // Bypass API requests to always fetch live data
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+
+  // Only handle GET requests from the same origin
   if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) {
     return;
   }
@@ -44,16 +52,16 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Fetch in background to update cache (stale-while-revalidate style)
+        // Background refresh
         fetch(e.request).then((networkResponse) => {
-          if (networkResponse.status === 200) {
+          if (networkResponse && networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => cache.put(e.request, networkResponse));
           }
-        }).catch(() => {/* Ignore offline network errors */});
+        }).catch(() => {});
         return cachedResponse;
       }
       return fetch(e.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+        if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
         }
         const responseToCache = networkResponse.clone();

@@ -14,7 +14,17 @@ let currentUser = null;
 let isCloudSyncing = false;
 let lastSyncTime = null;
 let firestoreUnsubscribe = null;
-let authMode = 'login'; // 'login' | 'register'
+let authMode = 'login'; // 'login' | 'register' | 'sync'
+
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 // Default categories (pastel-themed)
 const DEFAULT_CATEGORIES = [
@@ -25,13 +35,20 @@ const DEFAULT_CATEGORIES = [
   { id: 'cat-5', name: 'Otros', color: 'pastel-peach' }
 ];
 
-// Pastel color mapping for CSS classes
+// Expanded pastel & modern color mapping for CSS classes and color dots
 const PASTEL_COLOR_MAP = {
-  'pastel-pink': { bg: 'bg-pastel-pink-100 dark:bg-pastel-pink-500/20', text: 'text-pastel-pink-500 dark:text-pastel-pink-300', border: 'border-pastel-pink-300' },
-  'pastel-blue': { bg: 'bg-pastel-blue dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-300', border: 'border-blue-300' },
-  'pastel-lavender': { bg: 'bg-pastel-lavender dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-300', border: 'border-purple-300' },
-  'pastel-mint': { bg: 'bg-pastel-mint dark:bg-emerald-900/20', text: 'text-emerald-600 dark:text-emerald-300', border: 'border-emerald-300' },
-  'pastel-peach': { bg: 'bg-pastel-peach dark:bg-amber-900/20', text: 'text-amber-600 dark:text-amber-300', border: 'border-amber-300' }
+  'pastel-pink': { bg: 'bg-pink-100 dark:bg-pink-950/40', text: 'text-pink-600 dark:text-pink-300', border: 'border-pink-300', dot: '#F472B6', name: 'Rosa Pastel' },
+  'pastel-blue': { bg: 'bg-sky-100 dark:bg-sky-950/40', text: 'text-sky-600 dark:text-sky-300', border: 'border-sky-300', dot: '#38BDF8', name: 'Azul Cielo' },
+  'pastel-lavender': { bg: 'bg-purple-100 dark:bg-purple-950/40', text: 'text-purple-600 dark:text-purple-300', border: 'border-purple-300', dot: '#A855F7', name: 'Lavanda' },
+  'pastel-mint': { bg: 'bg-emerald-100 dark:bg-emerald-950/40', text: 'text-emerald-600 dark:text-emerald-300', border: 'border-emerald-300', dot: '#34D399', name: 'Menta Verde' },
+  'pastel-peach': { bg: 'bg-orange-100 dark:bg-orange-950/40', text: 'text-orange-600 dark:text-orange-300', border: 'border-orange-300', dot: '#FB923C', name: 'Durazno' },
+  'pastel-yellow': { bg: 'bg-amber-100 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-300', dot: '#FBBF24', name: 'Amarillo Miel' },
+  'pastel-coral': { bg: 'bg-red-100 dark:bg-red-950/40', text: 'text-red-600 dark:text-red-300', border: 'border-red-300', dot: '#F87171', name: 'Coral Suave' },
+  'pastel-teal': { bg: 'bg-teal-100 dark:bg-teal-950/40', text: 'text-teal-700 dark:text-teal-300', border: 'border-teal-300', dot: '#2DD4BF', name: 'Turquesa' },
+  'pastel-emerald': { bg: 'bg-green-100 dark:bg-green-950/40', text: 'text-green-700 dark:text-green-300', border: 'border-green-300', dot: '#10B981', name: 'Esmeralda' },
+  'pastel-purple': { bg: 'bg-violet-100 dark:bg-violet-950/40', text: 'text-violet-700 dark:text-violet-300', border: 'border-violet-300', dot: '#8B5CF6', name: 'Morado / Lila' },
+  'pastel-indigo': { bg: 'bg-indigo-100 dark:bg-indigo-950/40', text: 'text-indigo-600 dark:text-indigo-300', border: 'border-indigo-300', dot: '#6366F1', name: 'Índigo' },
+  'pastel-rose': { bg: 'bg-rose-100 dark:bg-rose-950/40', text: 'text-rose-600 dark:text-rose-300', border: 'border-rose-300', dot: '#FB7185', name: 'Rosa Palo' }
 };
 
 // Default sample tasks for a rich first-use experience
@@ -118,64 +135,59 @@ window.addEventListener('DOMContentLoaded', () => {
 // Firebase Integration & Real-time Sync
 // ==========================================
 
-const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyDummyKeyReplaceIfUsingLiveCloud123",
-  authDomain: "start-tasks.firebaseapp.com",
-  projectId: "start-tasks",
-  storageBucket: "start-tasks.appspot.com",
-  messagingSenderId: "1234567890",
-  appId: "1:1234567890:web:abcdef123456"
-};
-
-let firebaseInitialized = false;
+let serverSyncInterval = null;
 
 function initFirebase() {
-  // Check for saved local active user
+  // Check for saved active user session
   const savedActiveUser = localStorage.getItem('start_active_user');
   if (savedActiveUser) {
     try {
       currentUser = JSON.parse(savedActiveUser);
-      console.log('Sesión activa restaurada:', currentUser.email || currentUser.displayName);
+      console.log('Sesión universal activa:', currentUser.email || currentUser.displayName);
+      syncDataWithServer();
+      startBackgroundSync();
     } catch (e) {}
   }
+  updateAuthUI();
+}
 
-  const savedConfig = localStorage.getItem('start_firebase_config');
-  if (!savedConfig || typeof firebase === 'undefined') {
-    updateAuthUI();
-    return;
-  }
-
-  try {
-    const config = JSON.parse(savedConfig);
-    if (!firebase.apps.length) {
-      firebase.initializeApp(config);
+function startBackgroundSync() {
+  if (serverSyncInterval) clearInterval(serverSyncInterval);
+  serverSyncInterval = setInterval(() => {
+    if (currentUser && document.visibilityState === 'visible') {
+      fetchServerDataSilently();
     }
-    firebaseInitialized = true;
+  }, 4000);
+}
 
-    // Listen for auth state changes from live Firebase
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        currentUser = user;
-        localStorage.setItem('start_active_user', JSON.stringify({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName
-        }));
-        onUserLoggedIn(user);
-      } else {
-        if (savedConfig) {
-          currentUser = null;
-          localStorage.removeItem('start_active_user');
-          onUserLoggedOut();
+function fetchServerDataSilently() {
+  if (!currentUser) return;
+  fetch(`/api/user/data?uid=${encodeURIComponent(currentUser.uid)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.success) {
+        let changed = false;
+        if (Array.isArray(data.tasks) && JSON.stringify(data.tasks) !== JSON.stringify(tasks)) {
+          tasks = data.tasks;
+          localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
+          changed = true;
+        }
+        if (Array.isArray(data.categories) && data.categories.length > 0 && JSON.stringify(data.categories) !== JSON.stringify(categories)) {
+          categories = data.categories;
+          localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
+          changed = true;
+        }
+        if (changed) {
+          lastSyncTime = new Date();
+          updateSyncStatus('synced');
+          renderCategories();
+          renderTasks();
         }
       }
-      updateAuthUI();
+    })
+    .catch(err => {
+      console.warn('Sync background notice:', err);
     });
-
-  } catch (err) {
-    console.warn('Firebase en modo local:', err.message);
-    updateAuthUI();
-  }
 }
 
 function getStorageKey(type) {
@@ -187,95 +199,55 @@ function onUserLoggedIn(user) {
   loadData();
   renderCategories();
   renderTasks();
-  setupFirestoreSync(user.uid);
+  syncDataWithServer();
+  startBackgroundSync();
 }
 
 function onUserLoggedOut() {
-  if (firestoreUnsubscribe) {
-    firestoreUnsubscribe();
-    firestoreUnsubscribe = null;
+  if (serverSyncInterval) {
+    clearInterval(serverSyncInterval);
+    serverSyncInterval = null;
   }
   loadData();
   renderCategories();
   renderTasks();
 }
 
-function setupFirestoreSync(userId) {
-  if (!firebaseInitialized || typeof firebase === 'undefined' || !firebase.firestore) return;
-
-  try {
-    const db = firebase.firestore();
-    const userDocRef = db.collection('users').doc(userId);
-
-    if (firestoreUnsubscribe) {
-      firestoreUnsubscribe();
-    }
-
-    firestoreUnsubscribe = userDocRef.onSnapshot((docSnapshot) => {
-      if (docSnapshot.exists) {
-        const cloudData = docSnapshot.data();
-        if (cloudData && cloudData.tasks) {
-          tasks = cloudData.tasks;
-          localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
-        }
-        if (cloudData && cloudData.categories) {
-          categories = cloudData.categories;
-          localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
-        }
-        lastSyncTime = new Date();
-        updateSyncStatus('synced');
-        renderCategories();
-        renderTasks();
-      } else {
-        syncDataWithCloud();
-      }
-    }, (error) => {
-      console.warn('Aviso de Firestore Sync:', error.message);
-      updateSyncStatus('local');
-    });
-
-  } catch (e) {
-    console.warn('Error configurando Firestore Snapshot:', e);
-    updateSyncStatus('local');
-  }
-}
-
-function syncDataWithCloud(showFeedback = false) {
-  if (!currentUser || !firebaseInitialized || typeof firebase === 'undefined' || !firebase.firestore) {
+function syncDataWithServer(showFeedback = false) {
+  if (!currentUser) {
     if (showFeedback) {
-      alert('Tus datos están guardados localmente. Inicia sesión para sincronizar en la nube con otros dispositivos.');
+      alert('Tus datos están guardados localmente. Inicia sesión con tu correo para sincronizar entre tu computadora y celular.');
     }
     return;
   }
 
   updateSyncStatus('syncing');
 
-  try {
-    const db = firebase.firestore();
-    db.collection('users').doc(currentUser.uid).set({
+  fetch('/api/user/data', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      uid: currentUser.uid,
       tasks: tasks,
-      categories: categories,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      userEmail: currentUser.email || ''
-    }, { merge: true })
-      .then(() => {
+      categories: categories
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data && data.success) {
         lastSyncTime = new Date();
         updateSyncStatus('synced');
         if (showFeedback) {
-          alert('¡Datos sincronizados exitosamente con la nube!');
+          alert('¡Sincronización completa!\nTodas tus tareas (completadas y pendientes) están respaldadas.');
         }
-      })
-      .catch((err) => {
-        console.warn('Error al sincronizar con Firestore:', err);
+      } else {
         updateSyncStatus('local');
-        if (showFeedback) {
-          alert('Sincronizado localmente. Conexión a la nube no disponible temporalmente.');
-        }
-      });
-  } catch (err) {
-    console.warn('Sync error:', err);
-    updateSyncStatus('local');
-  }
+      }
+    })
+    .catch(err => {
+      console.warn('Error sincronizando con el servidor:', err);
+      updateSyncStatus('local');
+    });
 }
 
 function updateSyncStatus(status) {
@@ -292,11 +264,11 @@ function updateSyncStatus(status) {
   if (status === 'synced') {
     if (dot) {
       dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-      dot.title = 'Sincronizado con la nube';
+      dot.title = 'Sincronizado con el servidor';
     }
     if (badge) {
       badge.className = 'inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 mt-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300';
-      badge.textContent = '☁️ Conectado a la nube';
+      badge.textContent = '☁️ Servidor Universal Conectado';
     }
   } else if (status === 'syncing') {
     if (dot) {
@@ -323,8 +295,8 @@ function loadData() {
   const tasksKey = getStorageKey('tasks');
   const catKey = getStorageKey('categories');
 
-  const savedTasks = localStorage.getItem(tasksKey) || localStorage.getItem('start_tasks');
-  const savedCategories = localStorage.getItem(catKey) || localStorage.getItem('start_categories');
+  const savedTasks = localStorage.getItem(tasksKey);
+  const savedCategories = localStorage.getItem(catKey);
 
   if (savedTasks) {
     try {
@@ -351,14 +323,12 @@ function loadData() {
 
 function saveTasks() {
   localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
-  localStorage.setItem('start_tasks', JSON.stringify(tasks));
-  syncDataWithCloud();
+  syncDataWithServer();
 }
 
 function saveCategories() {
   localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
-  localStorage.setItem('start_categories', JSON.stringify(categories));
-  syncDataWithCloud();
+  syncDataWithServer();
 }
 
 // ==========================================
@@ -443,18 +413,25 @@ function renderManageCategories() {
   categories.forEach(cat => {
     const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
     html += `
-      <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 dark:border-dark-border bg-slate-50/70 dark:bg-dark-card/50">
-        <div class="flex items-center gap-2">
-          <span class="w-3.5 h-3.5 rounded-full ${colorStyles.bg}"></span>
-          <span class="text-sm font-medium text-slate-700 dark:text-slate-200">${cat.name}</span>
+      <div class="flex items-center justify-between p-2.5 rounded-2xl border border-slate-100 dark:border-dark-border bg-slate-50/70 dark:bg-dark-card/50 hover:bg-slate-100/70 dark:hover:bg-dark-hover transition-colors">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
+          <span class="text-xs font-title font-bold text-slate-700 dark:text-slate-200 truncate">${escapeHTML(cat.name)}</span>
         </div>
-        ${categories.length > 1 ? `
-          <button onclick="deleteCategory('${cat.id}')" class="text-red-400 hover:text-red-600 transition-colors p-1 cursor-pointer" title="Eliminar Categoría">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+        <div class="flex items-center gap-1 shrink-0">
+          <button type="button" onclick="startEditCategory('${cat.id}')" class="p-1.5 text-slate-400 hover:text-pastel-pink-500 dark:hover:text-pastel-pink-300 rounded-lg hover:bg-white dark:hover:bg-dark-card transition-colors cursor-pointer" title="Editar Materia (Nombre y Color)">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
             </svg>
           </button>
-        ` : ''}
+          ${categories.length > 1 ? `
+            <button type="button" onclick="deleteCategory('${cat.id}')" class="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-300 rounded-lg hover:bg-white dark:hover:bg-dark-card transition-colors cursor-pointer" title="Eliminar Materia">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+            </button>
+          ` : ''}
+        </div>
       </div>
     `;
   });
@@ -808,6 +785,7 @@ function selectTask(event, taskId) {
 }
 
 let editingTaskId = null;
+let editingCategoryId = null;
 
 function openAddModal() {
   editingTaskId = null;
@@ -816,6 +794,9 @@ function openAddModal() {
   document.getElementById('task-desc').value = '';
   document.getElementById('task-priority-toggle').dataset.priority = 'false';
   updateModalPriorityStar();
+
+  const deleteBtn = document.getElementById('btn-modal-delete-task');
+  if (deleteBtn) deleteBtn.classList.add('hidden');
 
   document.getElementById('task-modal').classList.remove('hidden');
   document.getElementById('task-modal').classList.add('flex');
@@ -834,13 +815,27 @@ function openEditModal(event, id) {
   document.getElementById('task-priority-toggle').dataset.priority = task.priority.toString();
   updateModalPriorityStar();
 
+  const deleteBtn = document.getElementById('btn-modal-delete-task');
+  if (deleteBtn) deleteBtn.classList.remove('hidden');
+
   document.getElementById('task-modal').classList.remove('hidden');
   document.getElementById('task-modal').classList.add('flex');
+}
+
+function deleteEditingTask() {
+  if (!editingTaskId) return;
+  const taskId = editingTaskId;
+  tasks = tasks.filter(t => t.id !== taskId);
+  if (selectedTaskId === taskId) selectedTaskId = null;
+  saveTasks();
+  closeModal();
+  renderTasks();
 }
 
 function closeModal() {
   document.getElementById('task-modal').classList.add('hidden');
   document.getElementById('task-modal').classList.remove('flex');
+  editingTaskId = null;
 }
 
 function toggleModalPriority() {
@@ -933,12 +928,10 @@ function toggleTaskPriority(event, id) {
 
 function deleteTask(event, id) {
   if (event) event.stopPropagation();
-  if (confirm('¿Estás seguro de que quieres eliminar esta tarea?')) {
-    tasks = tasks.filter(t => t.id !== id);
-    if (selectedTaskId === id) selectedTaskId = null;
-    saveTasks();
-    renderTasks();
-  }
+  tasks = tasks.filter(t => t.id !== id);
+  if (selectedTaskId === id) selectedTaskId = null;
+  saveTasks();
+  renderTasks();
 }
 
 function setFilter(filterId) {
@@ -948,37 +941,88 @@ function setFilter(filterId) {
 }
 
 function openManageCategories() {
+  cancelCategoryEdit();
   document.getElementById('categories-modal').classList.remove('hidden');
   document.getElementById('categories-modal').classList.add('flex');
 }
 
 function closeManageCategories() {
+  cancelCategoryEdit();
   document.getElementById('categories-modal').classList.add('hidden');
   document.getElementById('categories-modal').classList.remove('flex');
 }
 
-function addCategoryAction() {
+function startEditCategory(id) {
+  const cat = categories.find(c => c.id === id);
+  if (!cat) return;
+
+  editingCategoryId = id;
+  const nameInput = document.getElementById('new-cat-name');
+  const colorSelect = document.getElementById('new-cat-color');
+  const formTitle = document.getElementById('cat-form-title');
+  const submitBtn = document.getElementById('cat-form-submit');
+  const cancelBtn = document.getElementById('cat-form-cancel');
+
+  if (nameInput) nameInput.value = cat.name;
+  if (colorSelect) colorSelect.value = cat.color;
+  if (formTitle) formTitle.textContent = `Editar Materia: ${cat.name}`;
+  if (submitBtn) submitBtn.textContent = '💾 Guardar Cambios';
+  if (cancelBtn) cancelBtn.classList.remove('hidden');
+
+  if (nameInput) nameInput.focus();
+}
+
+function cancelCategoryEdit() {
+  editingCategoryId = null;
+  const nameInput = document.getElementById('new-cat-name');
+  const colorSelect = document.getElementById('new-cat-color');
+  const formTitle = document.getElementById('cat-form-title');
+  const submitBtn = document.getElementById('cat-form-submit');
+  const cancelBtn = document.getElementById('cat-form-cancel');
+
+  if (nameInput) nameInput.value = '';
+  if (colorSelect) colorSelect.value = 'pastel-pink';
+  if (formTitle) formTitle.textContent = 'Nueva Materia / Categoría';
+  if (submitBtn) submitBtn.textContent = '+ Agregar Materia';
+  if (cancelBtn) cancelBtn.classList.add('hidden');
+}
+
+function saveCategoryFormAction() {
   const nameInput = document.getElementById('new-cat-name');
   const colorSelect = document.getElementById('new-cat-color');
   const name = nameInput.value.trim();
   const color = colorSelect.value;
 
   if (!name) {
-    alert('Introduce un nombre para la materia/categoría.');
+    alert('Introduce un nombre para la materia.');
     return;
   }
 
-  const newCat = {
-    id: 'cat-' + Date.now(),
-    name: name,
-    color: color
-  };
+  if (editingCategoryId) {
+    const cat = categories.find(c => c.id === editingCategoryId);
+    if (cat) {
+      cat.name = name;
+      cat.color = color;
+      saveCategories();
+      cancelCategoryEdit();
+      renderCategories();
+      renderTasks();
+    }
+  } else {
+    const newCat = {
+      id: 'cat-' + Date.now(),
+      name: name,
+      color: color
+    };
+    categories.push(newCat);
+    saveCategories();
+    cancelCategoryEdit();
+    renderCategories();
+  }
+}
 
-  categories.push(newCat);
-  saveCategories();
-
-  nameInput.value = '';
-  renderCategories();
+function addCategoryAction() {
+  saveCategoryFormAction();
 }
 
 function deleteCategory(id) {
@@ -987,7 +1031,7 @@ function deleteCategory(id) {
     return;
   }
 
-  if (confirm('Al eliminar esta categoría, las tareas asociadas pasarán a la primera categoría disponible. ¿Proceder?')) {
+  if (confirm('Al eliminar esta categoría, las tareas asociadas pasarán a la primera categoría disponible. ¿Deseas continuar?')) {
     categories = categories.filter(c => c.id !== id);
     const fallbackId = categories[0].id;
 
@@ -1001,6 +1045,10 @@ function deleteCategory(id) {
       currentFilter = 'all';
     }
 
+    if (editingCategoryId === id) {
+      cancelCategoryEdit();
+    }
+
     saveCategories();
     saveTasks();
     renderCategories();
@@ -1012,6 +1060,8 @@ function deleteCategory(id) {
 // Authentication & User Profile UI
 // ==========================================
 
+let isSessionUnlocked = false;
+
 function updateAuthUI() {
   const displayNameEl = document.getElementById('user-display-name');
   const avatarIconEl = document.getElementById('user-avatar-icon');
@@ -1021,31 +1071,53 @@ function updateAuthUI() {
   const profileEmailEl = document.getElementById('profile-email-text');
   const profileAvatarEl = document.getElementById('profile-avatar');
 
+  const gatewayScreen = document.getElementById('auth-gateway-screen');
+  const mainAppView = document.getElementById('app-main-view');
+
+  // Check if session is active or unlocked
+  const hasActiveUser = Boolean(currentUser || localStorage.getItem('start_active_user'));
+  const isGuestActive = sessionStorage.getItem('start_guest_session') === 'true';
+  isSessionUnlocked = hasActiveUser || isGuestActive;
+
+  if (gatewayScreen && mainAppView) {
+    if (isSessionUnlocked) {
+      gatewayScreen.classList.add('hidden');
+      mainAppView.classList.remove('hidden');
+    } else {
+      gatewayScreen.classList.remove('hidden');
+      mainAppView.classList.add('hidden');
+    }
+  }
+
   if (currentUser) {
-    const name = currentUser.displayName || (currentUser.email ? currentUser.email.split('@')[0] : 'Usuario');
-    const initial = name.charAt(0).toUpperCase();
+    const name = currentUser.displayName || currentUser.email.split('@')[0];
+    const initial = (name.charAt(0) || 'U').toUpperCase();
 
     if (displayNameEl) displayNameEl.textContent = name;
     if (avatarIconEl) {
       avatarIconEl.innerHTML = `<span class="w-5 h-5 rounded-full bg-pastel-pink-300 text-white text-[10px] font-bold flex items-center justify-center">${initial}</span>`;
     }
     if (welcomeSubtitleEl) {
-      welcomeSubtitleEl.textContent = `¡Hola de nuevo, ${name}! Tus tareas están sincronizadas.`;
+      welcomeSubtitleEl.textContent = `¡Hola de nuevo, ${name}! Tus tareas están listas.`;
     }
 
     if (profileNameEl) profileNameEl.textContent = name;
-    if (profileEmailEl) profileEmailEl.textContent = currentUser.email || 'Conectado a la nube';
+    if (profileEmailEl) profileEmailEl.textContent = currentUser.email || 'Conectado';
     if (profileAvatarEl) profileAvatarEl.textContent = initial;
 
     updateSyncStatus('synced');
   } else {
-    if (displayNameEl) displayNameEl.textContent = 'Iniciar Sesión';
+    if (displayNameEl) displayNameEl.textContent = 'Modo Local';
     if (avatarIconEl) {
-      avatarIconEl.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>`;
+      avatarIconEl.innerHTML = `<span class="w-5 h-5 rounded-full bg-slate-200 dark:bg-dark-border text-slate-600 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center">⚡</span>`;
     }
     if (welcomeSubtitleEl) {
       welcomeSubtitleEl.textContent = 'Write like you are running out of time.';
     }
+
+    if (profileNameEl) profileNameEl.textContent = 'Invitado (Modo Local)';
+    if (profileEmailEl) profileEmailEl.textContent = 'Datos guardados localmente';
+    if (profileAvatarEl) profileAvatarEl.textContent = '⚡';
 
     updateSyncStatus('local');
   }
@@ -1055,23 +1127,12 @@ function openAuthOrProfileModal() {
   if (currentUser) {
     openProfileModal();
   } else {
-    openAuthModal();
+    openProfileModal();
   }
 }
 
-function openAuthModal() {
-  clearAuthAlert();
-  document.getElementById('auth-modal').classList.remove('hidden');
-  document.getElementById('auth-modal').classList.add('flex');
-}
-
-function closeAuthModal() {
-  document.getElementById('auth-modal').classList.add('hidden');
-  document.getElementById('auth-modal').classList.remove('flex');
-}
-
 function openProfileModal() {
-  updateSyncStatus('synced');
+  updateSyncStatus(currentUser ? 'synced' : 'local');
   document.getElementById('user-profile-modal').classList.remove('hidden');
   document.getElementById('user-profile-modal').classList.add('flex');
 }
@@ -1083,20 +1144,19 @@ function closeProfileModal() {
 
 function switchAuthTab(tab) {
   authMode = tab;
-  const loginTab = document.getElementById('auth-tab-login');
-  const registerTab = document.getElementById('auth-tab-register');
-  const syncTab = document.getElementById('auth-tab-sync');
+  const loginTab = document.getElementById('gate-tab-login');
+  const registerTab = document.getElementById('gate-tab-register');
+  const syncTab = document.getElementById('gate-tab-sync');
   const nameGroup = document.getElementById('auth-name-group');
   const emailGroup = document.getElementById('auth-email-group');
   const passwordGroup = document.getElementById('auth-password-group');
   const syncGroup = document.getElementById('auth-sync-group');
-  const extraOptions = document.getElementById('auth-extra-options');
   const submitBtn = document.getElementById('auth-submit-btn');
 
   clearAuthAlert();
 
-  const activeClass = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
-  const inactiveClass = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
+  const activeClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
+  const inactiveClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
 
   if (loginTab) loginTab.className = tab === 'login' ? activeClass : inactiveClass;
   if (registerTab) registerTab.className = tab === 'register' ? activeClass : inactiveClass;
@@ -1107,21 +1167,18 @@ function switchAuthTab(tab) {
     if (syncGroup) syncGroup.classList.add('hidden');
     if (emailGroup) emailGroup.classList.remove('hidden');
     if (passwordGroup) passwordGroup.classList.remove('hidden');
-    if (extraOptions) extraOptions.classList.remove('hidden');
     if (submitBtn) submitBtn.innerHTML = '<span>Iniciar Sesión</span>';
   } else if (tab === 'register') {
     if (nameGroup) nameGroup.classList.remove('hidden');
     if (syncGroup) syncGroup.classList.add('hidden');
     if (emailGroup) emailGroup.classList.remove('hidden');
     if (passwordGroup) passwordGroup.classList.remove('hidden');
-    if (extraOptions) extraOptions.classList.remove('hidden');
     if (submitBtn) submitBtn.innerHTML = '<span>Crear Cuenta</span>';
   } else if (tab === 'sync') {
     if (nameGroup) nameGroup.classList.add('hidden');
     if (emailGroup) emailGroup.classList.add('hidden');
     if (passwordGroup) passwordGroup.classList.add('hidden');
     if (syncGroup) syncGroup.classList.remove('hidden');
-    if (extraOptions) extraOptions.classList.add('hidden');
     if (submitBtn) submitBtn.innerHTML = '<span>📲 Cargar Datos del Celular</span>';
   }
 }
@@ -1136,9 +1193,9 @@ function showAuthAlert(message, isError = true) {
   const alertEl = document.getElementById('auth-alert');
   if (!alertEl) return;
   alertEl.className = isError
-    ? 'p-3 rounded-xl text-xs font-medium bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-300 border border-red-200 dark:border-red-900/30'
-    : 'p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/30';
-  alertEl.textContent = message;
+    ? 'p-3.5 rounded-2xl text-xs font-medium bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300 border border-red-200 dark:border-red-900/30'
+    : 'p-3.5 rounded-2xl text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/30';
+  alertEl.innerHTML = message;
   alertEl.classList.remove('hidden');
 }
 
@@ -1146,151 +1203,31 @@ function clearAuthAlert() {
   const alertEl = document.getElementById('auth-alert');
   if (alertEl) {
     alertEl.classList.add('hidden');
-    alertEl.textContent = '';
+    alertEl.innerHTML = '';
   }
 }
 
-// ==========================================
-// Local User Vault & Fallback Auth
-// ==========================================
+function switchAuthTab(tab) {
+  authMode = tab;
+  const loginTab = document.getElementById('gate-tab-login');
+  const registerTab = document.getElementById('gate-tab-register');
+  const nameGroup = document.getElementById('auth-name-group');
+  const submitBtn = document.getElementById('auth-submit-btn');
 
-function getUsersVault() {
-  try {
-    const raw = localStorage.getItem('start_users_vault');
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
-  }
-}
+  clearAuthAlert();
 
-function saveUsersVault(vault) {
-  localStorage.setItem('start_users_vault', JSON.stringify(vault));
-}
+  const activeClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
+  const inactiveClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
 
-function localRegisterUser(name, email, password) {
-  const vault = getUsersVault();
-  const normalizedEmail = email.toLowerCase().trim();
-  
-  if (vault[normalizedEmail]) {
-    return { success: false, message: 'Este correo ya está registrado. Por favor inicia sesión.' };
-  }
+  if (loginTab) loginTab.className = tab === 'login' ? activeClass : inactiveClass;
+  if (registerTab) registerTab.className = tab === 'register' ? activeClass : inactiveClass;
 
-  const userId = 'usr_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 5);
-  const newUser = {
-    uid: userId,
-    email: normalizedEmail,
-    displayName: name || normalizedEmail.split('@')[0],
-    password: password,
-    createdAt: new Date().toISOString()
-  };
-
-  vault[normalizedEmail] = newUser;
-  saveUsersVault(vault);
-
-  return { success: true, user: newUser };
-}
-
-function localLoginUser(email, password) {
-  const vault = getUsersVault();
-  const normalizedEmail = email.toLowerCase().trim();
-  const user = vault[normalizedEmail];
-
-  if (!user) {
-    return { success: false, message: 'No existe una cuenta con este correo. Por favor regístrate primero.' };
-  }
-
-  if (user.password !== password) {
-    return { success: false, message: 'Contraseña incorrecta. Por favor inténtalo de nuevo.' };
-  }
-
-  return { success: true, user: user };
-}
-
-function copySyncCode() {
-  const vault = getUsersVault();
-  const payload = {
-    version: 1,
-    user: currentUser,
-    tasks: tasks,
-    categories: categories,
-    vault: vault,
-    exportedAt: new Date().toISOString()
-  };
-
-  try {
-    const jsonStr = JSON.stringify(payload);
-    const code = btoa(unescape(encodeURIComponent(jsonStr)));
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(code)
-        .then(() => {
-          alert('¡Código de sincronización copiado al portapapeles!\n\nAhora abre StarT en tu otro dispositivo (computadora o celular), ve a Iniciar Sesión > "📲 Desde Celular" y pégalo para tener todos tus datos idénticos.');
-        })
-        .catch(() => {
-          prompt('Copia este código de sincronización para pegarlo en tu otro dispositivo:', code);
-        });
-    } else {
-      prompt('Copia este código de sincronización para pegarlo en tu otro dispositivo:', code);
-    }
-  } catch (err) {
-    console.error('Error generando sync code:', err);
-    alert('No se pudo generar el código de sincronización.');
-  }
-}
-
-function promptImportSyncCode() {
-  const code = prompt('Pega aquí el código de sincronización que copiaste desde tu celular/otro dispositivo:');
-  if (code && code.trim()) {
-    const res = importSyncCode(code.trim());
-    if (res.success) {
-      alert('¡Datos sincronizados exitosamente!\nTu cuenta y todas tus tareas han sido restauradas.');
-      closeProfileModal();
-    } else {
-      alert(res.message || 'Código de sincronización inválido.');
-    }
-  }
-}
-
-function importSyncCode(codeStr) {
-  try {
-    const jsonStr = decodeURIComponent(escape(atob(codeStr.trim())));
-    const payload = JSON.parse(jsonStr);
-
-    if (!payload || (!payload.tasks && !payload.user)) {
-      return { success: false, message: 'El código de sincronización no tiene un formato válido.' };
-    }
-
-    // 1. Restore Vault
-    if (payload.vault && typeof payload.vault === 'object') {
-      const currentVault = getUsersVault();
-      const mergedVault = { ...currentVault, ...payload.vault };
-      saveUsersVault(mergedVault);
-    }
-
-    // 2. Restore User Session
-    if (payload.user) {
-      currentUser = payload.user;
-      localStorage.setItem('start_active_user', JSON.stringify(currentUser));
-    }
-
-    // 3. Restore Categories & Tasks
-    if (Array.isArray(payload.categories) && payload.categories.length > 0) {
-      categories = payload.categories;
-      saveCategories();
-    }
-
-    if (Array.isArray(payload.tasks)) {
-      tasks = payload.tasks;
-      saveTasks();
-    }
-
-    onUserLoggedIn(currentUser || { uid: 'guest', email: '' });
-    updateAuthUI();
-
-    return { success: true };
-  } catch (err) {
-    console.error('Import error:', err);
-    return { success: false, message: 'Código no válido o dañado. Por favor vuelve a copiarlo.' };
+  if (tab === 'login') {
+    if (nameGroup) nameGroup.classList.add('hidden');
+    if (submitBtn) submitBtn.innerHTML = '<span>Iniciar Sesión</span>';
+  } else {
+    if (nameGroup) nameGroup.classList.remove('hidden');
+    if (submitBtn) submitBtn.innerHTML = '<span>Crear Cuenta</span>';
   }
 }
 
@@ -1298,27 +1235,9 @@ function handleAuthSubmit(event) {
   event.preventDefault();
   clearAuthAlert();
 
-  // Sync Code Tab handling
-  if (authMode === 'sync') {
-    const syncCode = document.getElementById('auth-sync-input').value.trim();
-    if (!syncCode) {
-      showAuthAlert('Por favor pega el código de sincronización de tu celular.');
-      return;
-    }
-
-    const res = importSyncCode(syncCode);
-    if (res.success) {
-      closeAuthModal();
-      alert('¡Sincronización completada!\nTus tareas, materias y cuenta han sido importadas a esta computadora.');
-    } else {
-      showAuthAlert(res.message || 'Código de sincronización no válido.');
-    }
-    return;
-  }
-
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;
-  const name = document.getElementById('auth-name').value.trim();
+  const name = document.getElementById('auth-name') ? document.getElementById('auth-name').value.trim() : '';
 
   if (!email || !password) {
     showAuthAlert('Por favor llena todos los campos.');
@@ -1329,141 +1248,62 @@ function handleAuthSubmit(event) {
   submitBtn.disabled = true;
   submitBtn.classList.add('opacity-70');
 
-  // Check if live Firebase project has been configured
-  const hasLiveFirebase = localStorage.getItem('start_firebase_config');
+  const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+  const payload = authMode === 'login' ? { email, password } : { email, password, displayName: name };
 
-  if (hasLiveFirebase && typeof firebase !== 'undefined' && firebase.auth) {
-    if (authMode === 'login') {
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          closeAuthModal();
-        })
-        .catch((error) => {
-          console.error('Firebase Login error:', error);
-          // Fallback to local vault
-          const localResult = localLoginUser(email, password);
-          if (localResult.success) {
-            currentUser = localResult.user;
-            localStorage.setItem('start_active_user', JSON.stringify(currentUser));
-            onUserLoggedIn(currentUser);
-            updateAuthUI();
-            closeAuthModal();
-          } else {
-            showAuthAlert(localResult.message || 'Correo o contraseña incorrectos.');
-          }
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('opacity-70');
-        });
-    } else {
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          if (name && user) {
-            return user.updateProfile({ displayName: name });
-          }
-        })
-        .then(() => {
-          closeAuthModal();
-        })
-        .catch((error) => {
-          console.error('Firebase Register error:', error);
-          // Fallback to local vault
-          const localResult = localRegisterUser(name, email, password);
-          if (localResult.success) {
-            currentUser = localResult.user;
-            localStorage.setItem('start_active_user', JSON.stringify(currentUser));
-            onUserLoggedIn(currentUser);
-            updateAuthUI();
-            closeAuthModal();
-          } else {
-            showAuthAlert(localResult.message);
-          }
-        })
-        .finally(() => {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('opacity-70');
-        });
-    }
-  } else {
-    // Seamless Direct User Vault Authentication
-    setTimeout(() => {
-      if (authMode === 'login') {
-        const result = localLoginUser(email, password);
-        if (result.success) {
-          currentUser = result.user;
-          localStorage.setItem('start_active_user', JSON.stringify(currentUser));
-          onUserLoggedIn(currentUser);
-          updateAuthUI();
-          closeAuthModal();
-        } else {
-          showAuthAlert(result.message);
-        }
-      } else {
-        const result = localRegisterUser(name, email, password);
-        if (result.success) {
-          currentUser = result.user;
-          localStorage.setItem('start_active_user', JSON.stringify(currentUser));
-          onUserLoggedIn(currentUser);
-          updateAuthUI();
-          closeAuthModal();
-        } else {
-          showAuthAlert(result.message);
-        }
+  fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Error de conexión.');
       }
-      submitBtn.disabled = false;
-      submitBtn.classList.remove('opacity-70');
-    }, 150);
-  }
-}
-
-function handleGoogleSignIn() {
-  const hasLiveFirebase = localStorage.getItem('start_firebase_config');
-  if (hasLiveFirebase && typeof firebase !== 'undefined' && firebase.auth) {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-      .then(() => {
-        closeAuthModal();
-      })
-      .catch((error) => {
-        console.warn('Google Auth notice:', error);
-        showAuthAlert('No se pudo completar el acceso con Google: ' + (error.message || 'Ventana cerrada'));
-      });
-  } else {
-    // Quick Google profile creation
-    const emailPrompt = prompt('Introduce tu correo de Google:', 'usuario@gmail.com');
-    if (emailPrompt && emailPrompt.trim()) {
-      const email = emailPrompt.trim().toLowerCase();
-      const name = email.split('@')[0];
-      currentUser = {
-        uid: 'google_' + btoa(email),
-        email: email,
-        displayName: name.charAt(0).toUpperCase() + name.slice(1),
-        photoURL: null
-      };
+      return data;
+    })
+    .then((data) => {
+      currentUser = data.user;
       localStorage.setItem('start_active_user', JSON.stringify(currentUser));
+      sessionStorage.removeItem('start_guest_session');
+
+      if (Array.isArray(data.tasks)) {
+        tasks = data.tasks;
+        localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
+      }
+      if (Array.isArray(data.categories) && data.categories.length > 0) {
+        categories = data.categories;
+        localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
+      }
+
+      isSessionUnlocked = true;
       onUserLoggedIn(currentUser);
       updateAuthUI();
-      closeAuthModal();
-    }
-  }
+    })
+    .catch((err) => {
+      showAuthAlert(err.message || 'Error al conectar con el servidor.');
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('opacity-70');
+    });
 }
 
 function continueAsGuest() {
   currentUser = null;
   localStorage.removeItem('start_active_user');
+  sessionStorage.setItem('start_guest_session', 'true');
+  isSessionUnlocked = true;
   onUserLoggedOut();
   updateAuthUI();
-  closeAuthModal();
 }
 
 function handleSignOut() {
-  if (typeof firebase !== 'undefined' && firebase.auth) {
-    try { firebase.auth().signOut(); } catch (e) {}
-  }
   currentUser = null;
+  isSessionUnlocked = false;
   localStorage.removeItem('start_active_user');
+  sessionStorage.removeItem('start_guest_session');
   onUserLoggedOut();
   updateAuthUI();
   closeProfileModal();

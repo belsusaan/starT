@@ -1,0 +1,80 @@
+{
+  "users": {
+    "susanabeltran679@gmail.com": {
+      "uid": "usr_mthsjhid_4ylmbd",
+      "email": "susanabeltran679@gmail.com",
+      "displayName": "Susana Beltrán",
+      "password": "miSuperPassword123",
+      "createdAt": "2026-08-31T22:09:21.253Z"
+    }
+  },
+  "tasks": {
+    "usr_mthsjhid_4ylmbd": [
+      {
+        "id": "t1",
+        "title": "Configurar kali",
+        "completed": true,
+        "priority": true
+      },
+      {
+        "id": "t2",
+        "title": "18 reglas",
+        "completed": false,
+        "priority": false
+      },
+      {
+        "id": "t3",
+        "title": "Video mom test",
+        "completed": true,
+        "priority": false
+      }
+    ],
+    "usr_mthhgnf7_i769v": []
+  },
+  "categories": {
+    "usr_mthsjhid_4ylmbd": [
+      {
+        "id": "cat-1",
+        "name": "Ciberseguridad",
+        "color": "pastel-pink"
+      },
+      {
+        "id": "cat-2",
+        "name": "Metodología",
+        "color": "pastel-blue"
+      }
+    ],
+    "usr_mthhgnf7_i769v": [
+      {
+        "id": "cat-4",
+        "name": "Personal",
+        "color": "pastel-mint"
+      },
+      {
+        "id": "cat-1788165456807",
+        "name": "Desarrollo de apps moviles",
+        "color": "pastel-pink"
+      },
+      {
+        "id": "cat-1788165468962",
+        "name": "Comercio electrónico",
+        "color": "pastel-blue"
+      },
+      {
+        "id": "cat-1788165490013",
+        "name": "Nube II",
+        "color": "pastel-lavender"
+      },
+      {
+        "id": "cat-1788165518249",
+        "name": "Ciberseguridad",
+        "color": "pastel-mint"
+      },
+      {
+        "id": "cat-1788165528388",
+        "name": "Incubadora",
+        "color": "pastel-peach"
+      }
+    ]
+  }
+}
