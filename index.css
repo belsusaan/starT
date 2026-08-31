@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap');
+
+/* Enable manual dark mode using class selector in Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+/* Tailwind v4 theme variables */
+@theme {
+  --font-display: 'Fredoka', sans-serif;
+  --font-sans: 'Outfit', sans-serif;
+  
+  /* Brand Palette */
+  --color-brand-plum: #601D49;
+  --color-brand-rose-medium: #BD5579;
+  --color-brand-rose-light: #EA9D9D;
+  --color-brand-cream: #FFEBB8;
+  
+  /* Dark Mode specific variables (deep plum base) */
+  --color-dark-bg: #1B0614;
+  --color-dark-card: #2B0E20;
+  --color-dark-border: #3D1830;
+  --color-dark-hover: #4D213F;
+
+  /* Custom Pastel Overrides mapped to the Brand Palette */
+  --color-pastel-pink-50: #FFFDF9;    /* Warm milk background */
+  --color-pastel-pink-100: #FFEBB8;   /* User cream */
+  --color-pastel-pink-200: #F7D0D0;
+  --color-pastel-pink-300: #EA9D9D;   /* User soft rose */
+  --color-pastel-pink-400: #BD5579;   /* User medium rose */
+  --color-pastel-pink-500: #601D49;   /* User deep plum */
+  
+  --color-pastel-lavender: #E8E3FA;
+  --color-pastel-blue: #E3EDFD;
+  --color-pastel-mint: #E3FDF1;
+  --color-pastel-yellow: #FFEBB8;
+  --color-pastel-peach: #FFECE3;
+  --color-star-yellow: #FFEBB8;       /* Custom cream for active star fill */
+  --color-star-yellow-light: #FFF5D9;
+}
+
+/* Custom Base Configurations */
+body {
+  font-family: var(--font-sans);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+h1, h2, h3, h4, .font-title {
+  font-family: var(--font-display);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-rose-light);
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-dark-border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-rose-medium);
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(189, 85, 121, 0.4), 0 0 10px rgba(189, 85, 121, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(189, 85, 121, 0.8), 0 0 25px rgba(189, 85, 121, 0.4);
+  }
+}
+
+@keyframes blush-wiggle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+@keyframes task-appear {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Floating class for priority star logo */
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Selected task card outline styling */
+.task-card-selected {
+  border-color: var(--color-brand-rose-medium) !important;
+  animation: pulse-glow 2s infinite;
+  transform: scale(1.015);
+  z-index: 10;
+}
+
+.dark .task-card-selected {
+  border-color: var(--color-brand-rose-light) !important;
+  box-shadow: 0 0 15px rgba(189, 85, 121, 0.3);
+}
+
+/* Task card transitions */
+.task-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: task-appear 0.35s ease forwards;
+}
+
+/* Custom styles for checked task strike-through */
+.strikethrough-line {
+  position: relative;
+}
+.strikethrough-line::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.completed-text .strikethrough-line::after {
+  width: 100%;
+}
+
+/* Blush circles in star face */
+.star-blush {
+  animation: blush-wiggle 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Custom focus styles */
+.custom-focus:focus-visible {
+  outline: 3px solid var(--color-brand-rose-light);
+  outline-offset: 2px;
+}
+.dark .custom-focus:focus-visible {
+  outline: 3px solid var(--color-brand-rose-medium);
+}
+
