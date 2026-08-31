@@ -402,9 +402,9 @@ function renderCategories() {
   if (!categoryFiltersContainer || !taskCategorySelect) return;
 
   let filterHTML = `
-    <button onclick="setFilter('all')" class="px-4 py-2 rounded-full font-title text-sm transition-all duration-200 shadow-sm cursor-pointer shrink-0 ${currentFilter === 'all'
+    <button onclick="setFilter('all')" class="px-4 py-2 rounded-full font-title font-bold text-sm transition-all duration-200 shadow-sm cursor-pointer shrink-0 ${currentFilter === 'all'
       ? 'bg-pastel-pink-300 text-white dark:bg-pastel-pink-500 shadow-pastel-pink-300/40'
-      : 'bg-white dark:bg-dark-card text-slate-600 dark:text-slate-300 hover:bg-pastel-pink-50 dark:hover:bg-dark-hover'
+      : 'bg-white dark:bg-dark-card text-slate-700 dark:text-slate-200 hover:bg-pastel-pink-50 dark:hover:bg-dark-hover'
     }">
       Todas
     </button>
@@ -415,7 +415,7 @@ function renderCategories() {
     const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
 
     filterHTML += `
-      <button onclick="setFilter('${cat.id}')" class="px-4 py-2 rounded-full font-title text-sm transition-all duration-200 shadow-sm cursor-pointer shrink-0 ${isSelected
+      <button onclick="setFilter('${cat.id}')" class="px-4 py-2 rounded-full font-title font-bold text-sm transition-all duration-200 shadow-sm cursor-pointer shrink-0 ${isSelected
         ? 'bg-pastel-pink-300 text-white dark:bg-pastel-pink-500 shadow-pastel-pink-300/40'
         : `bg-white dark:bg-dark-card ${colorStyles.text} hover:bg-pastel-pink-50 dark:hover:bg-dark-hover`
       }">
@@ -470,8 +470,15 @@ function renderTasks() {
     filtered = tasks.filter(t => t.categoryId === currentFilter);
   }
 
-  const activeTasks = filtered.filter(t => !t.completed).sort((a, b) => a.order - b.order);
-  const completedTasks = filtered.filter(t => t.completed).sort((a, b) => a.order - b.order);
+  const activeTasks = filtered.filter(t => !t.completed).sort((a, b) => {
+    // 1. Tareas con prioridad siempre al inicio
+    if (Boolean(a.priority) !== Boolean(b.priority)) {
+      return a.priority ? -1 : 1;
+    }
+    // 2. Orden personalizado
+    return (a.order || 0) - (b.order || 0);
+  });
+  const completedTasks = filtered.filter(t => t.completed).sort((a, b) => (a.order || 0) - (b.order || 0));
 
   if (filtered.length === 0) {
     taskListContainer.innerHTML = `
@@ -724,15 +731,11 @@ function startTouchDrag(card, taskId) {
   draggedElement = card;
 
   if (navigator.vibrate) {
-    try { navigator.vibrate([40, 20, 40]); } catch (e) { }
+    try { navigator.vibrate([40]); } catch (e) { }
   }
 
   card.classList.add('is-dragging');
   document.body.classList.add('touch-reorder-active');
-
-  placeholderElement = document.createElement('div');
-  placeholderElement.className = 'drag-placeholder';
-  card.parentNode.insertBefore(placeholderElement, card);
 }
 
 function handleTouchMoveDrag(clientY) {
@@ -748,9 +751,6 @@ function handleTouchMoveDrag(clientY) {
     if (clientY >= rect.top && clientY <= rect.bottom) {
       const isAfter = clientY > rect.top + rect.height / 2;
       groupContainer.insertBefore(draggedElement, isAfter ? sibling.nextSibling : sibling);
-      if (placeholderElement) {
-        groupContainer.insertBefore(placeholderElement, draggedElement);
-      }
       break;
     }
   }
@@ -761,7 +761,6 @@ function endTouchDrag() {
     draggedElement.classList.remove('is-dragging');
   }
   document.body.classList.remove('touch-reorder-active');
-  removePlaceholder();
   isTouchDragging = false;
   draggedTaskId = null;
   draggedElement = null;
@@ -770,10 +769,7 @@ function endTouchDrag() {
 }
 
 function removePlaceholder() {
-  if (placeholderElement && placeholderElement.parentNode) {
-    placeholderElement.parentNode.removeChild(placeholderElement);
-    placeholderElement = null;
-  }
+  // No-op for placeholder cleanup
 }
 
 function persistDomTaskOrder() {
@@ -880,7 +876,13 @@ function saveTaskAction() {
       tasks[taskIndex].priority = isPriority;
     }
   } else {
-    const newOrder = tasks.length > 0 ? Math.max(...tasks.map(t => t.order)) + 1 : 1;
+    let newOrder;
+    if (isPriority) {
+      const activeTasks = tasks.filter(t => !t.completed);
+      newOrder = activeTasks.length > 0 ? Math.min(...activeTasks.map(t => t.order || 0)) - 1 : 0;
+    } else {
+      newOrder = tasks.length > 0 ? Math.max(...tasks.map(t => t.order || 0)) + 1 : 1;
+    }
     const newTask = {
       id: 'task-' + Date.now(),
       title: title,
@@ -920,6 +922,11 @@ function toggleTaskPriority(event, id) {
   if (!task) return;
 
   task.priority = !task.priority;
+  if (task.priority) {
+    const activeTasks = tasks.filter(t => !t.completed && t.id !== id);
+    const minOrder = activeTasks.length > 0 ? Math.min(...activeTasks.map(t => t.order || 0)) - 1 : 0;
+    task.order = minOrder;
+  }
   saveTasks();
   renderTasks();
 }
@@ -1078,21 +1085,44 @@ function switchAuthTab(tab) {
   authMode = tab;
   const loginTab = document.getElementById('auth-tab-login');
   const registerTab = document.getElementById('auth-tab-register');
+  const syncTab = document.getElementById('auth-tab-sync');
   const nameGroup = document.getElementById('auth-name-group');
+  const emailGroup = document.getElementById('auth-email-group');
+  const passwordGroup = document.getElementById('auth-password-group');
+  const syncGroup = document.getElementById('auth-sync-group');
+  const extraOptions = document.getElementById('auth-extra-options');
   const submitBtn = document.getElementById('auth-submit-btn');
 
   clearAuthAlert();
 
+  const activeClass = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
+  const inactiveClass = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
+
+  if (loginTab) loginTab.className = tab === 'login' ? activeClass : inactiveClass;
+  if (registerTab) registerTab.className = tab === 'register' ? activeClass : inactiveClass;
+  if (syncTab) syncTab.className = tab === 'sync' ? activeClass : inactiveClass;
+
   if (tab === 'login') {
-    loginTab.className = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
-    registerTab.className = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
-    nameGroup.classList.add('hidden');
-    submitBtn.innerHTML = '<span>Iniciar Sesión</span>';
-  } else {
-    registerTab.className = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
-    loginTab.className = 'flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
-    nameGroup.classList.remove('hidden');
-    submitBtn.innerHTML = '<span>Crear Cuenta</span>';
+    if (nameGroup) nameGroup.classList.add('hidden');
+    if (syncGroup) syncGroup.classList.add('hidden');
+    if (emailGroup) emailGroup.classList.remove('hidden');
+    if (passwordGroup) passwordGroup.classList.remove('hidden');
+    if (extraOptions) extraOptions.classList.remove('hidden');
+    if (submitBtn) submitBtn.innerHTML = '<span>Iniciar Sesión</span>';
+  } else if (tab === 'register') {
+    if (nameGroup) nameGroup.classList.remove('hidden');
+    if (syncGroup) syncGroup.classList.add('hidden');
+    if (emailGroup) emailGroup.classList.remove('hidden');
+    if (passwordGroup) passwordGroup.classList.remove('hidden');
+    if (extraOptions) extraOptions.classList.remove('hidden');
+    if (submitBtn) submitBtn.innerHTML = '<span>Crear Cuenta</span>';
+  } else if (tab === 'sync') {
+    if (nameGroup) nameGroup.classList.add('hidden');
+    if (emailGroup) emailGroup.classList.add('hidden');
+    if (passwordGroup) passwordGroup.classList.add('hidden');
+    if (syncGroup) syncGroup.classList.remove('hidden');
+    if (extraOptions) extraOptions.classList.add('hidden');
+    if (submitBtn) submitBtn.innerHTML = '<span>📲 Cargar Datos del Celular</span>';
   }
 }
 
@@ -1176,9 +1206,115 @@ function localLoginUser(email, password) {
   return { success: true, user: user };
 }
 
+function copySyncCode() {
+  const vault = getUsersVault();
+  const payload = {
+    version: 1,
+    user: currentUser,
+    tasks: tasks,
+    categories: categories,
+    vault: vault,
+    exportedAt: new Date().toISOString()
+  };
+
+  try {
+    const jsonStr = JSON.stringify(payload);
+    const code = btoa(unescape(encodeURIComponent(jsonStr)));
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code)
+        .then(() => {
+          alert('¡Código de sincronización copiado al portapapeles!\n\nAhora abre StarT en tu otro dispositivo (computadora o celular), ve a Iniciar Sesión > "📲 Desde Celular" y pégalo para tener todos tus datos idénticos.');
+        })
+        .catch(() => {
+          prompt('Copia este código de sincronización para pegarlo en tu otro dispositivo:', code);
+        });
+    } else {
+      prompt('Copia este código de sincronización para pegarlo en tu otro dispositivo:', code);
+    }
+  } catch (err) {
+    console.error('Error generando sync code:', err);
+    alert('No se pudo generar el código de sincronización.');
+  }
+}
+
+function promptImportSyncCode() {
+  const code = prompt('Pega aquí el código de sincronización que copiaste desde tu celular/otro dispositivo:');
+  if (code && code.trim()) {
+    const res = importSyncCode(code.trim());
+    if (res.success) {
+      alert('¡Datos sincronizados exitosamente!\nTu cuenta y todas tus tareas han sido restauradas.');
+      closeProfileModal();
+    } else {
+      alert(res.message || 'Código de sincronización inválido.');
+    }
+  }
+}
+
+function importSyncCode(codeStr) {
+  try {
+    const jsonStr = decodeURIComponent(escape(atob(codeStr.trim())));
+    const payload = JSON.parse(jsonStr);
+
+    if (!payload || (!payload.tasks && !payload.user)) {
+      return { success: false, message: 'El código de sincronización no tiene un formato válido.' };
+    }
+
+    // 1. Restore Vault
+    if (payload.vault && typeof payload.vault === 'object') {
+      const currentVault = getUsersVault();
+      const mergedVault = { ...currentVault, ...payload.vault };
+      saveUsersVault(mergedVault);
+    }
+
+    // 2. Restore User Session
+    if (payload.user) {
+      currentUser = payload.user;
+      localStorage.setItem('start_active_user', JSON.stringify(currentUser));
+    }
+
+    // 3. Restore Categories & Tasks
+    if (Array.isArray(payload.categories) && payload.categories.length > 0) {
+      categories = payload.categories;
+      saveCategories();
+    }
+
+    if (Array.isArray(payload.tasks)) {
+      tasks = payload.tasks;
+      saveTasks();
+    }
+
+    onUserLoggedIn(currentUser || { uid: 'guest', email: '' });
+    updateAuthUI();
+
+    return { success: true };
+  } catch (err) {
+    console.error('Import error:', err);
+    return { success: false, message: 'Código no válido o dañado. Por favor vuelve a copiarlo.' };
+  }
+}
+
 function handleAuthSubmit(event) {
   event.preventDefault();
   clearAuthAlert();
+
+  // Sync Code Tab handling
+  if (authMode === 'sync') {
+    const syncCode = document.getElementById('auth-sync-input').value.trim();
+    if (!syncCode) {
+      showAuthAlert('Por favor pega el código de sincronización de tu celular.');
+      return;
+    }
+
+    const res = importSyncCode(syncCode);
+    if (res.success) {
+      closeAuthModal();
+      alert('¡Sincronización completada!\nTus tareas, materias y cuenta han sido importadas a esta computadora.');
+    } else {
+      showAuthAlert(res.message || 'Código de sincronización no válido.');
+    }
+    return;
+  }
 
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value;

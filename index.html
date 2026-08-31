@@ -500,7 +500,7 @@
         </button>
       </div>
 
-      <!-- Auth Tabs: Login vs Register -->
+      <!-- Auth Tabs: Login vs Register vs Sync Import -->
       <div class="flex rounded-xl bg-slate-100 dark:bg-dark-hover p-1 gap-1">
         <button id="auth-tab-login" onclick="switchAuthTab('login')"
           class="flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer">
@@ -509,6 +509,10 @@
         <button id="auth-tab-register" onclick="switchAuthTab('register')"
           class="flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer">
           Crear Cuenta
+        </button>
+        <button id="auth-tab-sync" onclick="switchAuthTab('sync')"
+          class="flex-1 py-1.5 rounded-lg text-xs font-title font-semibold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer">
+          📲 Desde Celular
         </button>
       </div>
 
@@ -525,8 +529,17 @@
             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 font-sans">
         </div>
 
-        <!-- Email -->
-        <div class="flex flex-col gap-1">
+        <!-- Sync Code Input (Visible only on Sync Tab) -->
+        <div id="auth-sync-group" class="hidden flex flex-col gap-1.5">
+          <label for="auth-sync-input"
+            class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Pega tu Código de Sincronización del Celular</label>
+          <textarea id="auth-sync-input" rows="3" placeholder="Pega aquí el código que copiaste desde tu celular..."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 font-mono"></textarea>
+          <p class="text-[11px] text-slate-400 dark:text-slate-500">💡 En tu celular ve a tu perfil y pulsa <b>"Copiar Código de Sincronización"</b>.</p>
+        </div>
+
+        <!-- Email (Hidden on Sync Tab) -->
+        <div id="auth-email-group" class="flex flex-col gap-1">
           <label for="auth-email"
             class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Correo
             Electrónico</label>
@@ -534,8 +547,8 @@
             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 font-sans">
         </div>
 
-        <!-- Password -->
-        <div class="flex flex-col gap-1">
+        <!-- Password (Hidden on Sync Tab) -->
+        <div id="auth-password-group" class="flex flex-col gap-1">
           <label for="auth-password"
             class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Contraseña</label>
           <div class="relative flex items-center">
@@ -561,7 +574,7 @@
       </form>
 
       <!-- Google / Quick Guest Options -->
-      <div class="flex flex-col gap-2 pt-1 border-t border-slate-100 dark:border-dark-border">
+      <div id="auth-extra-options" class="flex flex-col gap-2 pt-1 border-t border-slate-100 dark:border-dark-border">
         <button type="button" onclick="handleGoogleSignIn()"
           class="w-full py-2 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card hover:bg-slate-100 dark:hover:bg-dark-hover text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors flex items-center justify-center gap-2 cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24">
@@ -588,10 +601,10 @@
 
   <!-- User Profile & Cloud Sync Manager Modal -->
   <div id="user-profile-modal"
-    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-all duration-300"
+    class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
     role="dialog" aria-labelledby="profile-modal-title" aria-modal="true">
     <div
-      class="bg-white dark:bg-dark-card rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-5 animate-task-appear">
+      class="bg-white dark:bg-dark-card rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-5 animate-task-appear max-h-[90vh] overflow-y-auto">
 
       <div class="flex items-center justify-between">
         <h3 id="profile-modal-title" class="font-title text-lg font-bold text-slate-800 dark:text-slate-50">Mi Cuenta
@@ -627,13 +640,37 @@
       <div
         class="flex flex-col gap-2 p-3.5 rounded-2xl bg-pastel-pink-50 dark:bg-dark-card/40 border border-pastel-pink-100 dark:border-dark-border">
         <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-500 dark:text-slate-400 font-medium">Tareas sincronizadas:</span>
+          <span class="text-slate-500 dark:text-slate-400 font-medium">Tareas guardadas:</span>
           <span id="profile-task-count" class="font-title font-bold text-slate-700 dark:text-slate-200">0</span>
         </div>
         <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-500 dark:text-slate-400 font-medium">Última sincronización:</span>
+          <span class="text-slate-500 dark:text-slate-400 font-medium">Última actualización:</span>
           <span id="profile-last-sync"
             class="font-sans text-[11px] text-slate-600 dark:text-slate-300 font-semibold">Ahora mismo</span>
+        </div>
+      </div>
+
+      <!-- Cross-Device Sync Transfer Box -->
+      <div class="flex flex-col gap-2.5 p-4 rounded-2xl bg-gradient-to-r from-pastel-pink-50 to-pastel-pink-100/40 dark:from-dark-hover dark:to-dark-card border border-pastel-pink-200/60 dark:border-dark-border">
+        <div class="flex items-center gap-2">
+          <span class="text-base">📲</span>
+          <h4 class="font-title font-bold text-xs text-slate-800 dark:text-slate-100">Pasar datos a Computadora / Celular</h4>
+        </div>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+          Copia tu código de sincronización en este dispositivo y pégalo en tu otro dispositivo para tener todas tus tareas, materias y cuenta idénticas al instante.
+        </p>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="copySyncCode()"
+            class="flex-1 py-2 px-3 rounded-xl bg-pastel-pink-300 hover:bg-pastel-pink-400 text-white text-xs font-title font-semibold shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-3.5 h-3.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375-3.375-3.375m0 0 3.375-3.375m-3.375 3.375h10.875" />
+            </svg>
+            <span>📋 Copiar Código</span>
+          </button>
+          <button type="button" onclick="promptImportSyncCode()"
+            class="py-2 px-3 rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card hover:bg-slate-50 dark:hover:bg-dark-hover text-xs font-title font-semibold text-slate-700 dark:text-slate-200 transition-colors flex items-center justify-center gap-1 cursor-pointer">
+            <span>📥 Pegar Código</span>
+          </button>
         </div>
       </div>
 
