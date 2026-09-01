@@ -1,4 +1,4 @@
-const CACHE_NAME = 'star-t-cache-v7';
+const CACHE_NAME = 'star-t-cache-v8';
 const ASSETS = [
   './',
   './index.html',

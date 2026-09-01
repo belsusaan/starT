@@ -35,14 +35,23 @@ function saveDatabase(db) {
 // Get Local WiFi/Ethernet IP for easy mobile access
 function getLocalNetworkIP() {
   const interfaces = os.networkInterfaces();
+  const candidates = [];
+  
   for (const name of Object.keys(interfaces)) {
+    // Skip virtual adapters (VirtualBox, WSL, VMware, loopback)
+    if (/virtual|vethernet|vbox|loopback|host-only/i.test(name)) continue;
+
     for (const net of interfaces[name]) {
-      if (net.family === 'IPv4' && !net.internal) {
-        return net.address;
+      if (net.family === 'IPv4' && !net.internal && !net.address.startsWith('192.168.56.')) {
+        // Prioritize Wi-Fi / WLAN adapter
+        if (/wi-?fi|wlan|wireless/i.test(name)) {
+          return net.address;
+        }
+        candidates.push(net.address);
       }
     }
   }
-  return 'localhost';
+  return candidates[0] || 'localhost';
 }
 
 const MIME_TYPES = {

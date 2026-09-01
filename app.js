@@ -132,62 +132,61 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================
-// Firebase Integration & Real-time Sync
+// Firebase Integration & Real-time Cloud Sync
 // ==========================================
 
-let serverSyncInterval = null;
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCRfSYYs_InfqzNg4xq7-j5fGJz7SS_RhQ",
+  authDomain: "star-t-9be2a.firebaseapp.com",
+  projectId: "star-t-9be2a",
+  storageBucket: "star-t-9be2a.firebasestorage.app",
+  messagingSenderId: "127026716779",
+  appId: "1:127026716779:web:4800a34961fd7482cfd12e"
+};
+
+let firebaseInitialized = false;
 
 function initFirebase() {
-  // Check for saved active user session
-  const savedActiveUser = localStorage.getItem('start_active_user');
-  if (savedActiveUser) {
-    try {
-      currentUser = JSON.parse(savedActiveUser);
-      console.log('Sesión universal activa:', currentUser.email || currentUser.displayName);
-      syncDataWithServer();
-      startBackgroundSync();
-    } catch (e) {}
+  if (typeof firebase === 'undefined') {
+    console.warn('Firebase SDK no cargado en el navegador.');
+    updateAuthUI();
+    return;
   }
-  updateAuthUI();
-}
 
-function startBackgroundSync() {
-  if (serverSyncInterval) clearInterval(serverSyncInterval);
-  serverSyncInterval = setInterval(() => {
-    if (currentUser && document.visibilityState === 'visible') {
-      fetchServerDataSilently();
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(FIREBASE_CONFIG);
     }
-  }, 4000);
-}
+    firebaseInitialized = true;
 
-function fetchServerDataSilently() {
-  if (!currentUser) return;
-  fetch(`/api/user/data?uid=${encodeURIComponent(currentUser.uid)}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.success) {
-        let changed = false;
-        if (Array.isArray(data.tasks) && JSON.stringify(data.tasks) !== JSON.stringify(tasks)) {
-          tasks = data.tasks;
-          localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
-          changed = true;
-        }
-        if (Array.isArray(data.categories) && data.categories.length > 0 && JSON.stringify(data.categories) !== JSON.stringify(categories)) {
-          categories = data.categories;
-          localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
-          changed = true;
-        }
-        if (changed) {
-          lastSyncTime = new Date();
-          updateSyncStatus('synced');
-          renderCategories();
-          renderTasks();
+    // Listen for authentication changes from Firebase Cloud
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        currentUser = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email.split('@')[0]
+        };
+        localStorage.setItem('start_active_user', JSON.stringify(currentUser));
+        sessionStorage.removeItem('start_guest_session');
+        isSessionUnlocked = true;
+        onUserLoggedIn(currentUser);
+      } else {
+        const isGuest = sessionStorage.getItem('start_guest_session') === 'true';
+        if (!isGuest) {
+          currentUser = null;
+          isSessionUnlocked = false;
+          localStorage.removeItem('start_active_user');
+          onUserLoggedOut();
         }
       }
-    })
-    .catch(err => {
-      console.warn('Sync background notice:', err);
+      updateAuthUI();
     });
+
+  } catch (err) {
+    console.warn('Aviso de inicialización Firebase:', err.message);
+    updateAuthUI();
+  }
 }
 
 function getStorageKey(type) {
@@ -199,55 +198,106 @@ function onUserLoggedIn(user) {
   loadData();
   renderCategories();
   renderTasks();
-  syncDataWithServer();
-  startBackgroundSync();
+  setupFirestoreSync(user.uid);
 }
 
 function onUserLoggedOut() {
-  if (serverSyncInterval) {
-    clearInterval(serverSyncInterval);
-    serverSyncInterval = null;
+  if (firestoreUnsubscribe) {
+    firestoreUnsubscribe();
+    firestoreUnsubscribe = null;
   }
   loadData();
   renderCategories();
   renderTasks();
 }
 
-function syncDataWithServer(showFeedback = false) {
-  if (!currentUser) {
+function setupFirestoreSync(userId) {
+  if (!firebaseInitialized || typeof firebase === 'undefined' || !firebase.firestore) return;
+
+  try {
+    const db = firebase.firestore();
+    const userDocRef = db.collection('users').doc(userId);
+
+    if (firestoreUnsubscribe) {
+      firestoreUnsubscribe();
+    }
+
+    // Real-time listener for instant multi-device synchronization
+    firestoreUnsubscribe = userDocRef.onSnapshot((docSnapshot) => {
+      if (docSnapshot.exists) {
+        const cloudData = docSnapshot.data();
+        let changed = false;
+
+        if (cloudData && Array.isArray(cloudData.tasks)) {
+          if (JSON.stringify(cloudData.tasks) !== JSON.stringify(tasks)) {
+            tasks = cloudData.tasks;
+            localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
+            changed = true;
+          }
+        }
+        if (cloudData && Array.isArray(cloudData.categories) && cloudData.categories.length > 0) {
+          if (JSON.stringify(cloudData.categories) !== JSON.stringify(categories)) {
+            categories = cloudData.categories;
+            localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
+            changed = true;
+          }
+        }
+
+        lastSyncTime = new Date();
+        updateSyncStatus('synced');
+
+        if (changed) {
+          renderCategories();
+          renderTasks();
+        }
+      } else {
+        // Document does not exist yet: push initial local data to Firestore
+        syncDataWithCloud();
+      }
+    }, (error) => {
+      console.warn('Aviso Firestore Snapshot:', error.message);
+      updateSyncStatus('local');
+    });
+
+  } catch (e) {
+    console.warn('Error configurando Firestore Snapshot:', e);
+    updateSyncStatus('local');
+  }
+}
+
+function syncDataWithCloud(showFeedback = false) {
+  if (!currentUser || !firebaseInitialized || typeof firebase === 'undefined' || !firebase.firestore) {
     if (showFeedback) {
-      alert('Tus datos están guardados localmente. Inicia sesión con tu correo para sincronizar entre tu computadora y celular.');
+      alert('Tus datos están guardados localmente. Inicia sesión para sincronizar en la nube con tus otros dispositivos.');
     }
     return;
   }
 
   updateSyncStatus('syncing');
 
-  fetch('/api/user/data', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      uid: currentUser.uid,
+  try {
+    const db = firebase.firestore();
+    db.collection('users').doc(currentUser.uid).set({
       tasks: tasks,
-      categories: categories
-    })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data && data.success) {
+      categories: categories,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      userEmail: currentUser.email || ''
+    }, { merge: true })
+      .then(() => {
         lastSyncTime = new Date();
         updateSyncStatus('synced');
         if (showFeedback) {
-          alert('¡Sincronización completa!\nTodas tus tareas (completadas y pendientes) están respaldadas.');
+          alert('¡Sincronización completa con la nube de Firebase!\nTus datos están respaldados.');
         }
-      } else {
+      })
+      .catch((err) => {
+        console.warn('Error al sincronizar con Firestore:', err);
         updateSyncStatus('local');
-      }
-    })
-    .catch(err => {
-      console.warn('Error sincronizando con el servidor:', err);
-      updateSyncStatus('local');
-    });
+      });
+  } catch (err) {
+    console.warn('Sync error:', err);
+    updateSyncStatus('local');
+  }
 }
 
 function updateSyncStatus(status) {
@@ -264,16 +314,16 @@ function updateSyncStatus(status) {
   if (status === 'synced') {
     if (dot) {
       dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-      dot.title = 'Sincronizado con el servidor';
+      dot.title = 'Sincronizado en la nube (Firebase)';
     }
     if (badge) {
       badge.className = 'inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 mt-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300';
-      badge.textContent = '☁️ Servidor Universal Conectado';
+      badge.textContent = '☁️ Sincronizado en la Nube';
     }
   } else if (status === 'syncing') {
     if (dot) {
       dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-spin';
-      dot.title = 'Sincronizando...';
+      dot.title = 'Sincronizando con Firebase...';
     }
   } else {
     if (dot) {
@@ -323,12 +373,12 @@ function loadData() {
 
 function saveTasks() {
   localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
-  syncDataWithServer();
+  syncDataWithCloud();
 }
 
 function saveCategories() {
   localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
-  syncDataWithServer();
+  syncDataWithCloud();
 }
 
 // ==========================================
@@ -1244,50 +1294,66 @@ function handleAuthSubmit(event) {
     return;
   }
 
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    showAuthAlert('Servicio de autenticación en la nube no disponible.');
+    return;
+  }
+
   const submitBtn = document.getElementById('auth-submit-btn');
   submitBtn.disabled = true;
   submitBtn.classList.add('opacity-70');
 
-  const endpoint = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
-  const payload = authMode === 'login' ? { email, password } : { email, password, displayName: name };
-
-  fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-    .then(async (res) => {
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'Error de conexión.');
-      }
-      return data;
-    })
-    .then((data) => {
-      currentUser = data.user;
-      localStorage.setItem('start_active_user', JSON.stringify(currentUser));
-      sessionStorage.removeItem('start_guest_session');
-
-      if (Array.isArray(data.tasks)) {
-        tasks = data.tasks;
-        localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
-      }
-      if (Array.isArray(data.categories) && data.categories.length > 0) {
-        categories = data.categories;
-        localStorage.setItem(getStorageKey('categories'), JSON.stringify(categories));
-      }
-
-      isSessionUnlocked = true;
-      onUserLoggedIn(currentUser);
-      updateAuthUI();
-    })
-    .catch((err) => {
-      showAuthAlert(err.message || 'Error al conectar con el servidor.');
-    })
-    .finally(() => {
-      submitBtn.disabled = false;
-      submitBtn.classList.remove('opacity-70');
-    });
+  if (authMode === 'login') {
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => {
+        clearAuthAlert();
+      })
+      .catch((error) => {
+        let msg = 'Error al iniciar sesión.';
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+          msg = 'Correo o contraseña incorrectos. Si no tienes cuenta, pulsa en "Crear Cuenta".';
+        } else if (error.code === 'auth/invalid-email') {
+          msg = 'El formato del correo no es válido.';
+        } else if (error.code === 'auth/network-request-failed') {
+          msg = 'Error de conexión a internet. Verifica tu red.';
+        } else {
+          msg = error.message || msg;
+        }
+        showAuthAlert(msg);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-70');
+      });
+  } else {
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (name && user.updateProfile) {
+          user.updateProfile({ displayName: name }).catch(() => {});
+        }
+        clearAuthAlert();
+      })
+      .catch((error) => {
+        let msg = 'Error al registrar la cuenta.';
+        if (error.code === 'auth/email-already-in-use') {
+          msg = 'Este correo ya está registrado. Por favor pulsa en "Iniciar Sesión".';
+        } else if (error.code === 'auth/weak-password') {
+          msg = 'La contraseña debe tener al menos 6 caracteres.';
+        } else if (error.code === 'auth/invalid-email') {
+          msg = 'El formato del correo no es válido.';
+        } else if (error.code === 'auth/network-request-failed') {
+          msg = 'Error de conexión a internet. Verifica tu red.';
+        } else {
+          msg = error.message || msg;
+        }
+        showAuthAlert(msg);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-70');
+      });
+  }
 }
 
 function continueAsGuest() {
@@ -1300,6 +1366,9 @@ function continueAsGuest() {
 }
 
 function handleSignOut() {
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    try { firebase.auth().signOut(); } catch (e) {}
+  }
   currentUser = null;
   isSessionUnlocked = false;
   localStorage.removeItem('start_active_user');

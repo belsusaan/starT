@@ -6,6 +6,13 @@
       "displayName": "Susana Beltrán",
       "password": "miSuperPassword123",
       "createdAt": "2026-08-31T22:09:21.253Z"
+    },
+    "susana.beltran@gmail.com": {
+      "uid": "usr_mthyhwvf_5lmyx0",
+      "email": "susana.beltran@gmail.com",
+      "displayName": "Susana Beltran",
+      "password": "miSuperPassword123miSuperPassword123",
+      "createdAt": "2026-09-01T00:56:05.548Z"
     }
   },
   "tasks": {
@@ -29,7 +36,45 @@
         "priority": false
       }
     ],
-    "usr_mthhgnf7_i769v": []
+    "usr_mthhgnf7_i769v": [],
+    "usr_mthyhwvf_5lmyx0": [
+      {
+        "id": "task-1",
+        "title": "Completar guía de álgebra",
+        "description": "Ejercicios de la página 45 a la 50.",
+        "categoryId": "cat-1",
+        "completed": false,
+        "priority": true,
+        "order": 1
+      },
+      {
+        "id": "task-2",
+        "title": "Lectura de artículo científico",
+        "description": "Efectos del cambio climático en arrecifes de coral.",
+        "categoryId": "cat-2",
+        "completed": false,
+        "priority": false,
+        "order": 2
+      },
+      {
+        "id": "task-3",
+        "title": "Vocabulario de inglés",
+        "description": "Estudiar las 30 palabras nuevas para el test.",
+        "categoryId": "cat-3",
+        "completed": false,
+        "priority": true,
+        "order": 3
+      },
+      {
+        "id": "task-4",
+        "title": "Organizar mi habitación 🧹",
+        "description": "Doblar ropa y limpiar el escritorio.",
+        "categoryId": "cat-4",
+        "completed": true,
+        "priority": false,
+        "order": 4
+      }
+    ]
   },
   "categories": {
     "usr_mthsjhid_4ylmbd": [
@@ -73,6 +118,33 @@
       {
         "id": "cat-1788165528388",
         "name": "Incubadora",
+        "color": "pastel-peach"
+      }
+    ],
+    "usr_mthyhwvf_5lmyx0": [
+      {
+        "id": "cat-1",
+        "name": "Matemáticas",
+        "color": "pastel-pink"
+      },
+      {
+        "id": "cat-2",
+        "name": "Ciencias",
+        "color": "pastel-blue"
+      },
+      {
+        "id": "cat-3",
+        "name": "Idiomas",
+        "color": "pastel-lavender"
+      },
+      {
+        "id": "cat-4",
+        "name": "Personal",
+        "color": "pastel-mint"
+      },
+      {
+        "id": "cat-5",
+        "name": "Otros",
         "color": "pastel-peach"
       }
     ]
