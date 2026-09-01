@@ -122,11 +122,27 @@ function getAsleepSVG(isDarkTheme) {
 // ==========================================
 
 window.addEventListener('DOMContentLoaded', () => {
+  // 1. Immediately restore saved active session (zero flicker)
+  const savedActiveUser = localStorage.getItem('start_active_user');
+  const isGuestActive = sessionStorage.getItem('start_guest_session') === 'true';
+
+  if (savedActiveUser) {
+    try {
+      currentUser = JSON.parse(savedActiveUser);
+      isSessionUnlocked = true;
+    } catch (e) {
+      currentUser = null;
+    }
+  } else if (isGuestActive) {
+    isSessionUnlocked = true;
+  }
+
   initTheme();
-  initFirebase();
+  updateAuthUI();
   loadData();
   renderCategories();
   renderTasks();
+  initFirebase();
   setupEventListeners();
   setupPWA();
 });
@@ -135,7 +151,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Firebase Integration & Real-time Cloud Sync
 // ==========================================
 
-let DEFAULT_FIREBASE_CONFIG = {
+const DEFAULT_FIREBASE_CONFIG = {
   apiKey: "AIzaSyCRfSYYs_InfqzNg4xq7-j5fGJz7SS_RhQ",
   authDomain: "star-t-9be2a.firebaseapp.com",
   projectId: "star-t-9be2a",
@@ -146,23 +162,12 @@ let DEFAULT_FIREBASE_CONFIG = {
 
 let firebaseInitialized = false;
 
-async function initFirebase() {
+function initFirebase() {
   if (typeof firebase === 'undefined') {
-    console.warn('Firebase SDK no cargado en el navegador.');
+    console.warn('Firebase SDK no disponible en el navegador.');
     updateAuthUI();
     return;
   }
-
-  // Fetch dynamic environment variables from /api/config if available (Vercel or server)
-  try {
-    const res = await fetch('/api/config').catch(() => null);
-    if (res && res.ok) {
-      const dynamicConfig = await res.json().catch(() => null);
-      if (dynamicConfig && dynamicConfig.apiKey) {
-        DEFAULT_FIREBASE_CONFIG = dynamicConfig;
-      }
-    }
-  } catch (e) {}
 
   try {
     if (!firebase.apps.length) {
@@ -184,10 +189,9 @@ async function initFirebase() {
         onUserLoggedIn(currentUser);
       } else {
         const isGuest = sessionStorage.getItem('start_guest_session') === 'true';
-        if (!isGuest) {
+        if (!isGuest && !localStorage.getItem('start_active_user')) {
           currentUser = null;
           isSessionUnlocked = false;
-          localStorage.removeItem('start_active_user');
           onUserLoggedOut();
         }
       }
@@ -240,7 +244,10 @@ function setupFirestoreSync(userId) {
         let changed = false;
 
         if (cloudData && Array.isArray(cloudData.tasks)) {
-          if (JSON.stringify(cloudData.tasks) !== JSON.stringify(tasks)) {
+          // If cloud has 0 tasks but local device has tasks (e.g. from phone), push phone tasks to cloud
+          if (cloudData.tasks.length === 0 && tasks.length > 0) {
+            syncDataWithCloud();
+          } else if (JSON.stringify(cloudData.tasks) !== JSON.stringify(tasks)) {
             tasks = cloudData.tasks;
             localStorage.setItem(getStorageKey('tasks'), JSON.stringify(tasks));
             changed = true;
@@ -276,15 +283,10 @@ function setupFirestoreSync(userId) {
   }
 }
 
-function syncDataWithCloud(showFeedback = false) {
+function syncDataWithCloud() {
   if (!currentUser || !firebaseInitialized || typeof firebase === 'undefined' || !firebase.firestore) {
-    if (showFeedback) {
-      alert('Tus datos están guardados localmente. Inicia sesión para sincronizar en la nube con tus otros dispositivos.');
-    }
     return;
   }
-
-  updateSyncStatus('syncing');
 
   try {
     const db = firebase.firestore();
@@ -297,56 +299,19 @@ function syncDataWithCloud(showFeedback = false) {
     }, { merge: true })
       .then(() => {
         lastSyncTime = new Date();
-        updateSyncStatus('synced');
-        if (showFeedback) {
-          alert('¡Sincronización completa con la nube de Firebase!\nTus datos están respaldados.');
-        }
+        updateSyncStatus();
       })
       .catch((err) => {
-        console.error('Error al sincronizar con Firestore:', err);
-        updateSyncStatus('local');
+        console.error('Error al guardar en Firestore:', err);
       });
   } catch (err) {
-    console.error('Sync error:', err);
-    updateSyncStatus('local');
+    console.error('Save error:', err);
   }
 }
 
-function updateSyncStatus(status) {
-  const dot = document.getElementById('sync-status-dot');
-  const badge = document.getElementById('profile-sync-badge');
-  const lastSyncEl = document.getElementById('profile-last-sync');
+function updateSyncStatus() {
   const taskCountEl = document.getElementById('profile-task-count');
-
   if (taskCountEl) taskCountEl.textContent = tasks.length.toString();
-  if (lastSyncEl && lastSyncTime) {
-    lastSyncEl.textContent = lastSyncTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  if (status === 'synced') {
-    if (dot) {
-      dot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-pulse';
-      dot.title = 'Sincronizado en la nube (Firebase)';
-    }
-    if (badge) {
-      badge.className = 'inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 mt-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300';
-      badge.textContent = '☁️ Sincronizado en la Nube';
-    }
-  } else if (status === 'syncing') {
-    if (dot) {
-      dot.className = 'w-2 h-2 rounded-full bg-amber-400 animate-spin';
-      dot.title = 'Sincronizando con Firebase...';
-    }
-  } else {
-    if (dot) {
-      dot.className = 'w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600';
-      dot.title = 'Modo local';
-    }
-    if (badge) {
-      badge.className = 'inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 mt-1 rounded-full bg-slate-100 text-slate-600 dark:bg-dark-hover dark:text-slate-400';
-      badge.textContent = '⚡ Modo local';
-    }
-  }
 }
 
 // ==========================================

@@ -210,7 +210,7 @@
     class="flex-1 flex flex-col items-center justify-center p-4 min-h-screen animate-fade-in max-w-md mx-auto w-full">
     <div
       class="bg-white dark:bg-dark-card rounded-3xl p-6 sm:p-8 w-full shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-6 animate-task-appear">
-      
+
       <!-- Gateway Branding -->
       <div class="flex flex-col items-center text-center gap-3">
         <div
@@ -221,7 +221,8 @@
           <h1 class="font-title text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-50">
             StarT
           </h1>
-          <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-sans">Organiza tus materias y tareitas pendientes</p>
+          <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-sans">Organiza tus materias y tareitas
+            pendientes</p>
         </div>
       </div>
 
@@ -292,9 +293,6 @@
           <span>⚡ Entrar en Modo Local (Sin cuenta)</span>
         </button>
 
-        <div class="p-2.5 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/30 text-[11px] text-emerald-700 dark:text-emerald-300 flex items-center justify-center gap-1.5 font-medium">
-          <span>☁️ Sincronización en la Nube Activa (Celular & Computadora)</span>
-        </div>
       </div>
 
     </div>
@@ -338,16 +336,14 @@
               </svg>
             </span>
             <span id="user-display-name" class="font-bold max-w-[100px] sm:max-w-[130px] truncate">Susana</span>
-            <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-emerald-400"
-              title="Estado de sincronización"></span>
           </button>
 
           <!-- Install App Button (Visible if PWA install is ready) -->
           <button id="install-btn"
             class="hidden items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-title bg-pastel-pink-300 hover:bg-pastel-pink-400 text-white shadow-sm hover:shadow transition-all duration-200 cursor-pointer"
             title="Instalar aplicación en tu móvil">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-              class="w-4 h-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+              stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
             </svg>
@@ -497,8 +493,10 @@
       <div class="flex items-center justify-between gap-3 pt-2">
         <button type="button" id="btn-modal-delete-task" onclick="deleteEditingTask()"
           class="hidden px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer flex items-center gap-1.5">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+            stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
           </svg>
           <span>Eliminar</span>
         </button>
@@ -537,7 +535,8 @@
       <!-- Add / Edit Category Form -->
       <div
         class="flex flex-col gap-3 p-3.5 bg-slate-50 dark:bg-dark-card/30 rounded-2xl border border-slate-100 dark:border-dark-border">
-        <h4 id="cat-form-title" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Nueva Materia /
+        <h4 id="cat-form-title" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+          Nueva Materia /
           Categoría</h4>
 
         <div class="flex flex-col sm:flex-row gap-2">
@@ -622,57 +621,26 @@
           <h4 id="profile-name-text" class="font-title text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
             Usuario</h4>
           <p id="profile-email-text" class="text-xs text-slate-500 dark:text-slate-400 truncate">correo@ejemplo.com</p>
-          <span id="profile-sync-badge"
-            class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 mt-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-            ☁️ Conectado a la nube
-          </span>
         </div>
       </div>
 
-      <!-- Sync Status & Details -->
+      <!-- Task Stats -->
       <div
-        class="flex flex-col gap-2 p-3.5 rounded-2xl bg-pastel-pink-50 dark:bg-dark-card/40 border border-pastel-pink-100 dark:border-dark-border">
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-500 dark:text-slate-400 font-medium">Tareas guardadas:</span>
-          <span id="profile-task-count" class="font-title font-bold text-slate-700 dark:text-slate-200">0</span>
-        </div>
-        <div class="flex items-center justify-between text-xs">
-          <span class="text-slate-500 dark:text-slate-400 font-medium">Última actualización:</span>
-          <span id="profile-last-sync"
-            class="font-sans text-[11px] text-slate-600 dark:text-slate-300 font-semibold">Ahora mismo</span>
-        </div>
-      </div>
-
-      <!-- Universal Cloud Sync Info Box -->
-      <div class="flex flex-col gap-2.5 p-4 rounded-2xl bg-gradient-to-r from-pastel-pink-50 to-pastel-pink-100/40 dark:from-dark-hover dark:to-dark-card border border-pastel-pink-200/60 dark:border-dark-border">
-        <div class="flex items-center gap-2">
-          <span class="text-base">☁️</span>
-          <h4 class="font-title font-bold text-xs text-slate-800 dark:text-slate-100">Sincronización Universal Activa</h4>
-        </div>
-        <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-          Tus tareas y materias se guardan en tiempo real. Al iniciar sesión con tu correo y contraseña en tu celular o computadora, todos tus datos aparecerán idénticos automáticamente.
-        </p>
+        class="flex items-center justify-between p-3.5 rounded-2xl bg-pastel-pink-50 dark:bg-dark-card/40 border border-pastel-pink-100 dark:border-dark-border text-xs">
+        <span class="text-slate-500 dark:text-slate-400 font-medium">Tareas totales:</span>
+        <span id="profile-task-count" class="font-title font-bold text-slate-700 dark:text-slate-200">0</span>
       </div>
 
       <!-- Actions -->
-      <div class="flex items-center justify-between gap-3 pt-1">
-        <button onclick="syncDataWithServer(true)"
-          class="flex-1 py-2.5 px-3 rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card hover:bg-slate-50 dark:hover:bg-dark-hover text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
-            stroke="currentColor" class="w-4 h-4 text-pastel-pink-400">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-          </svg>
-          Sincronizar Ahora
-        </button>
+      <div class="flex items-center justify-end pt-2">
         <button onclick="handleSignOut()"
-          class="py-2.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5">
+          class="w-full py-2.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
             stroke="currentColor" class="w-4 h-4">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
           </svg>
-          Cerrar Sesión
+          <span>Cerrar Sesión</span>
         </button>
       </div>
 
