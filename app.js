@@ -135,7 +135,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Firebase Integration & Real-time Cloud Sync
 // ==========================================
 
-const FIREBASE_CONFIG = {
+let DEFAULT_FIREBASE_CONFIG = {
   apiKey: "AIzaSyCRfSYYs_InfqzNg4xq7-j5fGJz7SS_RhQ",
   authDomain: "star-t-9be2a.firebaseapp.com",
   projectId: "star-t-9be2a",
@@ -146,16 +146,27 @@ const FIREBASE_CONFIG = {
 
 let firebaseInitialized = false;
 
-function initFirebase() {
+async function initFirebase() {
   if (typeof firebase === 'undefined') {
     console.warn('Firebase SDK no cargado en el navegador.');
     updateAuthUI();
     return;
   }
 
+  // Fetch dynamic environment variables from /api/config if available (Vercel or server)
+  try {
+    const res = await fetch('/api/config').catch(() => null);
+    if (res && res.ok) {
+      const dynamicConfig = await res.json().catch(() => null);
+      if (dynamicConfig && dynamicConfig.apiKey) {
+        DEFAULT_FIREBASE_CONFIG = dynamicConfig;
+      }
+    }
+  } catch (e) {}
+
   try {
     if (!firebase.apps.length) {
-      firebase.initializeApp(FIREBASE_CONFIG);
+      firebase.initializeApp(DEFAULT_FIREBASE_CONFIG);
     }
     firebaseInitialized = true;
 

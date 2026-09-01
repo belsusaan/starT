@@ -96,6 +96,35 @@ const server = http.createServer((req, res) => {
   // API Routes
   // ==========================================
 
+  // Config Endpoint (loads from .env / process.env)
+  if (pathname === '/api/config' && req.method === 'GET') {
+    let envVars = {};
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+      try {
+        const content = fs.readFileSync(envPath, 'utf8');
+        content.split('\n').forEach(line => {
+          const trimmed = line.trim();
+          if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+            const [k, ...v] = trimmed.split('=');
+            envVars[k.trim()] = v.join('=').trim().replace(/^["']|["']$/g, '');
+          }
+        });
+      } catch (e) {}
+    }
+
+    const config = {
+      apiKey: process.env.FIREBASE_API_KEY || envVars.FIREBASE_API_KEY || "AIzaSyCRfSYYs_InfqzNg4xq7-j5fGJz7SS_RhQ",
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN || envVars.FIREBASE_AUTH_DOMAIN || "star-t-9be2a.firebaseapp.com",
+      projectId: process.env.FIREBASE_PROJECT_ID || envVars.FIREBASE_PROJECT_ID || "star-t-9be2a",
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || envVars.FIREBASE_STORAGE_BUCKET || "star-t-9be2a.firebasestorage.app",
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || envVars.FIREBASE_MESSAGING_SENDER_ID || "127026716779",
+      appId: process.env.FIREBASE_APP_ID || envVars.FIREBASE_APP_ID || "1:127026716779:web:4800a34961fd7482cfd12e"
+    };
+
+    return sendJSON(res, 200, config);
+  }
+
   // Network IP Endpoint (for connecting from mobile)
   if (pathname === '/api/info' && req.method === 'GET') {
     const ip = getLocalNetworkIP();
