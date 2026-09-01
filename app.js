@@ -292,7 +292,8 @@ function syncDataWithCloud(showFeedback = false) {
       tasks: tasks,
       categories: categories,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      userEmail: currentUser.email || ''
+      userEmail: currentUser.email || '',
+      displayName: currentUser.displayName || ''
     }, { merge: true })
       .then(() => {
         lastSyncTime = new Date();
@@ -302,11 +303,11 @@ function syncDataWithCloud(showFeedback = false) {
         }
       })
       .catch((err) => {
-        console.warn('Error al sincronizar con Firestore:', err);
+        console.error('Error al sincronizar con Firestore:', err);
         updateSyncStatus('local');
       });
   } catch (err) {
-    console.warn('Sync error:', err);
+    console.error('Sync error:', err);
     updateSyncStatus('local');
   }
 }
@@ -363,10 +364,11 @@ function loadData() {
     try {
       tasks = JSON.parse(savedTasks);
     } catch (e) {
-      tasks = [...DEFAULT_TASKS];
+      tasks = currentUser ? [] : [...DEFAULT_TASKS];
     }
   } else {
-    tasks = [...DEFAULT_TASKS];
+    // Registered accounts start empty with 0 tasks; guests start with sample tasks
+    tasks = currentUser ? [] : [...DEFAULT_TASKS];
     saveTasks();
   }
 
@@ -1338,16 +1340,49 @@ function handleAuthSubmit(event) {
       });
   } else {
     firebase.auth().createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         const user = userCredential.user;
         if (name && user.updateProfile) {
-          user.updateProfile({ displayName: name }).catch(() => {});
+          await user.updateProfile({ displayName: name }).catch(() => {});
         }
+
+        // Initialize clean state for the new user (0 tasks)
+        tasks = [];
+        categories = [...DEFAULT_CATEGORIES];
+        localStorage.setItem(`start_tasks_${user.uid}`, JSON.stringify([]));
+        localStorage.setItem(`start_categories_${user.uid}`, JSON.stringify(categories));
+
+        // Push initial document to Cloud Firestore
+        if (firebase.firestore) {
+          try {
+            const db = firebase.firestore();
+            await db.collection('users').doc(user.uid).set({
+              tasks: [],
+              categories: categories,
+              userEmail: user.email || '',
+              displayName: name || user.email.split('@')[0],
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            console.log('Documento inicial de usuario creado en Firestore.');
+          } catch (fsErr) {
+            console.error('Aviso de escritura inicial en Firestore:', fsErr);
+          }
+        }
+
         clearAuthAlert();
       })
       .catch((error) => {
         let msg = 'Error al registrar la cuenta.';
-        if (error.code === 'auth/email-already-in-use') {
+        if (error.code === 'auth/configuration-not-found' || error.code === 'auth/operation-not-allowed') {
+          msg = `
+            <div class="flex flex-col gap-1.5 text-left">
+              <span class="font-bold">⚠️ Falta activar el método en Firebase</span>
+              <p class="text-[11px] leading-relaxed">En tu consola de Firebase debes habilitar el inicio con correo:</p>
+              <p class="text-[11px] font-medium">1. Ve a <strong>Authentication</strong> &gt; <strong>Sign-in method</strong><br>2. Activa <strong>Correo electrónico/contraseña</strong> &gt; Guardar.</p>
+            </div>
+          `;
+        } else if (error.code === 'auth/email-already-in-use') {
           msg = 'Este correo ya está registrado. Por favor pulsa en "Iniciar Sesión".';
         } else if (error.code === 'auth/weak-password') {
           msg = 'La contraseña debe tener al menos 6 caracteres.';
