@@ -466,9 +466,11 @@ function renderManageCategories() {
   listContainer.innerHTML = html;
 }
 
-function renderTasks() {
+function renderTasks(options = {}) {
   const taskListContainer = document.getElementById('task-list');
   if (!taskListContainer) return;
+
+  const justMovedId = options.justMovedId || null;
 
   let filtered = tasks;
   if (currentFilter !== 'all') {
@@ -502,7 +504,7 @@ function renderTasks() {
   if (activeTasks.length > 0) {
     html += `<div class="space-y-3 task-group" id="active-tasks-container" data-status="active">`;
     activeTasks.forEach(task => {
-      html += renderTaskCard(task);
+      html += renderTaskCard(task, task.id === justMovedId);
     });
     html += `</div>`;
   }
@@ -519,7 +521,7 @@ function renderTasks() {
       <div class="space-y-3 opacity-80 task-group" id="completed-tasks-container" data-status="completed">
     `;
     completedTasks.forEach(task => {
-      html += renderTaskCard(task);
+      html += renderTaskCard(task, task.id === justMovedId);
     });
     html += `</div>`;
   }
@@ -528,7 +530,7 @@ function renderTasks() {
   attachDragAndDropListeners();
 }
 
-function renderTaskCard(task) {
+function renderTaskCard(task, isJustMoved = false) {
   const category = categories.find(c => c.id === task.categoryId) || { name: 'Otros', color: 'pastel-peach' };
   const colorStyles = PASTEL_COLOR_MAP[category.color] || PASTEL_COLOR_MAP['pastel-peach'];
   const isSelected = selectedTaskId === task.id;
@@ -536,6 +538,7 @@ function renderTaskCard(task) {
     ? 'task-card-selected'
     : 'border-slate-100 dark:border-dark-border hover:border-pastel-pink-200 dark:hover:border-dark-hover shadow-sm';
   const textCompletedClass = task.completed ? 'completed-text text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200';
+  const arriveClass = isJustMoved ? 'task-soft-arrive' : '';
 
   return `
     <div 
@@ -543,7 +546,7 @@ function renderTaskCard(task) {
       data-task-id="${task.id}"
       tabindex="0"
       onclick="selectTask(event, '${task.id}')"
-      class="task-card p-4 rounded-2xl border-2 bg-white dark:bg-dark-card flex items-center justify-between gap-3.5 cursor-grab active:cursor-grabbing outline-none ${cardBorderClass} custom-focus select-none"
+      class="task-card p-4 rounded-2xl border-2 bg-white dark:bg-dark-card flex items-center justify-between gap-3.5 cursor-grab active:cursor-grabbing outline-none ${cardBorderClass} ${arriveClass} custom-focus select-none"
       role="listitem"
       aria-selected="${isSelected}"
       draggable="true"
@@ -558,6 +561,7 @@ function renderTaskCard(task) {
       <div class="flex items-center gap-3.5 flex-1 min-w-0 pointer-events-auto">
         <!-- Custom Checkbox -->
         <button 
+          id="checkbox-${task.id}"
           onclick="toggleTaskComplete(event, '${task.id}')" 
           class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer select-none shrink-0 ${task.completed
       ? 'bg-pastel-pink-300 border-pastel-pink-300 dark:bg-pastel-pink-500 dark:border-pastel-pink-500 text-white'
@@ -572,7 +576,7 @@ function renderTaskCard(task) {
           ` : ''}
         </button>
 
-        <div class="min-w-0 flex-1 ${textCompletedClass}">
+        <div id="text-wrapper-${task.id}" class="min-w-0 flex-1 ${textCompletedClass}">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
             <h3 class="font-title text-base font-semibold leading-tight strikethrough-line truncate">
               ${escapeHTML(task.title)}
@@ -921,22 +925,136 @@ function saveTaskAction() {
 
   saveTasks();
   closeModal();
-  renderTasks();
+  renderTasks({ justMovedId: selectedTaskId });
+}
+
+const completingTaskIds = new Set();
+
+function triggerStarSparkles(anchorEl) {
+  if (!anchorEl) return;
+  const rect = anchorEl.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  const particlesCount = 6;
+  const colors = ['#EA9D9D', '#FFEBB8', '#BD5579', '#FFF5D9', '#E8E3FA'];
+
+  for (let i = 0; i < particlesCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'star-particle';
+
+    const angle = (i * (360 / particlesCount) + (Math.random() * 20 - 10)) * (Math.PI / 180);
+    const distance = 24 + Math.random() * 26;
+    const tx = Math.cos(angle) * distance;
+    const ty = Math.sin(angle) * distance;
+
+    star.style.setProperty('--tx', `${tx}px`);
+    star.style.setProperty('--ty', `${ty}px`);
+    star.style.left = `${centerX}px`;
+    star.style.top = `${centerY}px`;
+
+    const color = colors[i % colors.length];
+    const size = 11 + Math.random() * 6;
+
+    star.innerHTML = `
+      <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.18));">
+        <path d="M12 2l2.4 7.2h7.6l-6.2 4.5 2.4 7.3-6.2-4.5-6.2 4.5 2.4-7.3-6.2-4.5h7.6z"/>
+      </svg>
+    `;
+
+    document.body.appendChild(star);
+    setTimeout(() => {
+      if (star && star.parentNode) {
+        star.parentNode.removeChild(star);
+      }
+    }, 700);
+  }
 }
 
 function toggleTaskComplete(event, id) {
   if (event) event.stopPropagation();
+  if (completingTaskIds.has(id)) return;
+
   const task = tasks.find(t => t.id === id);
   if (!task) return;
 
-  task.completed = !task.completed;
+  const cardEl = document.getElementById(`card-${id}`);
+  const checkboxEl = document.getElementById(`checkbox-${id}`) || (cardEl ? cardEl.querySelector('button') : null);
+  const textWrapperEl = document.getElementById(`text-wrapper-${id}`);
 
-  const sameStatusTasks = tasks.filter(t => t.completed === task.completed);
-  const newOrder = sameStatusTasks.length > 0 ? Math.max(...sameStatusTasks.map(t => t.order)) + 1 : 1;
-  task.order = newOrder;
+  // Fallback if card is not in DOM
+  if (!cardEl) {
+    task.completed = !task.completed;
+    const sameStatusTasks = tasks.filter(t => t.completed === task.completed);
+    task.order = sameStatusTasks.length > 0 ? Math.max(...sameStatusTasks.map(t => t.order)) + 1 : 1;
+    saveTasks();
+    renderTasks();
+    return;
+  }
 
-  saveTasks();
-  renderTasks();
+  completingTaskIds.add(id);
+  const willComplete = !task.completed;
+
+  if (willComplete) {
+    // 1. Immediate visual confirmation: Checkbox pop & checkmark
+    if (checkboxEl) {
+      checkboxEl.classList.remove('border-slate-300', 'dark:border-slate-600', 'hover:border-pastel-pink-300');
+      checkboxEl.classList.add('bg-pastel-pink-300', 'border-pastel-pink-300', 'dark:bg-pastel-pink-500', 'dark:border-pastel-pink-500', 'text-white', 'check-pop-animate');
+      checkboxEl.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+        </svg>
+      `;
+      triggerStarSparkles(checkboxEl);
+    }
+
+    // 2. Smooth strikethrough transition on title text
+    if (textWrapperEl) {
+      textWrapperEl.classList.add('completed-text', 'text-slate-400', 'dark:text-slate-500');
+      textWrapperEl.classList.remove('text-slate-800', 'dark:text-slate-200');
+    }
+
+    // 3. Keep in place for 380ms so the user experiences the satisfaction of completing the task
+    setTimeout(() => {
+      // 4. Smooth collapse animation
+      cardEl.classList.add('task-collapsing');
+
+      // 5. When collapse completes, update data model and re-render smoothly
+      setTimeout(() => {
+        task.completed = true;
+        const sameStatusTasks = tasks.filter(t => t.completed === true);
+        task.order = sameStatusTasks.length > 0 ? Math.max(...sameStatusTasks.map(t => t.order)) + 1 : 1;
+        saveTasks();
+        completingTaskIds.delete(id);
+        renderTasks({ justMovedId: id });
+      }, 300);
+    }, 380);
+
+  } else {
+    // Un-marking task: smoothly restore to active
+    if (checkboxEl) {
+      checkboxEl.classList.add('border-slate-300', 'dark:border-slate-600', 'hover:border-pastel-pink-300', 'check-pop-animate');
+      checkboxEl.classList.remove('bg-pastel-pink-300', 'border-pastel-pink-300', 'dark:bg-pastel-pink-500', 'dark:border-pastel-pink-500', 'text-white');
+      checkboxEl.innerHTML = '';
+    }
+
+    if (textWrapperEl) {
+      textWrapperEl.classList.remove('completed-text', 'text-slate-400', 'dark:text-slate-500');
+      textWrapperEl.classList.add('text-slate-800', 'dark:text-slate-200');
+    }
+
+    setTimeout(() => {
+      cardEl.classList.add('task-collapsing');
+      setTimeout(() => {
+        task.completed = false;
+        const sameStatusTasks = tasks.filter(t => t.completed === false);
+        task.order = sameStatusTasks.length > 0 ? Math.max(...sameStatusTasks.map(t => t.order)) + 1 : 1;
+        saveTasks();
+        completingTaskIds.delete(id);
+        renderTasks({ justMovedId: id });
+      }, 280);
+    }, 280);
+  }
 }
 
 function toggleTaskPriority(event, id) {
@@ -956,10 +1074,21 @@ function toggleTaskPriority(event, id) {
 
 function deleteTask(event, id) {
   if (event) event.stopPropagation();
-  tasks = tasks.filter(t => t.id !== id);
-  if (selectedTaskId === id) selectedTaskId = null;
-  saveTasks();
-  renderTasks();
+  const cardEl = document.getElementById(`card-${id}`);
+  if (cardEl) {
+    cardEl.classList.add('task-collapsing');
+    setTimeout(() => {
+      tasks = tasks.filter(t => t.id !== id);
+      if (selectedTaskId === id) selectedTaskId = null;
+      saveTasks();
+      renderTasks();
+    }, 280);
+  } else {
+    tasks = tasks.filter(t => t.id !== id);
+    if (selectedTaskId === id) selectedTaskId = null;
+    saveTasks();
+    renderTasks();
+  }
 }
 
 function setFilter(filterId) {
