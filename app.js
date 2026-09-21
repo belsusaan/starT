@@ -373,10 +373,10 @@ const PALETTES = {
     name: 'Rosa Clásico',
     colors: ['#FFFDF9', '#FFEBB8', '#EA9D9D', '#601D49']
   },
-  'mauve': {
-    id: 'mauve',
-    name: 'Rosa & Ceniza',
-    colors: ['#FFF5F5', '#F7D6D0', '#E2B4BD', '#4A4A4A']
+  'crimson': {
+    id: 'crimson',
+    name: 'Rojo Carmesí',
+    colors: ['#EED9B9', '#D53E0F', '#9B0F06', '#5E0006']
   },
   'ocean': {
     id: 'ocean',
@@ -387,11 +387,6 @@ const PALETTES = {
     id: 'sunset',
     name: 'Atardecer Pastel',
     colors: ['#FFFDF0', '#FFDDB0', '#FFBE91', '#8F4820']
-  },
-  'pop': {
-    id: 'pop',
-    name: 'Pastel Pop',
-    colors: ['#F8FFF0', '#CFECF3', '#F9B2D7', '#8A2D65']
   },
   'caramel': {
     id: 'caramel',
@@ -410,6 +405,8 @@ function initTheme() {
   const savedPalette = localStorage.getItem('start_palette');
   if (savedPalette && PALETTES[savedPalette]) {
     currentPalette = savedPalette;
+  } else if (savedPalette === 'mauve' || savedPalette === 'pop') {
+    currentPalette = 'crimson';
   }
   applyTheme();
 }
@@ -514,8 +511,8 @@ function renderPaletteDropdown() {
       >
         <div class="flex items-center gap-2 min-w-0">
           <div class="flex items-center -space-x-1 shrink-0">
-            ${pal.colors.slice(0, 3).map(c => `
-              <span class="w-3.5 h-3.5 rounded-full border border-white dark:border-dark-card shadow-xs" style="background-color: ${c}"></span>
+            ${pal.colors.map(c => `
+              <span class="w-3 h-3 rounded-full border border-white dark:border-dark-card shadow-xs" style="background-color: ${c}"></span>
             `).join('')}
           </div>
           <span class="font-title text-xs truncate">${pal.name}</span>
