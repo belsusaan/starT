@@ -56,7 +56,7 @@ const DEFAULT_TASKS = [
   { id: 'task-1', title: 'Completar guía de álgebra', description: 'Ejercicios de la página 45 a la 50.', categoryId: 'cat-1', completed: false, priority: true, order: 1 },
   { id: 'task-2', title: 'Lectura de artículo científico', description: 'Efectos del cambio climático en arrecifes de coral.', categoryId: 'cat-2', completed: false, priority: false, order: 2 },
   { id: 'task-3', title: 'Vocabulario de inglés', description: 'Estudiar las 30 palabras nuevas para el test.', categoryId: 'cat-3', completed: false, priority: true, order: 3 },
-  { id: 'task-4', title: 'Organizar mi habitación 🧹', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: true, priority: false, order: 4 }
+  { id: 'task-4', title: 'Organizar mi habitación', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: true, priority: false, order: 4 }
 ];
 
 // Custom SVG star using logo.svg paths with safe padding viewBox
@@ -312,6 +312,10 @@ function syncDataWithCloud() {
 function updateSyncStatus() {
   const taskCountEl = document.getElementById('profile-task-count');
   if (taskCountEl) taskCountEl.textContent = tasks.length.toString();
+  const profileModal = document.getElementById('user-profile-modal');
+  if (profileModal && !profileModal.classList.contains('hidden')) {
+    renderProfileDashboard();
+  }
 }
 
 // ==========================================
@@ -360,14 +364,62 @@ function saveCategories() {
 }
 
 // ==========================================
-// Theme Management
+// Theme & Palettes Management (5 User Palettes + Base)
 // ==========================================
+
+const PALETTES = {
+  'default': {
+    id: 'default',
+    name: 'Rosa Clásico',
+    colors: ['#FFFDF9', '#FFEBB8', '#EA9D9D', '#601D49']
+  },
+  'mauve': {
+    id: 'mauve',
+    name: 'Rosa & Ceniza',
+    colors: ['#FFF5F5', '#F7D6D0', '#E2B4BD', '#4A4A4A']
+  },
+  'ocean': {
+    id: 'ocean',
+    name: 'Océano & Lino',
+    colors: ['#F2EFE7', '#C8DFDB', '#66A3BF', '#3368A0']
+  },
+  'sunset': {
+    id: 'sunset',
+    name: 'Atardecer Pastel',
+    colors: ['#FFFDF0', '#FFDDB0', '#FFBE91', '#8F4820']
+  },
+  'pop': {
+    id: 'pop',
+    name: 'Pastel Pop',
+    colors: ['#F8FFF0', '#CFECF3', '#F9B2D7', '#8A2D65']
+  },
+  'caramel': {
+    id: 'caramel',
+    name: 'Noche & Caramelo',
+    colors: ['#FAF7F0', '#F3E4C9', '#D3D4C0', '#0A2947']
+  }
+};
+
+let currentPalette = 'default';
 
 function initTheme() {
   const savedTheme = localStorage.getItem('start_theme');
   const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   theme = savedTheme ? savedTheme : (systemPrefersDark ? 'dark' : 'light');
+
+  const savedPalette = localStorage.getItem('start_palette');
+  if (savedPalette && PALETTES[savedPalette]) {
+    currentPalette = savedPalette;
+  }
   applyTheme();
+}
+
+function setPalette(paletteId) {
+  if (!PALETTES[paletteId]) return;
+  currentPalette = paletteId;
+  localStorage.setItem('start_palette', paletteId);
+  applyTheme();
+  renderPaletteDropdown();
 }
 
 function applyTheme() {
@@ -379,6 +431,12 @@ function applyTheme() {
   }
   localStorage.setItem('start_theme', theme);
 
+  if (currentPalette && currentPalette !== 'default') {
+    htmlEl.setAttribute('data-palette', currentPalette);
+  } else {
+    htmlEl.removeAttribute('data-palette');
+  }
+
   const themeToggleIcon = document.getElementById('theme-toggle-icon');
   if (themeToggleIcon) {
     themeToggleIcon.innerHTML = theme === 'dark'
@@ -386,8 +444,90 @@ function applyTheme() {
       : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-slate-700"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>`;
   }
 
-  // Refresh tasks if needed (e.g. empty state asleep star and star outlines)
+  const currentPal = PALETTES[currentPalette] || PALETTES['default'];
+  const paletteNameEl = document.getElementById('current-palette-name');
+  if (paletteNameEl) paletteNameEl.textContent = currentPal.name;
+
+  const paletteBtnIcon = document.getElementById('palette-btn-icon');
+  if (paletteBtnIcon && currentPal.colors) {
+    paletteBtnIcon.innerHTML = `
+      <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${currentPal.colors[2]}"></span>
+      <span class="w-2.5 h-2.5 rounded-full border border-white dark:border-dark-card" style="background-color: ${currentPal.colors[1]}"></span>
+    `;
+  }
+
   renderTasks();
+}
+
+function togglePaletteDropdown(event) {
+  if (event) event.stopPropagation();
+  const menu = document.getElementById('palette-dropdown-menu');
+  const btn = document.getElementById('palette-dropdown-btn');
+  const chevron = document.getElementById('palette-dropdown-chevron');
+  if (!menu) return;
+
+  const isHidden = menu.classList.contains('hidden');
+  if (isHidden) {
+    renderPaletteDropdown();
+    menu.classList.remove('hidden');
+    menu.classList.add('flex');
+    if (chevron) chevron.classList.add('rotate-180');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+  } else {
+    closePaletteDropdown();
+  }
+}
+
+function closePaletteDropdown() {
+  const menu = document.getElementById('palette-dropdown-menu');
+  const btn = document.getElementById('palette-dropdown-btn');
+  const chevron = document.getElementById('palette-dropdown-chevron');
+  if (menu && !menu.classList.contains('hidden')) {
+    menu.classList.add('hidden');
+    menu.classList.remove('flex');
+    if (chevron) chevron.classList.remove('rotate-180');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function selectPaletteFromDropdown(paletteId) {
+  setPalette(paletteId);
+  closePaletteDropdown();
+}
+
+function renderPaletteDropdown() {
+  const menu = document.getElementById('palette-dropdown-menu');
+  if (!menu) return;
+
+  menu.innerHTML = Object.values(PALETTES).map(pal => {
+    const isSelected = pal.id === currentPalette;
+    const itemClass = isSelected
+      ? 'bg-pastel-pink-50 dark:bg-dark-hover font-bold text-brand-rose-medium dark:text-pastel-pink-300'
+      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-dark-hover/60 font-medium';
+
+    return `
+      <button 
+        type="button"
+        onclick="selectPaletteFromDropdown('${pal.id}')"
+        class="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left transition-all cursor-pointer ${itemClass}"
+        title="Activar paleta ${pal.name}"
+      >
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="flex items-center -space-x-1 shrink-0">
+            ${pal.colors.slice(0, 3).map(c => `
+              <span class="w-3.5 h-3.5 rounded-full border border-white dark:border-dark-card shadow-xs" style="background-color: ${c}"></span>
+            `).join('')}
+          </div>
+          <span class="font-title text-xs truncate">${pal.name}</span>
+        </div>
+        ${isSelected ? `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-brand-rose-medium dark:text-pastel-pink-300 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        ` : ''}
+      </button>
+    `;
+  }).join('');
 }
 
 // ==========================================
@@ -513,12 +653,33 @@ function renderTasks(options = {}) {
     if (activeTasks.length > 0) {
       html += `<div class="h-px bg-slate-100 dark:bg-dark-border my-6"></div>`;
     }
+    const chevronClass = isCompletedOpen ? 'rotate-180' : 'rotate-0';
+    const containerClass = isCompletedOpen ? '' : 'hidden';
+
     html += `
-      <div class="mb-3 flex items-center gap-2">
-        <span class="font-title text-sm text-slate-400 dark:text-slate-500">Completadas (${completedTasks.length})</span>
-        <span class="h-0.5 flex-1 bg-slate-100/70 dark:bg-dark-border/40"></span>
-      </div>
-      <div class="space-y-3 opacity-80 task-group" id="completed-tasks-container" data-status="completed">
+      <button 
+        id="completed-toggle-btn"
+        type="button" 
+        onclick="toggleCompletedSection()" 
+        class="w-full mb-3 flex items-center justify-between gap-2 p-2 -ml-2 rounded-2xl hover:bg-slate-100/60 dark:hover:bg-dark-hover/40 transition-colors cursor-pointer text-left select-none group"
+        title="Desplegar o replegar tareas completadas"
+      >
+        <div class="flex items-center gap-2">
+          <span class="font-title text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-brand-rose-medium transition-colors">
+            Completadas (${completedTasks.length})
+          </span>
+          <span id="completed-toggle-label" class="text-[11px] font-title px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-dark-border text-slate-500 dark:text-slate-400 font-medium">
+            ${isCompletedOpen ? 'Ocultar' : 'Mostrar'}
+          </span>
+        </div>
+        <div class="flex items-center gap-2 flex-1">
+          <span class="h-0.5 flex-1 bg-slate-100/70 dark:bg-dark-border/40"></span>
+          <svg id="completed-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-slate-400 group-hover:text-brand-rose-medium transition-transform duration-200 ${chevronClass}">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+          </svg>
+        </div>
+      </button>
+      <div class="space-y-3 opacity-80 task-group transition-all duration-300 ${containerClass}" id="completed-tasks-container" data-status="completed">
     `;
     completedTasks.forEach(task => {
       html += renderTaskCard(task, task.id === justMovedId);
@@ -528,6 +689,32 @@ function renderTasks(options = {}) {
 
   taskListContainer.innerHTML = html;
   attachDragAndDropListeners();
+}
+
+let isCompletedOpen = false;
+
+function toggleCompletedSection() {
+  isCompletedOpen = !isCompletedOpen;
+  const container = document.getElementById('completed-tasks-container');
+  const chevron = document.getElementById('completed-chevron');
+  const label = document.getElementById('completed-toggle-label');
+  if (container) {
+    if (isCompletedOpen) {
+      container.classList.remove('hidden');
+    } else {
+      container.classList.add('hidden');
+    }
+  }
+  if (chevron) {
+    if (isCompletedOpen) {
+      chevron.classList.add('rotate-180');
+    } else {
+      chevron.classList.remove('rotate-180');
+    }
+  }
+  if (label) {
+    label.textContent = isCompletedOpen ? 'Ocultar' : 'Mostrar';
+  }
 }
 
 function renderTaskCard(task, isJustMoved = false) {
@@ -592,6 +779,7 @@ function renderTaskCard(task, isJustMoved = false) {
       <div class="flex items-center gap-1.5 shrink-0 pointer-events-auto">
         <!-- Priority Star Button -->
         <button 
+          id="star-btn-${task.id}"
           onclick="toggleTaskPriority(event, '${task.id}')" 
           title="Prioridad"
           class="focus:outline-none cursor-pointer"
@@ -1057,19 +1245,63 @@ function toggleTaskComplete(event, id) {
   }
 }
 
+const priorityAnimatingIds = new Set();
+
 function toggleTaskPriority(event, id) {
   if (event) event.stopPropagation();
+  if (priorityAnimatingIds.has(id)) return;
+
   const task = tasks.find(t => t.id === id);
   if (!task) return;
 
-  task.priority = !task.priority;
-  if (task.priority) {
-    const activeTasks = tasks.filter(t => !t.completed && t.id !== id);
-    const minOrder = activeTasks.length > 0 ? Math.min(...activeTasks.map(t => t.order || 0)) - 1 : 0;
-    task.order = minOrder;
+  const cardEl = document.getElementById(`card-${id}`);
+  const starBtn = document.getElementById(`star-btn-${id}`) || (cardEl ? cardEl.querySelector('button[title="Prioridad"]') : null);
+
+  if (!cardEl) {
+    task.priority = !task.priority;
+    if (task.priority) {
+      const activeTasks = tasks.filter(t => !t.completed && t.id !== id);
+      const minOrder = activeTasks.length > 0 ? Math.min(...activeTasks.map(t => t.order || 0)) - 1 : 0;
+      task.order = minOrder;
+    }
+    saveTasks();
+    renderTasks();
+    return;
   }
-  saveTasks();
-  renderTasks();
+
+  priorityAnimatingIds.add(id);
+  const willBePriority = !task.priority;
+
+  // 1. Instant bouncy pop animation on star
+  if (starBtn) {
+    starBtn.innerHTML = getStarSVG(willBePriority, theme === 'dark');
+    starBtn.classList.remove('check-pop-animate');
+    void starBtn.offsetWidth; // force reflow
+    starBtn.classList.add('check-pop-animate');
+
+    if (willBePriority) {
+      triggerStarSparkles(starBtn);
+    }
+  }
+
+  // 2. Micro-pause (320ms) so the user experiences the delight of the star pop & sparkles
+  setTimeout(() => {
+    // 3. Smooth collapse animation
+    cardEl.classList.add('task-collapsing');
+
+    // 4. Update data model and re-render smoothly with soft arrive animation
+    setTimeout(() => {
+      task.priority = willBePriority;
+      if (willBePriority) {
+        const activeTasks = tasks.filter(t => !t.completed && t.id !== id);
+        const minOrder = activeTasks.length > 0 ? Math.min(...activeTasks.map(t => t.order || 0)) - 1 : 0;
+        task.order = minOrder;
+      }
+      saveTasks();
+      priorityAnimatingIds.delete(id);
+      renderTasks({ justMovedId: id });
+    }, 280);
+  }, 320);
 }
 
 function deleteTask(event, id) {
@@ -1122,11 +1354,35 @@ function startEditCategory(id) {
 
   if (nameInput) nameInput.value = cat.name;
   if (colorSelect) colorSelect.value = cat.color;
+  syncCategorySwatchActive(cat.color);
   if (formTitle) formTitle.textContent = `Editar Materia: ${cat.name}`;
-  if (submitBtn) submitBtn.textContent = '💾 Guardar Cambios';
+  if (submitBtn) submitBtn.textContent = 'Guardar Cambios';
   if (cancelBtn) cancelBtn.classList.remove('hidden');
 
   if (nameInput) nameInput.focus();
+}
+
+function selectCategoryColorSwatch(colorVal) {
+  const colorSelect = document.getElementById('new-cat-color');
+  if (colorSelect) {
+    colorSelect.value = colorVal;
+  }
+  syncCategorySwatchActive(colorVal);
+}
+
+function syncCategorySwatchActive(colorVal) {
+  const swatches = document.querySelectorAll('.cat-swatch');
+  const selectEl = document.getElementById('new-cat-color');
+  const currentVal = colorVal || (selectEl ? selectEl.value : 'pastel-pink');
+
+  swatches.forEach(swatch => {
+    const fnAttr = swatch.getAttribute('onclick') || '';
+    if (fnAttr.includes(`'${currentVal}'`)) {
+      swatch.classList.add('ring-2', 'ring-brand-rose-medium', 'scale-115');
+    } else {
+      swatch.classList.remove('ring-2', 'ring-brand-rose-medium', 'scale-115');
+    }
+  });
 }
 
 function cancelCategoryEdit() {
@@ -1139,6 +1395,7 @@ function cancelCategoryEdit() {
 
   if (nameInput) nameInput.value = '';
   if (colorSelect) colorSelect.value = 'pastel-pink';
+  syncCategorySwatchActive('pastel-pink');
   if (formTitle) formTitle.textContent = 'Nueva Materia / Categoría';
   if (submitBtn) submitBtn.textContent = '+ Agregar Materia';
   if (cancelBtn) cancelBtn.classList.add('hidden');
@@ -1266,7 +1523,7 @@ function updateAuthUI() {
   } else {
     if (displayNameEl) displayNameEl.textContent = 'Modo Local';
     if (avatarIconEl) {
-      avatarIconEl.innerHTML = `<span class="w-5 h-5 rounded-full bg-slate-200 dark:bg-dark-border text-slate-600 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center">⚡</span>`;
+      avatarIconEl.innerHTML = `<span class="w-5 h-5 rounded-full bg-slate-200 dark:bg-dark-border text-slate-600 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center">L</span>`;
     }
     if (welcomeSubtitleEl) {
       welcomeSubtitleEl.textContent = 'Write like you are running out of time.';
@@ -1274,7 +1531,7 @@ function updateAuthUI() {
 
     if (profileNameEl) profileNameEl.textContent = 'Invitado (Modo Local)';
     if (profileEmailEl) profileEmailEl.textContent = 'Datos guardados localmente';
-    if (profileAvatarEl) profileAvatarEl.textContent = '⚡';
+    if (profileAvatarEl) profileAvatarEl.textContent = 'L';
 
     updateSyncStatus('local');
   }
@@ -1290,8 +1547,157 @@ function openAuthOrProfileModal() {
 
 function openProfileModal() {
   updateSyncStatus(currentUser ? 'synced' : 'local');
+  renderProfileDashboard();
   document.getElementById('user-profile-modal').classList.remove('hidden');
   document.getElementById('user-profile-modal').classList.add('flex');
+}
+
+function renderProfileDashboard() {
+  const dashboardContainer = document.getElementById('profile-dashboard');
+  if (!dashboardContainer) return;
+
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(t => t.completed);
+  const activeTasks = tasks.filter(t => !t.completed);
+  const priorityTasks = tasks.filter(t => t.priority);
+
+  const percentage = totalTasks > 0 ? Math.round((completedTasks.length / totalTasks) * 100) : 0;
+
+  // Status message based on completed tasks
+  let statusMessage = 'Todo listo para arrancar.';
+  let statusBadge = 'Organizado';
+  if (totalTasks === 0) {
+    statusMessage = 'Crea tu primera tarea para comenzar tu lista.';
+    statusBadge = 'Inicio';
+  } else if (percentage === 100) {
+    statusMessage = '¡Excelente trabajo! Has completado todas tus tareas.';
+    statusBadge = '100% Completado';
+  } else if (percentage >= 75) {
+    statusMessage = '¡Casi listo! Solo te quedan unas pocas tareas.';
+    statusBadge = 'Gran Avance';
+  } else if (percentage >= 50) {
+    statusMessage = '¡Buen ritmo! Ya completaste más de la mitad.';
+    statusBadge = 'Buen Ritmo';
+  } else if (percentage > 0) {
+    statusMessage = 'Progreso constante paso a paso.';
+    statusBadge = 'En Progreso';
+  }
+
+  // Breakdown by Category
+  const categoryStats = categories.map(cat => {
+    const catTasks = tasks.filter(t => t.categoryId === cat.id);
+    const catDoneTasks = catTasks.filter(t => t.completed);
+    const catPercent = catTasks.length > 0 ? Math.round((catDoneTasks.length / catTasks.length) * 100) : 0;
+    const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-peach'];
+    return {
+      name: cat.name,
+      tasksCount: catTasks.length,
+      doneCount: catDoneTasks.length,
+      percent: catPercent,
+      colorStyles
+    };
+  }).filter(c => c.tasksCount > 0);
+
+  dashboardContainer.innerHTML = `
+    <!-- Tasks Progress Card -->
+    <div class="p-4 rounded-2xl bg-gradient-to-br from-pastel-pink-50 via-white to-pastel-pink-100/50 dark:from-dark-hover dark:via-dark-card dark:to-dark-card border border-pastel-pink-200/80 dark:border-dark-border shadow-sm flex flex-col gap-2.5">
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-title font-bold text-slate-800 dark:text-slate-100">Progreso de Tareas</span>
+          <span class="text-[10px] font-title font-bold px-2 py-0.5 rounded-full bg-pastel-pink-200 dark:bg-pastel-pink-900/60 text-brand-rose-medium dark:text-pastel-pink-300">
+            ${statusBadge}
+          </span>
+        </div>
+        <span class="font-title text-base font-extrabold text-brand-rose-medium dark:text-pastel-pink-300">
+          ${percentage}%
+        </span>
+      </div>
+
+      <!-- Animated Progress Bar -->
+      <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-dark-border overflow-hidden shadow-inner">
+        <div 
+          class="h-full rounded-full bg-gradient-to-r from-pastel-pink-300 via-pastel-pink-400 to-brand-rose-medium transition-all duration-700 ease-out"
+          style="width: ${percentage}%"
+        ></div>
+      </div>
+
+      <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+        <span><strong>${completedTasks.length}</strong> de <strong>${totalTasks}</strong> tareas completadas</span>
+        <span class="text-[11px] text-slate-400 dark:text-slate-500">${statusMessage}</span>
+      </div>
+    </div>
+
+    <!-- 4-KPI Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <!-- Total Tasks -->
+      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-1">
+        <div class="flex items-center justify-between text-slate-400 dark:text-slate-500">
+          <span class="text-[10px] font-bold uppercase tracking-wider">Total</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 0 1 8.75 1h2.5A2.75 2.75 0 0 1 14 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v9.43a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 2 16.5V7.07c0-1.32.947-2.488 2.294-2.677.566-.078 1.134-.145 1.706-.2V3.75Zm4.25-1.25a1.25 1.25 0 0 0-1.25 1.25v.277c.414-.018.83-.027 1.25-.027.42 0 .836.009 1.25.027V3.75a1.25 1.25 0 0 0-1.25-1.25Z" clip-rule="evenodd" /></svg>
+        </div>
+        <span class="font-title text-xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">${totalTasks}</span>
+        <span class="text-[10px] text-slate-400 dark:text-slate-500">registradas</span>
+      </div>
+
+      <!-- Completed Tasks -->
+      <div class="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/30 flex flex-col gap-1">
+        <div class="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
+          <span class="text-[10px] font-bold uppercase tracking-wider">Hechas</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>
+        </div>
+        <span class="font-title text-xl font-extrabold text-emerald-700 dark:text-emerald-300 leading-none">${completedTasks.length}</span>
+        <span class="text-[10px] text-emerald-600/70 dark:text-emerald-400/60">completadas</span>
+      </div>
+
+      <!-- Pending Tasks -->
+      <div class="p-3 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30 flex flex-col gap-1">
+        <div class="flex items-center justify-between text-amber-600 dark:text-amber-400">
+          <span class="text-[10px] font-bold uppercase tracking-wider">Pendientes</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" /></svg>
+        </div>
+        <span class="font-title text-xl font-extrabold text-amber-700 dark:text-amber-300 leading-none">${activeTasks.length}</span>
+        <span class="text-[10px] text-amber-600/70 dark:text-amber-400/60">por realizar</span>
+      </div>
+
+      <!-- Priority Tasks -->
+      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-1">
+        <div class="flex items-center justify-between text-slate-400 dark:text-slate-500">
+          <span class="text-[10px] font-bold uppercase tracking-wider">Prioridad</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#F7BA00" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.402Z" clip-rule="evenodd" /></svg>
+        </div>
+        <span class="font-title text-xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">${priorityTasks.length}</span>
+        <span class="text-[10px] text-slate-400 dark:text-slate-500">con estrella</span>
+      </div>
+    </div>
+
+    <!-- Category Breakdown -->
+    ${categoryStats.length > 0 ? `
+      <div class="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-dark-hover/40 border border-slate-100 dark:border-dark-border flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 font-title">Tareas por Materia</span>
+          <span class="text-[10px] text-slate-400 dark:text-slate-500">Hechas / Total</span>
+        </div>
+        <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
+          ${categoryStats.map(cat => `
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center justify-between text-xs">
+                <span class="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-200 truncate">
+                  <span class="w-2 h-2 rounded-full ${cat.colorStyles.bg} shrink-0"></span>
+                  <span class="truncate">${escapeHTML(cat.name)}</span>
+                </span>
+                <span class="font-title font-bold text-slate-600 dark:text-slate-300 shrink-0 text-[11px]">
+                  ${cat.doneCount}/${cat.tasksCount} (${cat.percent}%)
+                </span>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-slate-200/70 dark:bg-dark-border overflow-hidden">
+                <div class="h-full rounded-full bg-pastel-pink-400 dark:bg-pastel-pink-300 transition-all duration-500" style="width: ${cat.percent}%"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
 }
 
 function closeProfileModal() {
@@ -1336,7 +1742,7 @@ function switchAuthTab(tab) {
     if (emailGroup) emailGroup.classList.add('hidden');
     if (passwordGroup) passwordGroup.classList.add('hidden');
     if (syncGroup) syncGroup.classList.remove('hidden');
-    if (submitBtn) submitBtn.innerHTML = '<span>📲 Cargar Datos del Celular</span>';
+    if (submitBtn) submitBtn.innerHTML = '<span>Cargar Datos del Celular</span>';
   }
 }
 
@@ -1437,7 +1843,7 @@ function handleAuthSubmit(event) {
       .then(async (userCredential) => {
         const user = userCredential.user;
         if (name && user.updateProfile) {
-          await user.updateProfile({ displayName: name }).catch(() => {});
+          await user.updateProfile({ displayName: name }).catch(() => { });
         }
 
         // Initialize clean state for the new user (0 tasks)
@@ -1471,7 +1877,7 @@ function handleAuthSubmit(event) {
         if (error.code === 'auth/configuration-not-found' || error.code === 'auth/operation-not-allowed') {
           msg = `
             <div class="flex flex-col gap-1.5 text-left">
-              <span class="font-bold">⚠️ Falta activar el método en Firebase</span>
+              <span class="font-bold">Aviso: Falta activar el método en Firebase</span>
               <p class="text-[11px] leading-relaxed">En tu consola de Firebase debes habilitar el inicio con correo:</p>
               <p class="text-[11px] font-medium">1. Ve a <strong>Authentication</strong> &gt; <strong>Sign-in method</strong><br>2. Activa <strong>Correo electrónico/contraseña</strong> &gt; Guardar.</p>
             </div>
@@ -1507,7 +1913,7 @@ function continueAsGuest() {
 
 function handleSignOut() {
   if (typeof firebase !== 'undefined' && firebase.auth) {
-    try { firebase.auth().signOut(); } catch (e) {}
+    try { firebase.auth().signOut(); } catch (e) { }
   }
   currentUser = null;
   isSessionUnlocked = false;
@@ -1532,6 +1938,13 @@ function setupEventListeners() {
       renderTasks();
     });
   }
+
+  // Close palette dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#palette-dropdown-wrapper')) {
+      closePaletteDropdown();
+    }
+  });
 
   window.addEventListener('keydown', (e) => {
     const activeEl = document.activeElement;
