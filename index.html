@@ -1,3 +1,24 @@
+<!-- ==========================================================================
+     StarT - APLICACIÓN WEB DE GESTIÓN DE TAREAS Y MATERIAS
+     ==========================================================================
+     ESTRUCTURA Y MAPA DE COMPONENTES DEL PROYECTO:
+
+     📁 assets/
+        ├── images/   -> Logotipos, iconos e ilustraciones (logo.svg, asleep.svg, etc.)
+        ├── css/      -> Archivo maestro de estilos (index.css)
+        └── js/       -> Lógica de la aplicación (app.js)
+     📁 components/   -> Plantillas independientes por componente para rediseño:
+        ├── auth-gateway.html            -> Pantalla de login, registro y modo invitado
+        ├── header.html                  -> Barra de navegación y selector de temas
+        ├── stats-banner.html            -> Tarjeta de bienvenida y estadísticas
+        ├── category-filters.html        -> Filtro de materias / categorías
+        ├── task-list.html               -> Contenedor de lista de tareas
+        ├── floating-action-button.html  -> Botón flotante móvil (FAB)
+        ├── task-modal.html              -> Modal de crear / editar tarea
+        ├── categories-modal.html        -> Modal de gestión de materias y colores
+        └── profile-modal.html           -> Modal de perfil de usuario y dashboard
+     ========================================================================== -->
+
 <!DOCTYPE html>
 <html lang="es" class="h-full">
 
@@ -13,10 +34,11 @@
   <!-- Open Graph -->
   <meta property="og:title" content="StarT Tasks">
   <meta property="og:description" content="Organizador de tareas con estilo pastel e instalable en el celular.">
-  <meta property="og:image" content="start-t logo.jpg">
+  <meta property="og:image" content="assets/images/start-t logo.jpg">
 
-  <!-- Mobile & PWA Apps Icons -->
-  <link rel="apple-touch-icon" href="start-t logo.jpg">
+  <!-- Favicon & Icons -->
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg">
+  <link rel="apple-touch-icon" href="assets/images/start-t logo.jpg">
   <link rel="manifest" href="manifest.json">
 
   <!-- Firebase Web SDK (Compat v10 for turnkey browser integration) -->
@@ -363,9 +385,11 @@
 <body
   class="h-full bg-pastel-pink-50 text-slate-800 dark:bg-dark-bg dark:text-slate-100 flex flex-col selection:bg-pastel-pink-200 min-h-screen">
 
-  <!-- ==========================================
-       LOGIN & SESSION GATEWAY (Initial Screen)
-       ========================================== -->
+  <!-- ==========================================================================
+       1. COMPONENTE: ACCESO Y AUTENTICACIÓN (LOGIN & REGISTRO)
+       Pantalla inicial para usuarios sin sesión activa.
+       Código modular equivalente: components/auth-gateway.html
+       ========================================================================== -->
   <div id="auth-gateway-screen"
     class="flex-1 flex flex-col items-center justify-center p-4 min-h-screen animate-fade-in max-w-md mx-auto w-full">
     <div
@@ -375,7 +399,7 @@
       <div class="flex flex-col items-center text-center gap-3">
         <div
           class="w-16 h-16 rounded-3xl overflow-hidden shadow-md border-2 border-white dark:border-dark-border flex items-center justify-center p-2 bg-pastel-pink-50 dark:bg-dark-hover shrink-0 animate-float">
-          <img src="logo.svg" alt="StarT Logo" class="w-full h-full object-contain">
+          <img src="assets/images/logo.svg" alt="StarT Logo" class="w-full h-full object-contain">
         </div>
         <div>
           <h1 class="font-title text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-50">
@@ -458,12 +482,16 @@
     </div>
   </div>
 
-  <!-- ==========================================
-       MAIN APPLICATION VIEW (Unlocked after Auth)
-       ========================================== -->
+  <!-- ==========================================================================
+       2. VISTA PRINCIPAL DE LA APLICACIÓN (DESBLOQUEADA TRAS INICIAR SESIÓN)
+       ========================================================================== -->
   <div id="app-main-view" class="hidden flex-1 flex flex-col">
 
-    <!-- Main Header -->
+    <!-- ==========================================================================
+         2.1 COMPONENTE: ENCABEZADO DE LA APLICACIÓN (HEADER)
+         Logo, título, selector de paletas, botón de perfil, PWA toggle y modo oscuro.
+         Código modular equivalente: components/header.html
+         ========================================================================== -->
     <header
       class="w-full bg-white/80 dark:bg-dark-card/85 backdrop-blur-md sticky top-0 z-30 border-b border-pastel-pink-100/50 dark:border-dark-border px-4 py-3 shadow-sm max-w-2xl mx-auto md:rounded-b-2xl md:mt-2 transition-colors duration-300">
       <div class="flex items-center justify-between gap-3">
@@ -471,7 +499,7 @@
           <!-- Logo (Sin cortes) -->
           <div
             class="w-11 h-11 rounded-2xl overflow-hidden shadow-sm border-2 border-white dark:border-dark-border hover:scale-105 active:scale-95 transition-transform duration-200 flex items-center justify-center p-1 bg-white/80 dark:bg-dark-card/70 shrink-0">
-            <img src="logo.svg" alt="StarT Logo" class="w-full h-full object-contain">
+            <img src="assets/images/logo.svg" alt="StarT Logo" class="w-full h-full object-contain">
           </div>
           <div>
             <h1 id="app-title"
@@ -547,7 +575,11 @@
     <!-- Main Container -->
     <main class="flex-1 max-w-2xl w-full mx-auto px-4 pt-6 pb-20 flex flex-col gap-6">
 
-      <!-- Welcoming Stats Card -->
+      <!-- ==========================================================================
+           2.2 COMPONENTE: TARJETA DE BIENVENIDA Y RESUMEN DE ESTADÍSTICAS
+           Banner con mensaje motivacional y botón rápido para nueva tarea.
+           Código modular equivalente: components/stats-banner.html
+           ========================================================================== -->
       <section
         class="w-full bg-gradient-to-r from-pastel-pink-100 to-pastel-pink-200/40 dark:from-pastel-pink-500/10 dark:to-transparent border border-pastel-pink-200/50 dark:border-pastel-pink-500/20 rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -568,7 +600,11 @@
         </div>
       </section>
 
-      <!-- Filters Section -->
+      <!-- ==========================================================================
+           2.3 COMPONENTE: FILTRO DE MATERIAS / CATEGORÍAS
+           Fila de píldoras de filtrado y botón para gestionar materias.
+           Código modular equivalente: components/category-filters.html
+           ========================================================================== -->
       <section class="flex flex-col gap-2">
         <div class="flex items-center justify-between">
           <h2 class="text-xs font-title font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Filtrar
@@ -593,7 +629,11 @@
         </div>
       </section>
 
-      <!-- Tasks Main List -->
+      <!-- ==========================================================================
+           2.4 COMPONENTE: LISTA PRINCIPAL DE TAREAS Y ESTADO VACÍO
+           Pila de tarjetas de tareas renderizadas dinámicamente por app.js.
+           Código modular equivalente: components/task-list.html
+           ========================================================================== -->
       <section class="flex-1 flex flex-col gap-4">
         <div class="flex items-center justify-between">
           <h2 class="text-xs font-title font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Tareas
@@ -607,7 +647,11 @@
       </section>
     </main>
 
-    <!-- Mobile Floating Add Button -->
+    <!-- ==========================================================================
+         2.5 COMPONENTE: BOTÓN FLOTANTE MÓVIL (FAB)
+         Botón fijado en pantalla para crear tareas en dispositivos móviles.
+         Código modular equivalente: components/floating-action-button.html
+         ========================================================================== -->
     <button onclick="openAddModal()"
       class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-tr from-pastel-pink-400 to-pastel-pink-300 hover:from-pastel-pink-500 hover:to-pastel-pink-400 text-white shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 flex items-center justify-center z-40 cursor-pointer"
       id="mobile-fab" title="Agregar Nueva Tarea" aria-label="Agregar Nueva Tarea">
@@ -618,7 +662,15 @@
     </button>
   </div>
 
-  <!-- Add/Edit Task Modal -->
+  <!-- ==========================================================================
+       3. MODALES Y VENTANAS EMERGENTES DEL SISTEMA
+       ========================================================================== -->
+
+  <!-- ==========================================================================
+       3.1 COMPONENTE: MODAL DE CREAR / EDITAR TAREA (#task-modal)
+       Formulario de título, descripción, materia, prioridad y guardado/borrado.
+       Código modular equivalente: components/task-modal.html
+       ========================================================================== -->
   <div id="task-modal"
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-all duration-300"
     role="dialog" aria-labelledby="modal-title" aria-modal="true">
@@ -698,7 +750,11 @@
     </div>
   </div>
 
-  <!-- Manage Categories Modal -->
+  <!-- ==========================================================================
+       3.2 COMPONENTE: MODAL DE GESTIÓN DE MATERIAS (#categories-modal)
+       Formulario de materias, paleta de 12 colores pastel y lista editable.
+       Código modular equivalente: components/categories-modal.html
+       ========================================================================== -->
   <div id="categories-modal"
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-all duration-300"
     role="dialog" aria-labelledby="categories-modal-title" aria-modal="true">
@@ -790,9 +846,11 @@
     </div>
   </div>
 
-
-
-  <!-- User Profile & Cloud Sync Manager Modal -->
+  <!-- ==========================================================================
+       3.3 COMPONENTE: MODAL DE PERFIL DE USUARIO Y DASHBOARD (#user-profile-modal)
+       Información del perfil, dashboard dinámico de productividad y logout.
+       Código modular equivalente: components/profile-modal.html
+       ========================================================================== -->
   <div id="user-profile-modal"
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
     role="dialog" aria-labelledby="profile-modal-title" aria-modal="true">
@@ -834,8 +892,6 @@
         <!-- Rendered dynamically by renderProfileDashboard() in app.js -->
       </div>
 
-
-
       <!-- Actions -->
       <div class="flex items-center justify-end pt-2">
         <button onclick="handleSignOut()"
@@ -852,8 +908,10 @@
     </div>
   </div>
 
-  <!-- JS Scripts -->
-  <script src="app.js"></script>
+  <!-- ==========================================================================
+       4. SCRIPTS Y LÓGICA DE LA APLICACIÓN
+       ========================================================================== -->
+  <script src="assets/js/app.js"></script>
 </body>
 
 </html>

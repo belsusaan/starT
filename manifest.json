@@ -9,13 +9,13 @@
   "theme_color": "#EA9D9D",
   "icons": [
     {
-      "src": "start-t logo.jpg",
+      "src": "assets/images/start-t logo.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "start-t logo.jpg",
+      "src": "assets/images/start-t logo.jpg",
       "sizes": "192x192",
       "type": "image/jpeg",
       "purpose": "any"

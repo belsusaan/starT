@@ -1,3 +1,14 @@
+/* ==========================================================================
+   StarT - SISTEMA DE DISEÑO Y HOJA DE ESTILOS MAESTRA
+   Ubicación: assets/css/index.css
+   Contenido:
+   - Fuentes tipográficas (Fredoka, Outfit)
+   - Variables de tema (@theme) y paleta base de la marca
+   - Paletas personalizadas (Crimson, Ocean, Sunset, Caramel)
+   - Animaciones y microinteracciones (float, pulse-glow, task-appear, check-pop, star-burst)
+   - Estados de arrastrar y soltar (Drag and Drop)
+   ========================================================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap');
 
 /* Enable manual dark mode using class selector in Tailwind v4 */

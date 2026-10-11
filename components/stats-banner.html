@@ -1,0 +1,23 @@
+<!-- ==========================================
+     COMPONENT: WELCOME & STATS BANNER
+     Banner presenting summary/welcoming message and
+     quick "+ Nueva Tarea" desktop button.
+     ========================================== -->
+<section
+  class="w-full bg-gradient-to-r from-pastel-pink-100 to-pastel-pink-200/40 dark:from-pastel-pink-500/10 dark:to-transparent border border-pastel-pink-200/50 dark:border-pastel-pink-500/20 rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div>
+    <h2 class="text-lg font-title font-bold text-slate-800 dark:text-pastel-pink-200">¿Qué tenemos ahora?</h2>
+    <p class="text-xs text-slate-600 dark:text-slate-400 mt-0.5" id="welcome-user-subtitle">Write like you are running out of time.</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <button onclick="openAddModal()"
+      class="px-4 py-2 rounded-2xl bg-white hover:bg-slate-50 dark:bg-dark-card dark:hover:bg-dark-hover border border-pastel-pink-300 dark:border-dark-border text-slate-700 dark:text-slate-300 text-sm font-title font-bold transition-all duration-200 shadow-sm flex items-center gap-1.5 cursor-pointer"
+      id="btn-new-task-banner">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+        stroke="currentColor" class="w-4 h-4 text-pastel-pink-500">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Nueva Tarea
+    </button>
+  </div>
+</section>

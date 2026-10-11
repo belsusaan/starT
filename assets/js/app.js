@@ -1,5 +1,24 @@
+// ==========================================================================
+// StarT - LÓGICA PRINCIPAL DE LA APLICACIÓN
+// Ubicación: assets/js/app.js
+// 
+// MAPA DE MÓDULOS Y COMPONENTES:
+// 1. ESTADO GLOBAL Y CONFIGURACIÓN
+// 2. COMPONENTES VISUALES SVG (Estrella animada y Estado vacío)
+// 3. CICLO DE VIDA E INICIALIZACIÓN (DOMContentLoaded)
+// 4. MÓDULO DE AUTENTICACIÓN Y SINCRONIZACIÓN EN LA NUBE (Firebase/REST)
+// 5. MÓDULO DE ALMACENAMIENTO LOCAL (LocalStorage / Fallback)
+// 6. COMPONENTE: GESTOR DE TEMAS Y PALETAS DE COLOR
+// 7. COMPONENTE: RENDERIZADO DE MATERIAS Y TAREAS
+// 8. COMPONENTE: ARRASTRAR Y SOLTAR (Drag & Drop táctil y ratón)
+// 9. COMPONENTE: ACCIONES Y SELECCIÓN DE TAREAS (CRUD & Modales)
+// 10. COMPONENTE: UI DE AUTENTICACIÓN Y PERFIL DE USUARIO
+// 11. ACCESIBILIDAD Y ATAJOS DE TECLADO
+// 12. SOPORTE PWA Y OFFLINE
+// ==========================================================================
+
 // ==========================================
-// starT APP - State & Configurations
+// 1. StarT APP - State & Configurations
 // ==========================================
 
 let tasks = [];

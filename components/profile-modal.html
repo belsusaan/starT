@@ -1,0 +1,63 @@
+<!-- ==========================================
+     COMPONENT: USER PROFILE & DASHBOARD MODAL
+     Modal showing account details, avatar, productivity stats
+     dashboard (rendered dynamically), and sign-out button.
+     ========================================== -->
+<div id="user-profile-modal"
+  class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
+  role="dialog" aria-labelledby="profile-modal-title" aria-modal="true">
+  <div
+    class="bg-white dark:bg-dark-card rounded-3xl p-6 w-full max-w-lg shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-5 animate-task-appear max-h-[90vh] overflow-y-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <h3 id="profile-modal-title" class="font-title text-lg font-bold text-slate-800 dark:text-slate-50">Mi Cuenta</h3>
+        <span class="text-[10px] font-title font-bold px-2 py-0.5 rounded-full bg-pastel-pink-100 dark:bg-pastel-pink-900/50 text-brand-rose-medium dark:text-pastel-pink-300 border border-pastel-pink-200/60 dark:border-pastel-pink-800/40">
+          Dashboard de Productividad
+        </span>
+      </div>
+      <button onclick="closeProfileModal()"
+        class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- User Card Info -->
+    <div
+      class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border">
+      <div id="profile-avatar"
+        class="w-12 h-12 rounded-full bg-pastel-pink-300 dark:bg-pastel-pink-500 text-white flex items-center justify-center font-title text-lg font-bold shadow-sm shrink-0">
+        U
+      </div>
+      <div class="min-w-0 flex-1">
+        <h4 id="profile-name-text" class="font-title text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+          Usuario
+        </h4>
+        <p id="profile-email-text" class="text-xs text-slate-500 dark:text-slate-400 truncate">correo@ejemplo.com</p>
+      </div>
+    </div>
+
+    <!-- Complexity Dashboard Section (rendered dynamically by app.js) -->
+    <div id="profile-dashboard" class="flex flex-col gap-3.5">
+      <!-- Rendered dynamically by renderProfileDashboard() in app.js -->
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end pt-2">
+      <button onclick="handleSignOut()"
+        class="w-full py-2.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 text-xs font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+          stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+        </svg>
+        <span>Cerrar Sesión</span>
+      </button>
+    </div>
+
+  </div>
+</div>

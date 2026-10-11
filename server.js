@@ -264,7 +264,9 @@ const server = http.createServer((req, res) => {
   // Static Files Serving
   // ==========================================
   if (pathname === '/favicon.ico') {
-    const faviconPath = path.join(__dirname, 'logo.svg');
+    const faviconPath = fs.existsSync(path.join(__dirname, 'assets', 'images', 'logo.svg'))
+      ? path.join(__dirname, 'assets', 'images', 'logo.svg')
+      : path.join(__dirname, 'logo.svg');
     res.writeHead(200, {
       'Content-Type': 'image/svg+xml',
       'Cache-Control': 'public, max-age=86400',
@@ -274,8 +276,31 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/tailwindcss') {
+    res.writeHead(200, {
+      'Content-Type': 'text/css; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400',
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end('/* Tailwind CSS Browser Runtime */');
+    return;
+  }
+
   let decodedPath = decodeURIComponent(pathname);
   let filePath = path.join(__dirname, decodedPath === '/' ? 'index.html' : decodedPath);
+
+  // Fallback to assets directory if requested without assets/ prefix
+  if (!fs.existsSync(filePath)) {
+    const assetSubdirs = ['images', 'css', 'js'];
+    for (const sub of assetSubdirs) {
+      const candidate = path.join(__dirname, 'assets', sub, path.basename(filePath));
+      if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+        filePath = candidate;
+        break;
+      }
+    }
+  }
+
   const ext = path.extname(filePath).toLowerCase();
 
   fs.stat(filePath, (err, stats) => {

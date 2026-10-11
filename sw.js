@@ -1,12 +1,13 @@
-const CACHE_NAME = 'star-t-cache-v17';
+const CACHE_NAME = 'star-t-cache-v18';
 const ASSETS = [
   './',
   './index.html',
-  './index.css',
-  './app.js',
+  './assets/css/index.css',
+  './assets/js/app.js',
   './manifest.json',
-  './logo.svg',
-  './asleep.svg'
+  './assets/images/logo.svg',
+  './assets/images/asleep.svg',
+  './assets/images/start-t logo.jpg'
 ];
 
 // Install Event
