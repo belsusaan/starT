@@ -1792,21 +1792,31 @@ function switchAuthTab(tab) {
   const registerTab = document.getElementById('gate-tab-register');
   const nameGroup = document.getElementById('auth-name-group');
   const submitBtn = document.getElementById('auth-submit-btn');
+  const titleEl = document.getElementById('auth-screen-title');
+  const footerToggleEl = document.getElementById('auth-toggle-footer');
 
   clearAuthAlert();
 
-  const activeClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer';
+  const activeClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-[#31648A] shadow-sm cursor-pointer';
   const inactiveClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
 
   if (loginTab) loginTab.className = tab === 'login' ? activeClass : inactiveClass;
   if (registerTab) registerTab.className = tab === 'register' ? activeClass : inactiveClass;
 
   if (tab === 'login') {
+    if (titleEl) titleEl.textContent = 'Login';
     if (nameGroup) nameGroup.classList.add('hidden');
     if (submitBtn) submitBtn.innerHTML = '<span>Iniciar Sesión</span>';
+    if (footerToggleEl) {
+      footerToggleEl.innerHTML = `¿No tienes cuenta? <button type="button" onclick="switchAuthTab('register')" class="font-bold underline hover:opacity-80 cursor-pointer">Regístrate aquí</button>`;
+    }
   } else {
+    if (titleEl) titleEl.textContent = 'Registro';
     if (nameGroup) nameGroup.classList.remove('hidden');
     if (submitBtn) submitBtn.innerHTML = '<span>Crear Cuenta</span>';
+    if (footerToggleEl) {
+      footerToggleEl.innerHTML = `¿Ya tienes cuenta? <button type="button" onclick="switchAuthTab('login')" class="font-bold underline hover:opacity-80 cursor-pointer">Inicia sesión aquí</button>`;
+    }
   }
 }
 

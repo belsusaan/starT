@@ -1,93 +1,109 @@
 <!-- ==========================================
      COMPONENT: AUTH & LOGIN GATEWAY SCREEN
-     Initial screen shown when user is not logged in.
-     Contains branding, tabs, login/register forms, and guest mode option.
+     Inspirado en el diseño Android Compact:
+     Fondo azul #31648A, tarjeta inferior butter cream #F8F3B9,
+     mascota StarT en la esquina superior derecha,
+     títulos en 'Cherry Bomb One' y textos en 'Dongle'.
      ========================================== -->
 <div id="auth-gateway-screen"
-  class="flex-1 flex flex-col items-center justify-center p-4 min-h-screen animate-fade-in max-w-md mx-auto w-full">
-  <div
-    class="bg-white dark:bg-dark-card rounded-3xl p-6 sm:p-8 w-full shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-6 animate-task-appear">
+  class="fixed inset-0 w-full h-[100dvh] max-h-[100dvh] bg-[#31648A] flex flex-col justify-end sm:justify-center items-center overflow-y-auto sm:overflow-hidden select-none animate-fade-in z-30">
 
-    <!-- Gateway Branding -->
-    <div class="flex flex-col items-center text-center gap-3">
-      <div
-        class="w-16 h-16 rounded-3xl overflow-hidden shadow-md border-2 border-white dark:border-dark-border flex items-center justify-center p-2 bg-pastel-pink-50 dark:bg-dark-hover shrink-0 animate-float">
-        <img src="assets/images/logo.svg" alt="StarT Logo" class="w-full h-full object-contain">
-      </div>
-      <div>
-        <h1 class="font-title text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-50">
-          StarT
+  <!-- Blue Sky Area (active on mobile to anchor card to bottom; hidden on desktop to center card) -->
+  <div class="flex-1 w-full min-h-0 sm:hidden"></div>
+
+  <div class="w-full max-w-sm mx-auto relative flex flex-col justify-end sm:justify-center shrink-0">
+
+    <!-- Star Mascot (Peeking out at the top-right corner of the cream card) -->
+    <div
+      class="absolute -top-16 sm:-top-22 right-3 sm:right-6 w-28 h-28 sm:w-36 sm:h-36 z-20 pointer-events-none select-none drop-shadow-md animate-float">
+      <img src="assets/images/logo.svg" alt="StarT Mascot" class="w-full h-full object-contain transform -rotate-6">
+    </div>
+
+    <!-- Cream Bottom Sheet / Card (Generous padding, spacious elements, matching Figma mockup) -->
+    <div
+      class="bg-[#F8F3B9] text-[#31648A] rounded-t-[40px] sm:rounded-[44px] pt-9 pb-10 px-7 sm:px-9 shadow-2xl relative z-10 flex flex-col gap-5 sm:gap-6 animate-task-appear w-full">
+
+      <!-- Title "Login" -->
+      <div class="pt-0.5">
+        <h1 id="auth-screen-title"
+          class="font-title text-4xl sm:text-5xl text-[#31648A] tracking-wide select-none drop-shadow-xs leading-none">
+          Login
         </h1>
-        <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 font-sans">Organiza tus materias y tareitas pendientes</p>
-      </div>
-    </div>
-
-    <!-- Auth Tabs -->
-    <div class="flex rounded-2xl bg-slate-100 dark:bg-dark-hover p-1 gap-1">
-      <button id="gate-tab-login" onclick="switchAuthTab('login')"
-        class="flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-pastel-pink-500 dark:text-pastel-pink-300 shadow-sm cursor-pointer">
-        Iniciar Sesión
-      </button>
-      <button id="gate-tab-register" onclick="switchAuthTab('register')"
-        class="flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer">
-        Crear Cuenta
-      </button>
-    </div>
-
-    <!-- Error / Notification Alert -->
-    <div id="auth-alert" class="hidden p-3.5 rounded-2xl text-xs font-medium transition-all"></div>
-
-    <!-- Form Inputs -->
-    <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="flex flex-col gap-3.5">
-      <!-- Name (Visible only on Register) -->
-      <div id="auth-name-group" class="hidden flex flex-col gap-1">
-        <label for="auth-name"
-          class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tu Nombre</label>
-        <input type="text" id="auth-name" placeholder="Ej. Susana"
-          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 font-sans">
       </div>
 
-      <!-- Email -->
-      <div id="auth-email-group" class="flex flex-col gap-1">
-        <label for="auth-email"
-          class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Correo Electrónico</label>
-        <input type="email" id="auth-email" required placeholder="tucorreo@ejemplo.com"
-          class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 font-sans">
+      <!-- Error / Notification Alert -->
+      <div id="auth-alert"
+        class="hidden p-2.5 rounded-2xl text-2xl font-sans font-semibold text-red-700 bg-red-100/90 text-center transition-all leading-tight">
       </div>
 
-      <!-- Password -->
-      <div id="auth-password-group" class="flex flex-col gap-1">
-        <label for="auth-password"
-          class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Contraseña</label>
-        <div class="relative flex items-center">
-          <input type="password" id="auth-password" required minlength="6" placeholder="Mínimo 6 caracteres"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 font-sans pr-10">
-          <button type="button" onclick="togglePasswordVisibility()"
-            class="absolute right-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
-            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-              stroke="currentColor" class="w-4 h-4">
+      <!-- Form Inputs -->
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="flex flex-col gap-4 sm:gap-4.5">
+        <!-- Name (Visible only on Register) -->
+        <div id="auth-name-group"
+          class="hidden bg-white rounded-full px-4 py-2.5 sm:py-3 shadow-xs border border-transparent focus-within:border-[#31648A]/40 flex items-center transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#31648A] shrink-0 mr-2.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <input type="text" id="auth-name" placeholder="Tu nombre"
+            class="w-full bg-transparent text-[#2C587A] placeholder-[#7D98AD] text-2xl sm:text-3xl font-sans font-medium focus:outline-none leading-none pt-0.5">
+        </div>
+
+        <!-- Email -->
+        <div id="auth-email-group"
+          class="bg-white rounded-full px-4 py-2.5 sm:py-3 shadow-xs border border-transparent focus-within:border-[#31648A]/40 flex items-center transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#31648A] shrink-0 mr-2.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <input type="email" id="auth-email" required placeholder="Correo electrónico"
+            class="w-full bg-transparent text-[#2C587A] placeholder-[#7D98AD] text-2xl sm:text-3xl font-sans font-medium focus:outline-none leading-none pt-0.5">
+        </div>
+
+        <!-- Password -->
+        <div id="auth-password-group"
+          class="bg-white rounded-full px-4 py-2.5 sm:py-3 shadow-xs border border-transparent focus-within:border-[#31648A]/40 flex items-center transition-all">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+            class="w-5.5 h-5.5 sm:w-6 sm:h-6 text-[#31648A] shrink-0 mr-2.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+          <input type="password" id="auth-password" required minlength="6" placeholder="Contraseña"
+            class="w-full bg-transparent text-[#2C587A] placeholder-[#7D98AD] text-2xl sm:text-3xl font-sans font-medium focus:outline-none leading-none pt-0.5 pr-2">
+          <button type="button" onclick="togglePasswordVisibility()" title="Mostrar contraseña"
+            class="text-[#7D98AD] hover:text-[#31648A] cursor-pointer shrink-0 transition-colors">
+            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
+              stroke="currentColor" class="w-5 h-5">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
           </button>
         </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="auth-submit-btn"
+          class="w-full py-3 sm:py-3.5 mt-2 rounded-full bg-[#31648A] hover:bg-[#254F6E] active:scale-[0.99] text-white text-3xl font-sans font-bold shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center leading-none">
+          <span>Iniciar Sesión</span>
+        </button>
+      </form>
+
+      <!-- Toggle Login/Register footer text (as in mockup) -->
+      <div id="auth-toggle-footer" class="text-right text-2xl sm:text-3xl font-sans text-[#31648A] pr-1 pt-1 leading-none font-medium">
+        ¿No tienes cuenta? <button type="button" onclick="switchAuthTab('register')"
+          class="font-bold underline hover:opacity-80 cursor-pointer">Regístrate aquí</button>
       </div>
 
-      <!-- Submit Button -->
-      <button type="submit" id="auth-submit-btn"
-        class="w-full py-3 mt-2 rounded-2xl text-sm font-title font-bold bg-pastel-pink-300 hover:bg-pastel-pink-400 text-white shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2">
-        <span>Iniciar Sesión</span>
-      </button>
-    </form>
+      <!-- Local Guest Option -->
+      <div class="text-center pt-3 border-t border-[#31648A]/20">
+        <button type="button" onclick="continueAsGuest()"
+          class="text-2xl sm:text-3xl font-sans font-medium text-[#31648A] hover:text-[#254F6E] underline cursor-pointer leading-none">
+          Entrar en Modo Local (sin cuenta)
+        </button>
+      </div>
 
-    <!-- Local Guest Option -->
-    <div class="flex flex-col gap-2.5 pt-2 border-t border-slate-100 dark:border-dark-border text-center">
-      <button type="button" onclick="continueAsGuest()"
-        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-hover hover:bg-slate-100 text-xs text-slate-600 dark:text-slate-300 font-title font-semibold transition-colors cursor-pointer flex items-center justify-center gap-2">
-        <span>Entrar en Modo Local (Sin cuenta)</span>
-      </button>
     </div>
-
   </div>
 </div>

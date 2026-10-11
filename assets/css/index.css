@@ -9,42 +9,47 @@
    - Estados de arrastrar y soltar (Drag and Drop)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Dongle:wght@300;400;700&display=swap');
 
 /* Enable manual dark mode using class selector in Tailwind v4 */
 @variant dark (&:where(.dark, .dark *));
 
 /* Tailwind v4 theme variables */
 @theme {
-  --font-display: 'Fredoka', sans-serif;
-  --font-sans: 'Outfit', sans-serif;
+  --font-display: 'Cherry Bomb One', cursive;
+  --font-sans: 'Dongle', sans-serif;
   
-  /* Brand Palette */
-  --color-brand-plum: #601D49;
-  --color-brand-rose-medium: #BD5579;
-  --color-brand-rose-light: #EA9D9D;
-  --color-brand-cream: #FFEBB8;
+  /* Brand Palette (Slate Blue & Butter Cream & Solar Yellow) */
+  --color-brand-blue: #31648A;
+  --color-brand-blue-dark: #20456E;
+  --color-brand-cream: #F8F3B9;
+  --color-brand-yellow: #FAB606;
+  --color-brand-blush: #E22868;
+
+  --color-brand-plum: #31648A;
+  --color-brand-rose-medium: #31648A;
+  --color-brand-rose-light: #F8F3B9;
   
-  /* Dark Mode specific variables (deep plum base) */
-  --color-dark-bg: #1B0614;
-  --color-dark-card: #2B0E20;
-  --color-dark-border: #3D1830;
-  --color-dark-hover: #4D213F;
+  /* Dark Mode specific variables (slate blue night base) */
+  --color-dark-bg: #132433;
+  --color-dark-card: #1D364A;
+  --color-dark-border: #2A4C68;
+  --color-dark-hover: #355E82;
 
   /* Custom Pastel Overrides mapped to the Brand Palette */
-  --color-pastel-pink-50: #FFFDF9;    /* Warm milk background */
-  --color-pastel-pink-100: #FFEBB8;   /* User cream */
-  --color-pastel-pink-200: #F7D0D0;
-  --color-pastel-pink-300: #EA9D9D;   /* User soft rose */
-  --color-pastel-pink-400: #BD5579;   /* User medium rose */
-  --color-pastel-pink-500: #601D49;   /* User deep plum */
+  --color-pastel-pink-50: #FDFBF0;    /* Warm milk cream background */
+  --color-pastel-pink-100: #F8F3B9;   /* Signature butter cream */
+  --color-pastel-pink-200: #E8E29E;
+  --color-pastel-pink-300: #4679A0;   /* Soft slate blue */
+  --color-pastel-pink-400: #31648A;   /* Primary Slate blue */
+  --color-pastel-pink-500: #20456E;   /* Deep Slate blue */
   
   --color-pastel-lavender: #E8E3FA;
   --color-pastel-blue: #E3EDFD;
   --color-pastel-mint: #E3FDF1;
-  --color-pastel-yellow: #FFEBB8;
+  --color-pastel-yellow: #F8F3B9;
   --color-pastel-peach: #FFECE3;
-  --color-star-yellow: #FFEBB8;       /* Custom cream for active star fill */
+  --color-star-yellow: #FAB606;       /* Solar golden yellow */
   --color-star-yellow-light: #FFF5D9;
 }
 
@@ -124,11 +129,34 @@ html[data-palette="caramel"].dark, html[data-palette="caramel"] .dark {
 /* Custom Base Configurations */
 body {
   font-family: var(--font-sans);
+  font-size: 1.55rem;
+  line-height: 1.15;
   transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+/* Scale up smaller text classes for Dongle glyph legibility */
+p.text-xs, .text-xs:not(svg), p.text-\[10px\] {
+  font-size: 1.25rem;
+  line-height: 1.15;
+}
+
+p.text-sm {
+  font-size: 1.4rem;
+  line-height: 1.15;
 }
 
 h1, h2, h3, h4, .font-title {
   font-family: var(--font-display);
+  letter-spacing: 0.02em;
 }
 
 /* Scrollbar Styling */
