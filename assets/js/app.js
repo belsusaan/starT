@@ -47,28 +47,38 @@ function escapeHTML(str) {
 
 // Default categories (aligned with 5-color palette, NO GREEN)
 const DEFAULT_CATEGORIES = [
-  { id: 'cat-1', name: 'Matemáticas', color: 'pastel-pink' },
+  { id: 'cat-1', name: 'Matemáticas', color: 'pastel-mint' },
   { id: 'cat-2', name: 'Ciencias', color: 'pastel-blue' },
   { id: 'cat-3', name: 'Idiomas', color: 'pastel-lavender' },
-  { id: 'cat-4', name: 'Personal', color: 'pastel-yellow' },
-  { id: 'cat-5', name: 'Otros', color: 'pastel-rose' }
+  { id: 'cat-4', name: 'Personal', color: 'pastel-pink' },
+  { id: 'cat-5', name: 'Otros', color: 'pastel-yellow' }
 ];
 
 // Expanded pastel & modern color mapping aligned strictly with the 5 official palette colors:
 // #CE1483 (Violet Red), #F5F2B8 (Lemon Chiffon), #33658A (Baltic Blue), #00120B (Onyx), #FCD3DE (Petal Frost)
 const PASTEL_COLOR_MAP = {
-  'pastel-pink': { bg: 'bg-[#FCD3DE] dark:bg-[#3D1A29]', cardBg: 'bg-[#FCD3DE] dark:bg-[#321421]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#CE1483', name: 'Magenta StarT' },
-  'pastel-blue': { bg: 'bg-[#D2E7F9] dark:bg-[#152838]', cardBg: 'bg-[#D2E7F9] dark:bg-[#10202E]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#33658A', name: 'Baltic Blue' },
-  'pastel-lavender': { bg: 'bg-[#E7E0F9] dark:bg-[#2C2142]', cardBg: 'bg-[#E7E0F9] dark:bg-[#231A35]', text: 'text-[#1E3A56] dark:text-purple-100', border: 'border-purple-300', dot: '#8B5CF6', name: 'Lavanda' },
-  'pastel-mint': { bg: 'bg-[#FCD3DE] dark:bg-[#3D1A29]', cardBg: 'bg-[#FCD3DE] dark:bg-[#321421]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#FCD3DE', name: 'Petal Frost' },
-  'pastel-peach': { bg: 'bg-[#FAF6D2] dark:bg-[#35331E]', cardBg: 'bg-[#FAF6D2] dark:bg-[#2A2917]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#E6DE7A', name: 'Crema Suave' },
-  'pastel-yellow': { bg: 'bg-[#F5F2B8] dark:bg-[#35331E]', cardBg: 'bg-[#F5F2B8] dark:bg-[#2B2918]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#F5F2B8', name: 'Lemon Chiffon' },
-  'pastel-coral': { bg: 'bg-[#FCD7E0] dark:bg-[#401A27]', cardBg: 'bg-[#FCD7E0] dark:bg-[#33141F]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#F472B6', name: 'Rosa Pastel' },
-  'pastel-teal': { bg: 'bg-[#D7E4EE] dark:bg-[#152737]', cardBg: 'bg-[#D7E4EE] dark:bg-[#101F2C]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#234A68', name: 'Azul Profundo' },
-  'pastel-emerald': { bg: 'bg-[#F7D4E4] dark:bg-[#381628]', cardBg: 'bg-[#F7D4E4] dark:bg-[#2C101F]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#9D174D', name: 'Vino Magenta' },
-  'pastel-purple': { bg: 'bg-[#ECD5FA] dark:bg-[#2D1B3A]', cardBg: 'bg-[#ECD5FA] dark:bg-[#24152E]', text: 'text-[#1E3A56] dark:text-violet-100', border: 'border-violet-300', dot: '#7C3AED', name: 'Morado' },
-  'pastel-indigo': { bg: 'bg-[#DDE5F5] dark:bg-[#182840]', cardBg: 'bg-[#DDE5F5] dark:bg-[#132034]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#4682B4', name: 'Azul Acero' },
-  'pastel-rose': { bg: 'bg-[#FCD3DE] dark:bg-[#4A1D2F]', cardBg: 'bg-[#FCD3DE] dark:bg-[#3A1624]', text: 'text-[#1E3A56] dark:text-rose-100', border: 'border-rose-300', dot: '#FB7185', name: 'Rosa Vivo' }
+  // Rosa Más Fuerte (Vibrante / Magenta #CE1483 - Especialmente para Personal)
+  'pastel-pink': { bg: 'bg-[#FBBFD5] dark:bg-[#4E132F]', cardBg: 'bg-[#FBBFD5] dark:bg-[#48122B]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-400', dot: '#CE1483', name: 'Rosa Más Fuerte' },
+  'pastel-pink-strong': { bg: 'bg-[#FBBFD5] dark:bg-[#4E132F]', cardBg: 'bg-[#FBBFD5] dark:bg-[#48122B]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-400', dot: '#CE1483', name: 'Rosa Más Fuerte' },
+
+  // Rosa Pálido (Petal Frost #FCD3DE - Suave)
+  'pastel-mint': { bg: 'bg-[#FFF0F4] dark:bg-[#2C1420]', cardBg: 'bg-[#FFF0F4] dark:bg-[#25101A]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-200', dot: '#F8A5BF', name: 'Rosa Pálido' },
+  'pastel-coral': { bg: 'bg-[#FFF2F6] dark:bg-[#2C1420]', cardBg: 'bg-[#FFF2F6] dark:bg-[#25101A]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-200', dot: '#F472B6', name: 'Rosa Suave' },
+  'pastel-rose': { bg: 'bg-[#FDE2EC] dark:bg-[#381424]', cardBg: 'bg-[#FDE2EC] dark:bg-[#30101E]', text: 'text-[#1E3A56] dark:text-rose-100', border: 'border-rose-300', dot: '#E03B7C', name: 'Rosa Medio' },
+
+  // Baltic Blue (#33658A) & Derivados
+  'pastel-blue': { bg: 'bg-[#E1EFF8] dark:bg-[#152838]', cardBg: 'bg-[#E1EFF8] dark:bg-[#10202E]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#33658A', name: 'Baltic Blue' },
+  'pastel-indigo': { bg: 'bg-[#E4ECF8] dark:bg-[#182840]', cardBg: 'bg-[#E4ECF8] dark:bg-[#132034]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#4682B4', name: 'Azul Acero' },
+  'pastel-teal': { bg: 'bg-[#DCEBF4] dark:bg-[#132331]', cardBg: 'bg-[#DCEBF4] dark:bg-[#0F1D28]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#234A68', name: 'Azul Profundo' },
+
+  // Lemon Chiffon (#F5F2B8) & Cremas
+  'pastel-yellow': { bg: 'bg-[#FDFBE1] dark:bg-[#35331E]', cardBg: 'bg-[#FDFBE1] dark:bg-[#2B2918]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#C99E18', name: 'Lemon Chiffon' },
+  'pastel-peach': { bg: 'bg-[#FAF4DB] dark:bg-[#35331E]', cardBg: 'bg-[#FAF4DB] dark:bg-[#2A2917]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#D99824', name: 'Crema Suave' },
+
+  // Lavandas & Vinos
+  'pastel-lavender': { bg: 'bg-[#F0EBFC] dark:bg-[#2C2142]', cardBg: 'bg-[#F0EBFC] dark:bg-[#231A35]', text: 'text-[#1E3A56] dark:text-purple-100', border: 'border-purple-300', dot: '#8B5CF6', name: 'Lavanda' },
+  'pastel-purple': { bg: 'bg-[#F3E5FC] dark:bg-[#2D1B3A]', cardBg: 'bg-[#F3E5FC] dark:bg-[#24152E]', text: 'text-[#1E3A56] dark:text-violet-100', border: 'border-violet-300', dot: '#7C3AED', name: 'Morado' },
+  'pastel-emerald': { bg: 'bg-[#F9E2EC] dark:bg-[#381628]', cardBg: 'bg-[#F9E2EC] dark:bg-[#2C101F]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#9D174D', name: 'Vino Magenta' }
 };
 
 // Default sample tasks for a rich first-use experience
@@ -77,7 +87,7 @@ const DEFAULT_TASKS = [
   { id: 'task-2', title: 'Repasar derivadas e integrales', description: 'Ejercicios de la página 45 a la 50.', categoryId: 'cat-1', completed: false, priority: true, order: 2 },
   { id: 'task-3', title: 'Lectura de artículo científico', description: 'Efectos del cambio climático en arrecifes de coral.', categoryId: 'cat-2', completed: false, priority: false, order: 3 },
   { id: 'task-4', title: 'Vocabulario de inglés', description: 'Estudiar las 30 palabras nuevas para el examen.', categoryId: 'cat-3', completed: false, priority: true, order: 4 },
-  { id: 'task-5', title: 'Organizar mi habitación', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: true, priority: false, order: 5 }
+  { id: 'task-5', title: 'Organizar mi habitación', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: false, priority: false, order: 5 }
 ];
 
 // Custom SVG star using logo.svg paths with safe padding viewBox
@@ -365,6 +375,11 @@ function loadData() {
   if (savedCategories) {
     try {
       categories = JSON.parse(savedCategories);
+      const personalCat = categories.find(c => c.name && c.name.toLowerCase() === 'personal');
+      if (personalCat && personalCat.color !== 'pastel-pink') {
+        personalCat.color = 'pastel-pink';
+        saveCategories();
+      }
     } catch (e) {
       categories = [...DEFAULT_CATEGORIES];
     }
@@ -428,11 +443,11 @@ function applyTheme() {
 }
 
 // Stubs for backwards compatibility
-function setPalette() {}
-function renderPaletteDropdown() {}
-function closePaletteDropdown() {}
-function togglePaletteDropdown() {}
-function selectPaletteFromDropdown() {}
+function setPalette() { }
+function renderPaletteDropdown() { }
+function closePaletteDropdown() { }
+function togglePaletteDropdown() { }
+function selectPaletteFromDropdown() { }
 
 
 // ==========================================
@@ -455,15 +470,31 @@ function renderCategories() {
 
   categories.forEach(cat => {
     const isSelected = currentFilter === cat.id;
+    const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
+    const dotColor = colorStyles.dot || '#CE1483';
+    const isPale = ['pastel-mint', 'pastel-coral', 'pastel-yellow', 'pastel-peach'].includes(cat.color);
+    const selectedTextColor = isPale ? '#1E3A56' : '#ffffff';
+    const selectedDotColor = isPale ? '#1E3A56' : '#ffffff';
 
-    filterHTML += `
-      <button onclick="setFilter('${cat.id}')" class="px-5 py-2 sm:py-2.5 rounded-full font-title font-bold text-xl sm:text-2xl transition-all duration-200 cursor-pointer shrink-0 leading-none ${isSelected
-        ? 'bg-[#33658A] text-white border-2 border-[#33658A] shadow-xs'
-        : 'bg-white dark:bg-dark-card text-[#33658A] dark:text-sky-300 border-2 border-[#33658A] hover:bg-[#33658A]/10'
-      }">
-        ${escapeHTML(cat.name)}
-      </button>
-    `;
+    if (isSelected) {
+      filterHTML += `
+        <button onclick="setFilter('${cat.id}')" 
+          class="px-5 py-2 sm:py-2.5 rounded-full font-title font-bold text-xl sm:text-2xl transition-all duration-200 cursor-pointer shrink-0 leading-none shadow-xs flex items-center gap-2"
+          style="background-color: ${dotColor}; color: ${selectedTextColor}; border: 2px solid ${dotColor};">
+          <span class="w-2.5 h-2.5 rounded-full shrink-0 pointer-events-none" style="background-color: ${selectedDotColor};"></span>
+          ${escapeHTML(cat.name)}
+        </button>
+      `;
+    } else {
+      filterHTML += `
+        <button onclick="setFilter('${cat.id}')" 
+          class="px-5 py-2 sm:py-2.5 rounded-full font-title font-bold text-xl sm:text-2xl transition-all duration-200 cursor-pointer shrink-0 leading-none hover:scale-102 active:scale-98 flex items-center gap-2 ${colorStyles.cardBg} text-[#1E3A56] dark:text-slate-100 shadow-2xs"
+          style="border: 2px solid ${dotColor};">
+          <span class="w-2.5 h-2.5 rounded-full shrink-0 pointer-events-none" style="background-color: ${dotColor};"></span>
+          ${escapeHTML(cat.name)}
+        </button>
+      `;
+    }
   });
 
   filterHTML += `
@@ -682,7 +713,7 @@ function renderTaskCard(task, isJustMoved = false) {
   const colorStyles = PASTEL_COLOR_MAP[category.color] || PASTEL_COLOR_MAP['pastel-pink'];
   const isSelected = selectedTaskId === task.id;
   const cardBorderClass = isSelected
-    ? 'task-card-selected ring-2 ring-[#33658A]'
+    ? 'task-card-selected border border-[#CE1483] dark:border-[#FCD3DE]'
     : 'border border-black/5 dark:border-white/10 shadow-xs hover:shadow-sm';
   const textCompletedClass = task.completed ? 'completed-text opacity-60' : '';
   const arriveClass = isJustMoved ? 'task-soft-arrive' : '';
@@ -715,11 +746,11 @@ function renderTaskCard(task, isJustMoved = false) {
 
         <!-- Task Title & Description -->
         <div id="text-wrapper-${task.id}" class="min-w-0 flex-1 ${textCompletedClass}">
-          <h3 class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56] dark:text-slate-100 leading-tight strikethrough-line line-clamp-2">
+          <h3 class="font-title task-title-text font-bold text-[#1E3A56] dark:text-slate-100 leading-tight strikethrough-line line-clamp-2">
             ${escapeHTML(task.title)}
           </h3>
           ${task.description ? `
-            <p class="font-sans text-xl sm:text-2xl text-[#1E3A56]/80 dark:text-slate-200 line-clamp-2 leading-tight pt-0.5">
+            <p class="font-sans task-desc-text text-[#1E3A56]/80 dark:text-slate-200 line-clamp-2 leading-tight pt-0.5">
               ${escapeHTML(task.description)}
             </p>
           ` : ''}
@@ -1076,7 +1107,7 @@ function openAddModal() {
   document.getElementById('modal-title').textContent = 'Nueva Tarea';
   document.getElementById('task-title').value = '';
   document.getElementById('task-desc').value = '';
-  
+
   const defaultCatId = categories.length > 0 ? categories[0].id : '';
   if (categories.length > 0) {
     const hiddenSelect = document.getElementById('task-category');
@@ -1111,7 +1142,7 @@ function openEditModal(event, id) {
   document.getElementById('modal-title').textContent = 'Editar Tarea';
   document.getElementById('task-title').value = task.title;
   document.getElementById('task-desc').value = task.description || '';
-  
+
   const hiddenSelect = document.getElementById('task-category');
   if (hiddenSelect) hiddenSelect.value = task.categoryId;
   syncCustomCategorySelect(task.categoryId);

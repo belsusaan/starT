@@ -196,14 +196,14 @@
 
     .task-card-selected {
       border-color: var(--color-brand-rose-medium) !important;
-      animation: pulse-glow 2s infinite;
+      box-shadow: 0 0 15px rgba(206, 20, 131, 0.45), 0 0 25px rgba(206, 20, 131, 0.25);
       transform: scale(1.015);
       z-index: 10;
     }
 
     .dark .task-card-selected {
       border-color: var(--color-brand-rose-light) !important;
-      box-shadow: 0 0 15px rgba(189, 85, 121, 0.3);
+      box-shadow: 0 0 16px rgba(206, 20, 131, 0.55), 0 0 28px rgba(252, 211, 222, 0.3);
     }
 
     .task-card {
@@ -356,6 +356,27 @@
     }
     .dark .custom-focus:focus-visible {
       outline: 3px solid var(--color-brand-rose-medium);
+    }
+
+    /* Task Card Typography - Title (+2px) & Detail (-2px) */
+    .task-title-text {
+      font-size: 26px !important;
+      line-height: 1.15;
+    }
+    @media (min-width: 640px) {
+      .task-title-text {
+        font-size: 32px !important;
+      }
+    }
+
+    .task-desc-text {
+      font-size: 18px !important;
+      line-height: 1.15;
+    }
+    @media (min-width: 640px) {
+      .task-desc-text {
+        font-size: 22px !important;
+      }
     }
   </style>
 </head>
@@ -764,10 +785,10 @@
           <div class="flex flex-col gap-2">
             <span class="text-xl sm:text-2xl font-title font-bold text-[#1E3A56] dark:text-slate-300 pl-1 leading-none">Color de la materia</span>
             <div class="flex items-center gap-2 flex-wrap" id="cat-swatches-container">
-              <button type="button" onclick="selectCategoryColorSwatch('pastel-pink')" class="cat-swatch w-7 h-7 rounded-full bg-[#CE1483] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Magenta StarT"></button>
+              <button type="button" onclick="selectCategoryColorSwatch('pastel-pink')" class="cat-swatch w-7 h-7 rounded-full bg-[#CE1483] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Rosa Fuerte (Magenta)"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-blue')" class="cat-swatch w-7 h-7 rounded-full bg-[#33658A] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Baltic Blue"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-yellow')" class="cat-swatch w-7 h-7 rounded-full bg-[#F5F2B8] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Lemon Chiffon"></button>
-              <button type="button" onclick="selectCategoryColorSwatch('pastel-mint')" class="cat-swatch w-7 h-7 rounded-full bg-[#FCD3DE] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Petal Frost"></button>
+              <button type="button" onclick="selectCategoryColorSwatch('pastel-mint')" class="cat-swatch w-7 h-7 rounded-full bg-[#FCD3DE] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Rosa Pálido"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-rose')" class="cat-swatch w-7 h-7 rounded-full bg-[#FB7185] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Rosa Vivo"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-coral')" class="cat-swatch w-7 h-7 rounded-full bg-[#F472B6] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Rosa Pastel"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-indigo')" class="cat-swatch w-7 h-7 rounded-full bg-[#4682B4] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Azul Acero"></button>
