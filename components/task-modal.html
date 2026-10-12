@@ -5,53 +5,93 @@
      ========================================== -->
 <div id="task-modal"
   class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm transition-all duration-300"
-  role="dialog" aria-labelledby="modal-title" aria-modal="true">
+  role="dialog" aria-labelledby="modal-title" aria-modal="true"
+  onclick="handleTaskModalBackdropClick(event)">
   <div
-    class="bg-white dark:bg-dark-card rounded-3xl p-6 w-full max-w-md shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-5 animate-task-appear">
+    class="bg-white dark:bg-dark-card rounded-[32px] p-6 sm:p-8 w-full max-w-lg md:max-w-2xl lg:max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 dark:border-dark-border transform transition-all flex flex-col gap-6 animate-task-appear scrollbar-none"
+    onclick="event.stopPropagation()">
     <!-- Header -->
-    <div class="flex items-center justify-between">
-      <h3 id="modal-title" class="font-title text-lg font-bold text-slate-800 dark:text-slate-50">Nueva Tarea</h3>
+    <div class="flex items-center justify-between pb-1">
+      <h3 id="modal-title" class="font-title text-3xl sm:text-4xl font-bold text-[#1E3A56] dark:text-slate-50 leading-none">Nueva Tarea</h3>
       <button onclick="closeModal()"
-        class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-          class="w-5 h-5">
+        class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-2xl hover:bg-slate-100 dark:hover:bg-dark-hover transition-colors cursor-pointer"
+        title="Cerrar">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          class="w-7 h-7">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
 
     <!-- Form Inputs -->
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-5">
       <!-- Title -->
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1.5">
         <label for="task-title"
-          class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Título de la tarea</label>
-        <input type="text" id="task-title" placeholder="Ej. Estudiar funciones trigonométricas"
-          class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 focus:ring-1 focus:ring-pastel-pink-300 transition-colors font-sans">
+          class="text-2xl sm:text-3xl font-title font-bold text-[#1E3A56] dark:text-slate-200 tracking-wide pl-1">
+          Título de la tarea
+        </label>
+        <div class="bg-slate-50/80 dark:bg-dark-card rounded-2xl px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-dark-border focus-within:border-[#CE1483] transition-all">
+          <input type="text" id="task-title" placeholder="Ej. Estudiar funciones trigonométricas"
+            class="w-full bg-transparent text-2xl sm:text-3xl font-sans font-medium text-[#1E3A56] dark:text-slate-100 placeholder:text-2xl sm:placeholder:text-3xl placeholder-slate-400 focus:outline-none leading-none pt-0.5">
+        </div>
       </div>
 
       <!-- Description -->
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1.5">
         <label for="task-desc"
-          class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Descripción (Opcional)</label>
-        <textarea id="task-desc" rows="2" placeholder="Detalles sobre entregables, temas, apuntes..."
-          class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 focus:ring-1 focus:ring-pastel-pink-300 transition-colors font-sans resize-none"></textarea>
+          class="text-2xl sm:text-3xl font-title font-bold text-[#1E3A56] dark:text-slate-200 tracking-wide pl-1">
+          Descripción (opcional)
+        </label>
+        <div class="bg-slate-50/80 dark:bg-dark-card rounded-2xl px-4 py-3 sm:py-3.5 border border-slate-200 dark:border-dark-border focus-within:border-[#CE1483] transition-all">
+          <textarea id="task-desc" rows="3" placeholder="Detalles sobre entregables, temas, apuntes..."
+            class="w-full bg-transparent text-2xl sm:text-3xl font-sans font-medium text-[#1E3A56] dark:text-slate-100 placeholder:text-2xl sm:placeholder:text-3xl placeholder-slate-400 focus:outline-none leading-snug resize-none"></textarea>
+        </div>
       </div>
 
       <!-- Category & Priority Row -->
-      <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="task-category"
-            class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Materia</label>
-          <select id="task-category"
-            class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-card text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:border-pastel-pink-300 transition-colors font-sans cursor-pointer">
-          </select>
+      <div class="grid grid-cols-2 gap-4 items-start">
+        <!-- Custom Styled Category Select -->
+        <div class="flex flex-col gap-1.5">
+          <label for="task-category-trigger"
+            class="text-2xl sm:text-3xl font-title font-bold text-[#1E3A56] dark:text-slate-200 tracking-wide pl-1">
+            Materia
+          </label>
+          <div class="relative" id="task-category-wrapper">
+            <!-- Hidden native select for standard form and JS compatibility -->
+            <select id="task-category" class="sr-only" aria-hidden="true"></select>
+
+            <!-- Custom Select Trigger Button -->
+            <button type="button" id="task-category-trigger" onclick="toggleCategoryDropdown(event)"
+              class="w-full px-4 py-3 sm:py-3.5 rounded-2xl border border-slate-200 dark:border-dark-border bg-slate-50/80 dark:bg-dark-card hover:border-[#CE1483]/60 focus:border-[#CE1483] focus:outline-none transition-all flex items-center justify-between gap-2 cursor-pointer select-none">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span id="task-category-dot" class="w-4 h-4 rounded-full shrink-0 shadow-2xs bg-[#F472B6]"></span>
+                <span id="task-category-label" class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56] dark:text-slate-100 truncate leading-none">
+                  Matemáticas
+                </span>
+              </div>
+              <svg id="task-category-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+                class="w-6 h-6 text-slate-400 transition-transform duration-200 shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+
+            <!-- Custom Dropdown Menu -->
+            <div id="task-category-menu"
+              class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-dark-card rounded-2xl shadow-xl border border-slate-200 dark:border-dark-border p-2 max-h-56 overflow-y-auto animate-task-appear scrollbar-none">
+              <!-- Populated dynamically with category options -->
+            </div>
+          </div>
         </div>
 
-        <div class="flex flex-col gap-1 items-center justify-center">
-          <span class="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Prioridad</span>
+        <!-- Priority Star Toggle -->
+        <div class="flex flex-col gap-1.5 items-center justify-center">
+          <span class="text-2xl sm:text-3xl font-title font-bold text-[#1E3A56] dark:text-slate-200 tracking-wide mb-1">
+            Prioridad
+          </span>
           <button type="button" id="task-priority-toggle" onclick="toggleModalPriority()"
-            class="focus:outline-none cursor-pointer" data-priority="false">
+            class="focus:outline-none cursor-pointer p-1 hover:scale-110 active:scale-95 transition-transform" data-priority="false"
+            title="Marcar como prioritaria">
           </button>
         </div>
       </div>
@@ -60,21 +100,17 @@
     <!-- Actions -->
     <div class="flex items-center justify-between gap-3 pt-2">
       <button type="button" id="btn-modal-delete-task" onclick="deleteEditingTask()"
-        class="hidden px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer flex items-center gap-1.5">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8"
-          stroke="currentColor" class="w-4 h-4">
+        class="hidden px-5 py-3 rounded-full text-2xl font-title font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+          stroke="currentColor" class="w-6 h-6">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
         </svg>
         <span>Eliminar</span>
       </button>
-      <div class="flex items-center gap-2 ml-auto">
-        <button type="button" onclick="closeModal()"
-          class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 dark:hover:bg-dark-hover transition-colors cursor-pointer">
-          Cancelar
-        </button>
+      <div class="ml-auto">
         <button type="button" onclick="saveTaskAction()"
-          class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-pastel-pink-300 hover:bg-pastel-pink-400 text-white shadow-sm hover:shadow transition-all cursor-pointer font-title">
+          class="px-8 py-3.5 rounded-full text-2xl sm:text-3xl font-title font-bold bg-[#CE1483] hover:bg-[#B0106E] active:scale-[0.99] text-white shadow-md hover:shadow-lg transition-all cursor-pointer leading-none">
           Guardar Tarea
         </button>
       </div>

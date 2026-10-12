@@ -19,111 +19,41 @@
   --font-display: 'Cherry Bomb One', cursive;
   --font-sans: 'Dongle', sans-serif;
   
-  /* Brand Palette (Slate Blue & Butter Cream & Solar Yellow) */
-  --color-brand-blue: #31648A;
-  --color-brand-blue-dark: #20456E;
-  --color-brand-cream: #F8F3B9;
-  --color-brand-yellow: #FAB606;
-  --color-brand-blush: #E22868;
+  /* Official 5-Color Unified Palette */
+  --color-brand-magenta: #CE1483;
+  --color-brand-lemon: #F5F2B8;
+  --color-brand-blue: #33658A;
+  --color-brand-onyx: #00120B;
+  --color-brand-petal: #FCD3DE;
 
-  --color-brand-plum: #31648A;
-  --color-brand-rose-medium: #31648A;
-  --color-brand-rose-light: #F8F3B9;
+  --color-brand-blue-dark: #234A68;
+  --color-brand-cream: #F5F2B8;
+  --color-brand-blush: #CE1483;
+  --color-brand-plum: #33658A;
+  --color-brand-rose-medium: #CE1483;
+  --color-brand-rose-light: #FCD3DE;
   
-  /* Dark Mode specific variables (slate blue night base) */
-  --color-dark-bg: #132433;
-  --color-dark-card: #1D364A;
-  --color-dark-border: #2A4C68;
-  --color-dark-hover: #355E82;
+  /* Dark Mode specific variables (Onyx #00120B & Baltic Blue #33658A base - NO GREEN) */
+  --color-dark-bg: #00120B;
+  --color-dark-card: #0E1720;
+  --color-dark-border: #192A3A;
+  --color-dark-hover: #203548;
 
   /* Custom Pastel Overrides mapped to the Brand Palette */
-  --color-pastel-pink-50: #FDFBF0;    /* Warm milk cream background */
-  --color-pastel-pink-100: #F8F3B9;   /* Signature butter cream */
-  --color-pastel-pink-200: #E8E29E;
-  --color-pastel-pink-300: #4679A0;   /* Soft slate blue */
-  --color-pastel-pink-400: #31648A;   /* Primary Slate blue */
-  --color-pastel-pink-500: #20456E;   /* Deep Slate blue */
+  --color-pastel-pink-50: #FCF5F8;
+  --color-pastel-pink-100: #FCD3DE;   /* Petal Frost */
+  --color-pastel-pink-200: #F7B5C7;
+  --color-pastel-pink-300: #CE1483;   /* Medium Violet Red */
+  --color-pastel-pink-400: #33658A;   /* Baltic Blue */
+  --color-pastel-pink-500: #234A68;
   
   --color-pastel-lavender: #E8E3FA;
   --color-pastel-blue: #E3EDFD;
   --color-pastel-mint: #E3FDF1;
-  --color-pastel-yellow: #F8F3B9;
+  --color-pastel-yellow: #F5F2B8;
   --color-pastel-peach: #FFECE3;
-  --color-star-yellow: #FAB606;       /* Solar golden yellow */
-  --color-star-yellow-light: #FFF5D9;
-}
-
-/* Custom App Palettes from Images */
-html[data-palette="crimson"] {
-  --color-brand-plum: #5E0006;
-  --color-brand-rose-medium: #9B0F06;
-  --color-brand-rose-light: #D53E0F;
-  --color-pastel-pink-50: #FCF8F2;
-  --color-pastel-pink-100: #EED9B9;
-  --color-pastel-pink-200: #E2BE8D;
-  --color-pastel-pink-300: #9B0F06;
-  --color-pastel-pink-400: #7F0C05;
-  --color-pastel-pink-500: #5E0006;
-}
-html[data-palette="crimson"].dark, html[data-palette="crimson"] .dark {
-  --color-dark-bg: #180406;
-  --color-dark-card: #25070A;
-  --color-dark-border: #421015;
-  --color-dark-hover: #58171E;
-}
-
-html[data-palette="ocean"] {
-  --color-brand-plum: #20456E;
-  --color-brand-rose-medium: #3368A0;
-  --color-brand-rose-light: #66A3BF;
-  --color-pastel-pink-50: #F2EFE7;
-  --color-pastel-pink-100: #C8DFDB;
-  --color-pastel-pink-200: #AFD0CC;
-  --color-pastel-pink-300: #66A3BF;
-  --color-pastel-pink-400: #3368A0;
-  --color-pastel-pink-500: #20456E;
-}
-html[data-palette="ocean"].dark, html[data-palette="ocean"] .dark {
-  --color-dark-bg: #101B27;
-  --color-dark-card: #182838;
-  --color-dark-border: #243B52;
-  --color-dark-hover: #314E6C;
-}
-
-html[data-palette="sunset"] {
-  --color-brand-plum: #8F4820;
-  --color-brand-rose-medium: #FFBE91;
-  --color-brand-rose-light: #FFDDB0;
-  --color-pastel-pink-50: #FFFDF0;
-  --color-pastel-pink-100: #FFDDB0;
-  --color-pastel-pink-200: #CFEBFF;
-  --color-pastel-pink-300: #FFBE91;
-  --color-pastel-pink-400: #F59F67;
-  --color-pastel-pink-500: #8F4820;
-}
-html[data-palette="sunset"].dark, html[data-palette="sunset"] .dark {
-  --color-dark-bg: #261910;
-  --color-dark-card: #382518;
-  --color-dark-border: #4F3523;
-  --color-dark-hover: #63432C;
-}
-
-html[data-palette="caramel"] {
-  --color-brand-plum: #0A2947;
-  --color-brand-rose-medium: #8B5E3C;
-  --color-brand-rose-light: #D3D4C0;
-  --color-pastel-pink-50: #FAF7F0;
-  --color-pastel-pink-100: #F3E4C9;
-  --color-pastel-pink-200: #D3D4C0;
-  --color-pastel-pink-300: #8B5E3C;
-  --color-pastel-pink-400: #704728;
-  --color-pastel-pink-500: #0A2947;
-}
-html[data-palette="caramel"].dark, html[data-palette="caramel"] .dark {
-  --color-dark-bg: #071728;
-  --color-dark-card: #0E243D;
-  --color-dark-border: #1A395C;
-  --color-dark-hover: #234B75;
+  --color-star-yellow: #CE1483;
+  --color-star-yellow-light: #FCD3DE;
 }
 
 /* Custom Base Configurations */
@@ -154,8 +84,14 @@ p.text-sm {
   line-height: 1.15;
 }
 
-h1, h2, h3, h4, .font-title {
-  font-family: var(--font-display);
+/* All general typography, headings, buttons, and elements default to paragraph font (Dongle) */
+h1, h2, h3, h4, button, input, select, textarea, .font-title {
+  font-family: var(--font-sans);
+}
+
+/* ONLY app name and explicit titles (4 tareas, Mi Perfil, Configuración) use Cherry Bomb One */
+.font-cherry {
+  font-family: var(--font-display) !important;
   letter-spacing: 0.02em;
 }
 

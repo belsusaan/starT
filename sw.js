@@ -1,4 +1,4 @@
-const CACHE_NAME = 'star-t-cache-v18';
+const CACHE_NAME = 'star-t-cache-v19';
 const ASSETS = [
   './',
   './index.html',
@@ -21,7 +21,7 @@ self.addEventListener('install', (e) => {
   );
 });
 
-// Activate Event
+// Activate Event (Delete old caches immediately)
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -36,7 +36,7 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Fetch Event (Cache-First with network fallback, bypass API)
+// Fetch Event (Network-First with Cache Fallback for instant updates)
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
@@ -50,27 +50,18 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
+  // Network-First: Always try to get latest from network; fallback to cache offline
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Background refresh
-        fetch(e.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-      return fetch(e.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200) {
-          return networkResponse;
+    fetch(e.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, responseToCache));
         }
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(e.request, responseToCache);
-        });
         return networkResponse;
-      });
-    })
+      })
+      .catch(() => {
+        return caches.match(e.request);
+      })
   );
 });

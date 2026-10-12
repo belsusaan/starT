@@ -1,7 +1,7 @@
 <!-- ==========================================
      COMPONENT: USER PROFILE & DASHBOARD MODAL
      Modal showing account details, avatar, productivity stats
-     dashboard (rendered dynamically), and sign-out button.
+     dashboard, password change form, and sign-out button.
      ========================================== -->
 <div id="user-profile-modal"
   class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
@@ -13,7 +13,7 @@
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2.5">
         <h3 id="profile-modal-title" class="font-title text-lg font-bold text-slate-800 dark:text-slate-50">Mi Cuenta</h3>
-        <span class="text-[10px] font-title font-bold px-2 py-0.5 rounded-full bg-pastel-pink-100 dark:bg-pastel-pink-900/50 text-brand-rose-medium dark:text-pastel-pink-300 border border-pastel-pink-200/60 dark:border-pastel-pink-800/40">
+        <span class="text-[10px] font-title font-bold px-2 py-0.5 rounded-full bg-pastel-pink-100 dark:bg-pastel-pink-900/50 text-[#33658A] dark:text-pastel-pink-300 border border-pastel-pink-200/60 dark:border-pastel-pink-800/40">
           Dashboard de Productividad
         </span>
       </div>
@@ -30,7 +30,7 @@
     <div
       class="flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border">
       <div id="profile-avatar"
-        class="w-12 h-12 rounded-full bg-pastel-pink-300 dark:bg-pastel-pink-500 text-white flex items-center justify-center font-title text-lg font-bold shadow-sm shrink-0">
+        class="w-12 h-12 rounded-full bg-[#D1D5DB] dark:bg-slate-700 text-[#1E3A56] dark:text-slate-100 flex items-center justify-center font-title text-lg font-bold shadow-sm shrink-0">
         U
       </div>
       <div class="min-w-0 flex-1">
@@ -41,9 +41,49 @@
       </div>
     </div>
 
-    <!-- Complexity Dashboard Section (rendered dynamically by app.js) -->
-    <div id="profile-dashboard" class="flex flex-col gap-3.5">
-      <!-- Rendered dynamically by renderProfileDashboard() in app.js -->
+
+    <!-- Password Change Section (Visible only for authenticated users) -->
+    <div class="profile-pwd-section p-4 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-3">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-[#CE1483]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+        </svg>
+        <h4 class="font-title text-sm font-bold text-slate-800 dark:text-slate-100">Cambiar Contraseña</h4>
+      </div>
+
+      <div id="profile-pwd-alert" class="hidden p-2.5 rounded-xl text-base font-sans text-center transition-all leading-tight"></div>
+
+      <form id="profile-password-form" onsubmit="handleChangePassword(event)" class="flex flex-col gap-2.5">
+        <div class="bg-white dark:bg-dark-card rounded-xl px-3.5 py-2 border border-slate-200 dark:border-dark-border flex items-center focus-within:border-[#CE1483]">
+          <input type="password" id="profile-new-password" required minlength="6" placeholder="Nueva contraseña (mínimo 6 caracteres)"
+            class="w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none font-sans">
+        </div>
+        <div class="bg-white dark:bg-dark-card rounded-xl px-3.5 py-2 border border-slate-200 dark:border-dark-border flex items-center focus-within:border-[#CE1483]">
+          <input type="password" id="profile-confirm-password" required minlength="6" placeholder="Confirmar nueva contraseña"
+            class="w-full bg-transparent text-sm text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none font-sans">
+        </div>
+        <button type="submit" id="profile-change-pwd-btn"
+          class="w-full py-2 px-4 rounded-xl bg-[#CE1483] hover:bg-[#B0106E] text-white text-xs font-title font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center">
+          <span>Actualizar Contraseña</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Guest Prompt Section (Visible for local guest users) -->
+    <div class="profile-guest-section hidden p-4 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-3">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-[#CE1483]">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+        <h4 class="font-title text-sm font-bold text-slate-800 dark:text-slate-100">Modo Invitado</h4>
+      </div>
+      <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
+        Inicia sesión o crea una cuenta para sincronizar tus tareas en todos tus dispositivos y cambiar tu contraseña.
+      </p>
+      <button type="button" onclick="openAuthGateway()"
+        class="w-full py-2 px-4 rounded-xl bg-[#CE1483] hover:bg-[#B0106E] text-white text-xs font-title font-bold transition-all shadow-xs cursor-pointer flex items-center justify-center">
+        <span>Iniciar Sesión / Registrarme</span>
+      </button>
     </div>
 
     <!-- Actions -->
@@ -55,7 +95,7 @@
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
         </svg>
-        <span>Cerrar Sesión</span>
+        <span class="profile-signout-label">Cerrar Sesión</span>
       </button>
     </div>
 

@@ -1,0 +1,79 @@
+<!-- ==========================================
+     PAGE COMPONENT: SETTINGS / CONFIGURATION FULL VIEW (#settings-view)
+     Full page containing subject management, palette selection,
+     dark mode toggle, PWA install, and app details.
+     ========================================== -->
+<div id="settings-view" class="hidden flex-1 flex flex-col min-h-[100dvh] bg-white dark:bg-dark-bg text-slate-800 dark:text-slate-100 animate-fade-in select-none">
+  <!-- Top Navigation Header -->
+  <header
+    class="w-full bg-white dark:bg-dark-card border-b border-slate-100 dark:border-dark-border sticky top-0 z-30 transition-colors duration-300">
+    <div class="w-full max-w-2xl md:max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
+      <button onclick="navigateTo('home')" class="flex items-center gap-2 p-2 rounded-2xl hover:bg-slate-100 dark:hover:bg-dark-hover text-[#1E3A56] dark:text-slate-100 transition-colors cursor-pointer" title="Volver al inicio">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        <span class="font-title text-xl sm:text-2xl font-bold hidden sm:inline">Volver</span>
+      </button>
+
+      <h1 class="font-cherry text-3xl sm:text-4xl text-[#1E3A56] dark:text-slate-50 tracking-wide">
+        Configuración
+      </h1>
+
+      <div class="w-10 sm:w-20 invisible" aria-hidden="true"></div>
+    </div>
+  </header>
+
+  <!-- Page Content Container -->
+  <main class="flex-1 max-w-2xl md:max-w-5xl lg:max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6 pb-24">
+    <!-- 1. Gestión de Materias y Colores -->
+    <section class="bg-slate-50/80 dark:bg-dark-card/60 rounded-[28px] p-5 sm:p-6 border border-slate-100 dark:border-dark-border shadow-xs flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56] dark:text-slate-100">Materias y Colores</h2>
+          <p class="font-sans text-xl sm:text-2xl text-slate-500 dark:text-slate-400">Personaliza tus asignaturas y su color en las tarjetas</p>
+        </div>
+        <button onclick="openManageCategories()" class="px-5 py-2 sm:py-2.5 rounded-full bg-[#CE1483] hover:bg-[#B0106E] text-white text-xl sm:text-2xl font-title font-bold transition-all shadow-xs cursor-pointer shrink-0 leading-none">
+          + Administrar
+        </button>
+      </div>
+
+      <!-- Preview de Materias existentes -->
+      <div id="settings-categories-list" class="flex flex-col gap-2.5">
+        <!-- Renderizado dinámicamente por app.js -->
+      </div>
+    </section>
+
+    <!-- 2. Modo Oscuro / Claro -->
+    <section class="bg-slate-50/80 dark:bg-dark-card/60 rounded-[28px] p-5 sm:p-6 border border-slate-100 dark:border-dark-border shadow-xs flex items-center justify-between gap-4">
+      <div>
+        <h2 class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56] dark:text-slate-100">Modo Oscuro</h2>
+        <p class="font-sans text-xl sm:text-2xl text-slate-500 dark:text-slate-400">Alternar contraste para descansar la vista</p>
+      </div>
+      <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border text-[#1E3A56] dark:text-slate-200 hover:border-[#33658A] cursor-pointer transition-all shadow-xs">
+        <svg id="theme-toggle-icon-settings" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+      </button>
+    </section>
+
+    <!-- 3. PWA Instalar App -->
+    <section class="bg-[#F5F2B8] text-[#1E3A56] rounded-[28px] p-5 sm:p-6 shadow-xs flex items-center justify-between gap-4">
+      <div>
+        <h2 class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56]">Instalar en tu Celular</h2>
+        <p class="font-sans text-xl sm:text-2xl text-[#1E3A56]/90 font-medium">Usa StarT como una app nativa, con acceso directo y soporte offline</p>
+      </div>
+      <button onclick="triggerPWAInstall()" class="px-6 py-2.5 rounded-full bg-[#33658A] hover:bg-[#234A68] text-white text-xl sm:text-2xl font-title font-bold transition-all shadow-xs cursor-pointer shrink-0 leading-none">
+        Instalar
+      </button>
+    </section>
+
+    <!-- 5. Info StarT -->
+    <div class="text-center py-4 flex flex-col items-center gap-1">
+      <div class="w-10 h-10 mb-1">
+        <img src="assets/images/logo.svg" alt="StarT" class="w-full h-full object-contain">
+      </div>
+      <span class="font-title text-xl sm:text-2xl font-bold text-[#1E3A56] dark:text-slate-300">StarT • Tareitas Pendientes</span>
+      <span class="font-sans text-lg sm:text-xl text-slate-400">Versión 2.0 • Diseñado con cariño</span>
+    </div>
+  </main>
+</div>

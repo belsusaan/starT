@@ -45,37 +45,39 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
-// Default categories (pastel-themed)
+// Default categories (aligned with 5-color palette, NO GREEN)
 const DEFAULT_CATEGORIES = [
   { id: 'cat-1', name: 'Matemáticas', color: 'pastel-pink' },
   { id: 'cat-2', name: 'Ciencias', color: 'pastel-blue' },
   { id: 'cat-3', name: 'Idiomas', color: 'pastel-lavender' },
-  { id: 'cat-4', name: 'Personal', color: 'pastel-mint' },
-  { id: 'cat-5', name: 'Otros', color: 'pastel-peach' }
+  { id: 'cat-4', name: 'Personal', color: 'pastel-yellow' },
+  { id: 'cat-5', name: 'Otros', color: 'pastel-rose' }
 ];
 
-// Expanded pastel & modern color mapping for CSS classes and color dots
+// Expanded pastel & modern color mapping aligned strictly with the 5 official palette colors:
+// #CE1483 (Violet Red), #F5F2B8 (Lemon Chiffon), #33658A (Baltic Blue), #00120B (Onyx), #FCD3DE (Petal Frost)
 const PASTEL_COLOR_MAP = {
-  'pastel-pink': { bg: 'bg-pink-100 dark:bg-pink-950/40', text: 'text-pink-600 dark:text-pink-300', border: 'border-pink-300', dot: '#F472B6', name: 'Rosa Pastel' },
-  'pastel-blue': { bg: 'bg-sky-100 dark:bg-sky-950/40', text: 'text-sky-600 dark:text-sky-300', border: 'border-sky-300', dot: '#38BDF8', name: 'Azul Cielo' },
-  'pastel-lavender': { bg: 'bg-purple-100 dark:bg-purple-950/40', text: 'text-purple-600 dark:text-purple-300', border: 'border-purple-300', dot: '#A855F7', name: 'Lavanda' },
-  'pastel-mint': { bg: 'bg-emerald-100 dark:bg-emerald-950/40', text: 'text-emerald-600 dark:text-emerald-300', border: 'border-emerald-300', dot: '#34D399', name: 'Menta Verde' },
-  'pastel-peach': { bg: 'bg-orange-100 dark:bg-orange-950/40', text: 'text-orange-600 dark:text-orange-300', border: 'border-orange-300', dot: '#FB923C', name: 'Durazno' },
-  'pastel-yellow': { bg: 'bg-amber-100 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-300', border: 'border-amber-300', dot: '#FBBF24', name: 'Amarillo Miel' },
-  'pastel-coral': { bg: 'bg-red-100 dark:bg-red-950/40', text: 'text-red-600 dark:text-red-300', border: 'border-red-300', dot: '#F87171', name: 'Coral Suave' },
-  'pastel-teal': { bg: 'bg-teal-100 dark:bg-teal-950/40', text: 'text-teal-700 dark:text-teal-300', border: 'border-teal-300', dot: '#2DD4BF', name: 'Turquesa' },
-  'pastel-emerald': { bg: 'bg-green-100 dark:bg-green-950/40', text: 'text-green-700 dark:text-green-300', border: 'border-green-300', dot: '#10B981', name: 'Esmeralda' },
-  'pastel-purple': { bg: 'bg-violet-100 dark:bg-violet-950/40', text: 'text-violet-700 dark:text-violet-300', border: 'border-violet-300', dot: '#8B5CF6', name: 'Morado / Lila' },
-  'pastel-indigo': { bg: 'bg-indigo-100 dark:bg-indigo-950/40', text: 'text-indigo-600 dark:text-indigo-300', border: 'border-indigo-300', dot: '#6366F1', name: 'Índigo' },
-  'pastel-rose': { bg: 'bg-rose-100 dark:bg-rose-950/40', text: 'text-rose-600 dark:text-rose-300', border: 'border-rose-300', dot: '#FB7185', name: 'Rosa Palo' }
+  'pastel-pink': { bg: 'bg-[#FCD3DE] dark:bg-[#3D1A29]', cardBg: 'bg-[#FCD3DE] dark:bg-[#321421]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#CE1483', name: 'Magenta StarT' },
+  'pastel-blue': { bg: 'bg-[#D2E7F9] dark:bg-[#152838]', cardBg: 'bg-[#D2E7F9] dark:bg-[#10202E]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#33658A', name: 'Baltic Blue' },
+  'pastel-lavender': { bg: 'bg-[#E7E0F9] dark:bg-[#2C2142]', cardBg: 'bg-[#E7E0F9] dark:bg-[#231A35]', text: 'text-[#1E3A56] dark:text-purple-100', border: 'border-purple-300', dot: '#8B5CF6', name: 'Lavanda' },
+  'pastel-mint': { bg: 'bg-[#FCD3DE] dark:bg-[#3D1A29]', cardBg: 'bg-[#FCD3DE] dark:bg-[#321421]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#FCD3DE', name: 'Petal Frost' },
+  'pastel-peach': { bg: 'bg-[#FAF6D2] dark:bg-[#35331E]', cardBg: 'bg-[#FAF6D2] dark:bg-[#2A2917]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#E6DE7A', name: 'Crema Suave' },
+  'pastel-yellow': { bg: 'bg-[#F5F2B8] dark:bg-[#35331E]', cardBg: 'bg-[#F5F2B8] dark:bg-[#2B2918]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#F5F2B8', name: 'Lemon Chiffon' },
+  'pastel-coral': { bg: 'bg-[#FCD7E0] dark:bg-[#401A27]', cardBg: 'bg-[#FCD7E0] dark:bg-[#33141F]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#F472B6', name: 'Rosa Pastel' },
+  'pastel-teal': { bg: 'bg-[#D7E4EE] dark:bg-[#152737]', cardBg: 'bg-[#D7E4EE] dark:bg-[#101F2C]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#234A68', name: 'Azul Profundo' },
+  'pastel-emerald': { bg: 'bg-[#F7D4E4] dark:bg-[#381628]', cardBg: 'bg-[#F7D4E4] dark:bg-[#2C101F]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#9D174D', name: 'Vino Magenta' },
+  'pastel-purple': { bg: 'bg-[#ECD5FA] dark:bg-[#2D1B3A]', cardBg: 'bg-[#ECD5FA] dark:bg-[#24152E]', text: 'text-[#1E3A56] dark:text-violet-100', border: 'border-violet-300', dot: '#7C3AED', name: 'Morado' },
+  'pastel-indigo': { bg: 'bg-[#DDE5F5] dark:bg-[#182840]', cardBg: 'bg-[#DDE5F5] dark:bg-[#132034]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#4682B4', name: 'Azul Acero' },
+  'pastel-rose': { bg: 'bg-[#FCD3DE] dark:bg-[#4A1D2F]', cardBg: 'bg-[#FCD3DE] dark:bg-[#3A1624]', text: 'text-[#1E3A56] dark:text-rose-100', border: 'border-rose-300', dot: '#FB7185', name: 'Rosa Vivo' }
 };
 
 // Default sample tasks for a rich first-use experience
 const DEFAULT_TASKS = [
-  { id: 'task-1', title: 'Completar guía de álgebra', description: 'Ejercicios de la página 45 a la 50.', categoryId: 'cat-1', completed: false, priority: true, order: 1 },
-  { id: 'task-2', title: 'Lectura de artículo científico', description: 'Efectos del cambio climático en arrecifes de coral.', categoryId: 'cat-2', completed: false, priority: false, order: 2 },
-  { id: 'task-3', title: 'Vocabulario de inglés', description: 'Estudiar las 30 palabras nuevas para el test.', categoryId: 'cat-3', completed: false, priority: true, order: 3 },
-  { id: 'task-4', title: 'Organizar mi habitación', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: true, priority: false, order: 4 }
+  { id: 'task-1', title: 'Completar guía de cálculo', description: 'Esta es la descripción de mi guía.', categoryId: 'cat-1', completed: false, priority: true, order: 1 },
+  { id: 'task-2', title: 'Repasar derivadas e integrales', description: 'Ejercicios de la página 45 a la 50.', categoryId: 'cat-1', completed: false, priority: true, order: 2 },
+  { id: 'task-3', title: 'Lectura de artículo científico', description: 'Efectos del cambio climático en arrecifes de coral.', categoryId: 'cat-2', completed: false, priority: false, order: 3 },
+  { id: 'task-4', title: 'Vocabulario de inglés', description: 'Estudiar las 30 palabras nuevas para el examen.', categoryId: 'cat-3', completed: false, priority: true, order: 4 },
+  { id: 'task-5', title: 'Organizar mi habitación', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: true, priority: false, order: 5 }
 ];
 
 // Custom SVG star using logo.svg paths with safe padding viewBox
@@ -383,60 +385,21 @@ function saveCategories() {
 }
 
 // ==========================================
-// Theme & Palettes Management (5 User Palettes + Base)
+// Theme Management (Light / Onyx #00120B Dark Mode)
 // ==========================================
-
-const PALETTES = {
-  'default': {
-    id: 'default',
-    name: 'Rosa Clásico',
-    colors: ['#FFFDF9', '#FFEBB8', '#EA9D9D', '#601D49']
-  },
-  'crimson': {
-    id: 'crimson',
-    name: 'Rojo Carmesí',
-    colors: ['#EED9B9', '#D53E0F', '#9B0F06', '#5E0006']
-  },
-  'ocean': {
-    id: 'ocean',
-    name: 'Océano & Lino',
-    colors: ['#F2EFE7', '#C8DFDB', '#66A3BF', '#3368A0']
-  },
-  'sunset': {
-    id: 'sunset',
-    name: 'Atardecer Pastel',
-    colors: ['#FFFDF0', '#FFDDB0', '#FFBE91', '#8F4820']
-  },
-  'caramel': {
-    id: 'caramel',
-    name: 'Noche & Caramelo',
-    colors: ['#FAF7F0', '#F3E4C9', '#D3D4C0', '#0A2947']
-  }
-};
-
-let currentPalette = 'default';
 
 function initTheme() {
   const savedTheme = localStorage.getItem('start_theme');
   const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   theme = savedTheme ? savedTheme : (systemPrefersDark ? 'dark' : 'light');
-
-  const savedPalette = localStorage.getItem('start_palette');
-  if (savedPalette && PALETTES[savedPalette]) {
-    currentPalette = savedPalette;
-  } else if (savedPalette === 'mauve' || savedPalette === 'pop') {
-    currentPalette = 'crimson';
-  }
   applyTheme();
 }
 
-function setPalette(paletteId) {
-  if (!PALETTES[paletteId]) return;
-  currentPalette = paletteId;
-  localStorage.setItem('start_palette', paletteId);
+function toggleTheme() {
+  theme = theme === 'light' ? 'dark' : 'light';
   applyTheme();
-  renderPaletteDropdown();
 }
+window.toggleTheme = toggleTheme;
 
 function applyTheme() {
   const htmlEl = document.documentElement;
@@ -446,105 +409,31 @@ function applyTheme() {
     htmlEl.classList.remove('dark');
   }
   localStorage.setItem('start_theme', theme);
+  htmlEl.removeAttribute('data-palette');
 
-  if (currentPalette && currentPalette !== 'default') {
-    htmlEl.setAttribute('data-palette', currentPalette);
-  } else {
-    htmlEl.removeAttribute('data-palette');
-  }
+  const sunSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-[#F5F2B8]"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /></svg>`;
+  const moonSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-[#33658A]"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>`;
 
   const themeToggleIcon = document.getElementById('theme-toggle-icon');
   if (themeToggleIcon) {
-    themeToggleIcon.innerHTML = theme === 'dark'
-      ? `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-pastel-pink-200"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /></svg>`
-      : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-slate-700"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" /></svg>`;
+    themeToggleIcon.innerHTML = theme === 'dark' ? sunSVG : moonSVG;
   }
 
-  const currentPal = PALETTES[currentPalette] || PALETTES['default'];
-  const paletteNameEl = document.getElementById('current-palette-name');
-  if (paletteNameEl) paletteNameEl.textContent = currentPal.name;
-
-  const paletteBtnIcon = document.getElementById('palette-btn-icon');
-  if (paletteBtnIcon && currentPal.colors) {
-    paletteBtnIcon.innerHTML = `
-      <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${currentPal.colors[2]}"></span>
-      <span class="w-2.5 h-2.5 rounded-full border border-white dark:border-dark-card" style="background-color: ${currentPal.colors[1]}"></span>
-    `;
+  const themeToggleIconSettings = document.getElementById('theme-toggle-icon-settings');
+  if (themeToggleIconSettings) {
+    themeToggleIconSettings.innerHTML = theme === 'dark' ? sunSVG : moonSVG;
   }
 
   renderTasks();
 }
 
-function togglePaletteDropdown(event) {
-  if (event) event.stopPropagation();
-  const menu = document.getElementById('palette-dropdown-menu');
-  const btn = document.getElementById('palette-dropdown-btn');
-  const chevron = document.getElementById('palette-dropdown-chevron');
-  if (!menu) return;
+// Stubs for backwards compatibility
+function setPalette() {}
+function renderPaletteDropdown() {}
+function closePaletteDropdown() {}
+function togglePaletteDropdown() {}
+function selectPaletteFromDropdown() {}
 
-  const isHidden = menu.classList.contains('hidden');
-  if (isHidden) {
-    renderPaletteDropdown();
-    menu.classList.remove('hidden');
-    menu.classList.add('flex');
-    if (chevron) chevron.classList.add('rotate-180');
-    if (btn) btn.setAttribute('aria-expanded', 'true');
-  } else {
-    closePaletteDropdown();
-  }
-}
-
-function closePaletteDropdown() {
-  const menu = document.getElementById('palette-dropdown-menu');
-  const btn = document.getElementById('palette-dropdown-btn');
-  const chevron = document.getElementById('palette-dropdown-chevron');
-  if (menu && !menu.classList.contains('hidden')) {
-    menu.classList.add('hidden');
-    menu.classList.remove('flex');
-    if (chevron) chevron.classList.remove('rotate-180');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
-  }
-}
-
-function selectPaletteFromDropdown(paletteId) {
-  setPalette(paletteId);
-  closePaletteDropdown();
-}
-
-function renderPaletteDropdown() {
-  const menu = document.getElementById('palette-dropdown-menu');
-  if (!menu) return;
-
-  menu.innerHTML = Object.values(PALETTES).map(pal => {
-    const isSelected = pal.id === currentPalette;
-    const itemClass = isSelected
-      ? 'bg-pastel-pink-50 dark:bg-dark-hover font-bold text-brand-rose-medium dark:text-pastel-pink-300'
-      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-dark-hover/60 font-medium';
-
-    return `
-      <button 
-        type="button"
-        onclick="selectPaletteFromDropdown('${pal.id}')"
-        class="w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left transition-all cursor-pointer ${itemClass}"
-        title="Activar paleta ${pal.name}"
-      >
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="flex items-center -space-x-1 shrink-0">
-            ${pal.colors.map(c => `
-              <span class="w-3 h-3 rounded-full border border-white dark:border-dark-card shadow-xs" style="background-color: ${c}"></span>
-            `).join('')}
-          </div>
-          <span class="font-title text-xs truncate">${pal.name}</span>
-        </div>
-        ${isSelected ? `
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-brand-rose-medium dark:text-pastel-pink-300 shrink-0">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-          </svg>
-        ` : ''}
-      </button>
-    `;
-  }).join('');
-}
 
 // ==========================================
 // Rendering: Categories & Tasks
@@ -556,9 +445,9 @@ function renderCategories() {
   if (!categoryFiltersContainer || !taskCategorySelect) return;
 
   let filterHTML = `
-    <button onclick="setFilter('all')" class="px-4 py-2 rounded-full font-title font-bold text-sm transition-all duration-200 shadow-sm cursor-pointer shrink-0 ${currentFilter === 'all'
-      ? 'bg-pastel-pink-300 text-white dark:bg-pastel-pink-500 shadow-pastel-pink-300/40'
-      : 'bg-white dark:bg-dark-card text-slate-700 dark:text-slate-200 hover:bg-pastel-pink-50 dark:hover:bg-dark-hover'
+    <button onclick="setFilter('all')" class="px-5 py-2 sm:py-2.5 rounded-full font-title font-bold text-xl sm:text-2xl transition-all duration-200 cursor-pointer shrink-0 leading-none ${currentFilter === 'all'
+      ? 'bg-[#33658A] text-white border-2 border-[#33658A] shadow-xs'
+      : 'bg-white dark:bg-dark-card text-[#33658A] dark:text-sky-300 border-2 border-[#33658A] hover:bg-[#33658A]/10'
     }">
       Todas
     </button>
@@ -566,17 +455,22 @@ function renderCategories() {
 
   categories.forEach(cat => {
     const isSelected = currentFilter === cat.id;
-    const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
 
     filterHTML += `
-      <button onclick="setFilter('${cat.id}')" class="px-4 py-2 rounded-full font-title font-bold text-sm transition-all duration-200 shadow-sm cursor-pointer shrink-0 ${isSelected
-        ? 'bg-pastel-pink-300 text-white dark:bg-pastel-pink-500 shadow-pastel-pink-300/40'
-        : `bg-white dark:bg-dark-card ${colorStyles.text} hover:bg-pastel-pink-50 dark:hover:bg-dark-hover`
+      <button onclick="setFilter('${cat.id}')" class="px-5 py-2 sm:py-2.5 rounded-full font-title font-bold text-xl sm:text-2xl transition-all duration-200 cursor-pointer shrink-0 leading-none ${isSelected
+        ? 'bg-[#33658A] text-white border-2 border-[#33658A] shadow-xs'
+        : 'bg-white dark:bg-dark-card text-[#33658A] dark:text-sky-300 border-2 border-[#33658A] hover:bg-[#33658A]/10'
       }">
-        ${cat.name}
+        ${escapeHTML(cat.name)}
       </button>
     `;
   });
+
+  filterHTML += `
+    <button onclick="openManageCategories()" class="px-4 py-2 sm:py-2.5 rounded-full font-title font-bold text-lg sm:text-xl text-[#33658A] dark:text-sky-300 border-2 border-dashed border-[#33658A]/40 hover:border-[#33658A] hover:bg-[#33658A]/10 transition-all cursor-pointer shrink-0 leading-none" title="Gestionar y agregar materias">
+      + Materia
+    </button>
+  `;
 
   categoryFiltersContainer.innerHTML = filterHTML;
 
@@ -585,8 +479,10 @@ function renderCategories() {
     selectHTML += `<option value="${cat.id}">${cat.name}</option>`;
   });
   taskCategorySelect.innerHTML = selectHTML;
+  syncCustomCategorySelect();
 
   renderManageCategories();
+  renderManageCategoriesInline();
 }
 
 function renderManageCategories() {
@@ -598,19 +494,19 @@ function renderManageCategories() {
     const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
     html += `
       <div class="flex items-center justify-between p-2.5 rounded-2xl border border-slate-100 dark:border-dark-border bg-slate-50/70 dark:bg-dark-card/50 hover:bg-slate-100/70 dark:hover:bg-dark-hover transition-colors">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <span class="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
-          <span class="text-xs font-title font-bold text-slate-700 dark:text-slate-200 truncate">${escapeHTML(cat.name)}</span>
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-4 h-4 rounded-full shrink-0 shadow-xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
+          <span class="text-2xl font-title font-bold text-slate-700 dark:text-slate-200 truncate leading-none">${escapeHTML(cat.name)}</span>
         </div>
-        <div class="flex items-center gap-1 shrink-0">
-          <button type="button" onclick="startEditCategory('${cat.id}')" class="p-1.5 text-slate-400 hover:text-pastel-pink-500 dark:hover:text-pastel-pink-300 rounded-lg hover:bg-white dark:hover:bg-dark-card transition-colors cursor-pointer" title="Editar Materia (Nombre y Color)">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button type="button" onclick="startEditCategory('${cat.id}')" class="p-2 text-slate-400 hover:text-[#CE1483] dark:hover:text-[#CE1483] rounded-xl hover:bg-white dark:hover:bg-dark-card transition-colors cursor-pointer" title="Editar Materia (Nombre y Color)">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
             </svg>
           </button>
           ${categories.length > 1 ? `
-            <button type="button" onclick="deleteCategory('${cat.id}')" class="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-300 rounded-lg hover:bg-white dark:hover:bg-dark-card transition-colors cursor-pointer" title="Eliminar Materia">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-4 h-4">
+            <button type="button" onclick="deleteCategory('${cat.id}')" class="p-2 text-slate-400 hover:text-red-500 dark:hover:text-red-300 rounded-xl hover:bg-white dark:hover:bg-dark-card transition-colors cursor-pointer" title="Eliminar Materia">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
               </svg>
             </button>
@@ -658,7 +554,19 @@ function renderTasks(options = {}) {
   let html = '';
 
   if (activeTasks.length > 0) {
-    html += `<div class="space-y-3 task-group" id="active-tasks-container" data-status="active">`;
+    html += `
+      <div class="w-full mb-3 flex items-center justify-between gap-3 p-1 text-left select-none">
+        <div class="flex items-center gap-2.5">
+          <span class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56] dark:text-slate-100">
+            Por hacer (${activeTasks.length})
+          </span>
+        </div>
+        <div class="flex items-center gap-2 flex-1">
+          <span class="h-0.5 flex-1 bg-slate-200/80 dark:bg-dark-border/60"></span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 task-group mb-6" id="active-tasks-container" data-status="active">
+    `;
     activeTasks.forEach(task => {
       html += renderTaskCard(task, task.id === justMovedId);
     });
@@ -666,9 +574,6 @@ function renderTasks(options = {}) {
   }
 
   if (completedTasks.length > 0) {
-    if (activeTasks.length > 0) {
-      html += `<div class="h-px bg-slate-100 dark:bg-dark-border my-6"></div>`;
-    }
     const chevronClass = isCompletedOpen ? 'rotate-180' : 'rotate-0';
     const containerClass = isCompletedOpen ? '' : 'hidden';
 
@@ -677,25 +582,25 @@ function renderTasks(options = {}) {
         id="completed-toggle-btn"
         type="button" 
         onclick="toggleCompletedSection()" 
-        class="w-full mb-3 flex items-center justify-between gap-2 p-2 -ml-2 rounded-2xl hover:bg-slate-100/60 dark:hover:bg-dark-hover/40 transition-colors cursor-pointer text-left select-none group"
+        class="w-full my-3 flex items-center justify-between gap-3 p-2 -ml-2 rounded-2xl hover:bg-slate-100/60 dark:hover:bg-dark-hover/40 transition-colors cursor-pointer text-left select-none group"
         title="Desplegar o replegar tareas completadas"
       >
-        <div class="flex items-center gap-2">
-          <span class="font-title text-sm font-bold text-slate-500 dark:text-slate-400 group-hover:text-brand-rose-medium transition-colors">
+        <div class="flex items-center gap-2.5">
+          <span class="font-title text-2xl sm:text-3xl font-bold text-slate-500 dark:text-slate-400 group-hover:text-[#CE1483] transition-colors">
             Completadas (${completedTasks.length})
           </span>
-          <span id="completed-toggle-label" class="text-[11px] font-title px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-dark-border text-slate-500 dark:text-slate-400 font-medium">
+          <span id="completed-toggle-label" class="text-lg sm:text-xl font-title px-3 py-0.5 rounded-full bg-slate-100 dark:bg-dark-border text-slate-600 dark:text-slate-300 font-bold leading-none">
             ${isCompletedOpen ? 'Ocultar' : 'Mostrar'}
           </span>
         </div>
         <div class="flex items-center gap-2 flex-1">
-          <span class="h-0.5 flex-1 bg-slate-100/70 dark:bg-dark-border/40"></span>
-          <svg id="completed-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-slate-400 group-hover:text-brand-rose-medium transition-transform duration-200 ${chevronClass}">
+          <span class="h-0.5 flex-1 bg-slate-200/80 dark:bg-dark-border/60"></span>
+          <svg id="completed-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-slate-400 group-hover:text-[#CE1483] transition-transform duration-200 ${chevronClass}">
             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
         </div>
       </button>
-      <div class="space-y-3 opacity-80 task-group transition-all duration-300 ${containerClass}" id="completed-tasks-container" data-status="completed">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-80 task-group transition-all duration-300 ${containerClass}" id="completed-tasks-container" data-status="completed">
     `;
     completedTasks.forEach(task => {
       html += renderTaskCard(task, task.id === justMovedId);
@@ -705,6 +610,45 @@ function renderTasks(options = {}) {
 
   taskListContainer.innerHTML = html;
   attachDragAndDropListeners();
+  renderBannerStats();
+}
+
+function renderBannerStats() {
+  const totalTasks = tasks.length;
+  const activeTasks = tasks.filter(t => !t.completed).length;
+  const completedTasks = tasks.filter(t => t.completed).length;
+  const percent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  const countEl = document.getElementById('banner-tasks-count');
+  const quoteEl = document.getElementById('banner-quote');
+  const progressTextEl = document.getElementById('banner-progress-text');
+  const progressCircleEl = document.getElementById('banner-progress-circle');
+
+  if (countEl) {
+    countEl.textContent = `${completedTasks}/${totalTasks} ${totalTasks === 1 ? 'tarea' : 'tareas'}`;
+  }
+
+  if (quoteEl) {
+    if (totalTasks === 0) {
+      quoteEl.textContent = '¡Comienza agregando tu primera tarea!';
+    } else if (percent === 100) {
+      quoteEl.textContent = '¡Excelente trabajo! Todo al día 🎉';
+    } else if (percent >= 50) {
+      quoteEl.textContent = 'Keep going, only fools are satisfied';
+    } else {
+      quoteEl.textContent = 'Paso a pasito, ¡tú puedes con todo! ⭐';
+    }
+  }
+
+  if (progressTextEl) {
+    progressTextEl.textContent = `${percent}%`;
+  }
+
+  if (progressCircleEl) {
+    const circumference = 213.6; // 2 * PI * 34
+    const offset = circumference - (circumference * percent / 100);
+    progressCircleEl.style.strokeDashoffset = offset;
+  }
 }
 
 let isCompletedOpen = false;
@@ -734,13 +678,13 @@ function toggleCompletedSection() {
 }
 
 function renderTaskCard(task, isJustMoved = false) {
-  const category = categories.find(c => c.id === task.categoryId) || { name: 'Otros', color: 'pastel-peach' };
-  const colorStyles = PASTEL_COLOR_MAP[category.color] || PASTEL_COLOR_MAP['pastel-peach'];
+  const category = categories.find(c => c.id === task.categoryId) || { name: 'Otros', color: 'pastel-pink' };
+  const colorStyles = PASTEL_COLOR_MAP[category.color] || PASTEL_COLOR_MAP['pastel-pink'];
   const isSelected = selectedTaskId === task.id;
   const cardBorderClass = isSelected
-    ? 'task-card-selected'
-    : 'border-slate-100 dark:border-dark-border hover:border-pastel-pink-200 dark:hover:border-dark-hover shadow-sm';
-  const textCompletedClass = task.completed ? 'completed-text text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200';
+    ? 'task-card-selected ring-2 ring-[#33658A]'
+    : 'border border-black/5 dark:border-white/10 shadow-xs hover:shadow-sm';
+  const textCompletedClass = task.completed ? 'completed-text opacity-60' : '';
   const arriveClass = isJustMoved ? 'task-soft-arrive' : '';
 
   return `
@@ -749,78 +693,69 @@ function renderTaskCard(task, isJustMoved = false) {
       data-task-id="${task.id}"
       tabindex="0"
       onclick="selectTask(event, '${task.id}')"
-      class="task-card p-4 rounded-2xl border-2 bg-white dark:bg-dark-card flex items-center justify-between gap-3.5 cursor-grab active:cursor-grabbing outline-none ${cardBorderClass} ${arriveClass} custom-focus select-none"
+      class="task-card p-4 sm:p-5 rounded-[26px] ${colorStyles.cardBg} flex items-center justify-between gap-3 cursor-grab active:cursor-grabbing outline-none ${cardBorderClass} ${arriveClass} custom-focus select-none transition-all duration-200"
       role="listitem"
       aria-selected="${isSelected}"
       draggable="true"
     >
-      <!-- Drag Handle Indicator (Desktop & Mobile visual cue) -->
-      <div class="drag-handle text-slate-300 dark:text-slate-600 hover:text-pastel-pink-400 cursor-grab shrink-0 p-1 -ml-1">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </div>
-
       <div class="flex items-center gap-3.5 flex-1 min-w-0 pointer-events-auto">
-        <!-- Custom Checkbox -->
+        <!-- White Circular Checkbox (compact 16px size) -->
         <button 
           id="checkbox-${task.id}"
           onclick="toggleTaskComplete(event, '${task.id}')" 
-          class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all cursor-pointer select-none shrink-0 ${task.completed
-      ? 'bg-pastel-pink-300 border-pastel-pink-300 dark:bg-pastel-pink-500 dark:border-pastel-pink-500 text-white'
-      : 'border-slate-300 dark:border-slate-600 hover:border-pastel-pink-300'
-    }"
+          class="w-4 h-4 rounded-full bg-white shadow-xs border border-white/90 flex items-center justify-center transition-all cursor-pointer select-none shrink-0 hover:scale-115 active:scale-90"
           title="${task.completed ? 'Marcar como pendiente' : 'Marcar como completada'}"
         >
           ${task.completed ? `
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3.5" stroke="#CE1483" class="w-2.5 h-2.5">
               <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
             </svg>
           ` : ''}
         </button>
 
+        <!-- Task Title & Description -->
         <div id="text-wrapper-${task.id}" class="min-w-0 flex-1 ${textCompletedClass}">
-          <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <h3 class="font-title text-base font-semibold leading-tight strikethrough-line truncate">
-              ${escapeHTML(task.title)}
-            </h3>
-            <span class="text-xs px-2.5 py-0.5 rounded-full font-medium ${colorStyles.bg} ${colorStyles.text}">
-              ${escapeHTML(category.name)}
-            </span>
-          </div>
-          ${task.description ? `<p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">${escapeHTML(task.description)}</p>` : ''}
+          <h3 class="font-title text-2xl sm:text-3xl font-bold text-[#1E3A56] dark:text-slate-100 leading-tight strikethrough-line line-clamp-2">
+            ${escapeHTML(task.title)}
+          </h3>
+          ${task.description ? `
+            <p class="font-sans text-xl sm:text-2xl text-[#1E3A56]/80 dark:text-slate-200 line-clamp-2 leading-tight pt-0.5">
+              ${escapeHTML(task.description)}
+            </p>
+          ` : ''}
         </div>
       </div>
 
-      <div class="flex items-center gap-1.5 shrink-0 pointer-events-auto">
-        <!-- Priority Star Button -->
+      <!-- Actions: Mascot Star, Edit Pencil, Delete Trash -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 pointer-events-auto">
+        <!-- Mascot Star Priority Button -->
         <button 
           id="star-btn-${task.id}"
           onclick="toggleTaskPriority(event, '${task.id}')" 
-          title="Prioridad"
-          class="focus:outline-none cursor-pointer"
+          title="${task.priority ? 'Quitar prioridad' : 'Marcar como prioritaria'}"
+          class="focus:outline-none cursor-pointer p-0.5 hover:scale-110 active:scale-95 transition-transform"
         >
           ${getStarSVG(task.priority, theme === 'dark')}
         </button>
 
-        <!-- Edit Button -->
+        <!-- Edit Pencil Button -->
         <button 
           onclick="openEditModal(event, '${task.id}')"
-          class="p-1.5 text-slate-400 hover:text-pastel-pink-400 dark:hover:text-pastel-pink-300 rounded-lg hover:bg-slate-50 dark:hover:bg-dark-hover transition-colors cursor-pointer"
+          class="p-1 text-[#1E3A56] dark:text-slate-200 hover:opacity-75 transition-opacity cursor-pointer"
           title="Editar Tarea"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4.5 h-4.5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 sm:w-5.5 sm:h-5.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
           </svg>
         </button>
 
-        <!-- Delete Button -->
+        <!-- Delete Trash Button -->
         <button 
           onclick="deleteTask(event, '${task.id}')"
-          class="p-1.5 text-slate-400 hover:text-red-400 dark:hover:text-red-300 rounded-lg hover:bg-slate-50 dark:hover:bg-dark-hover transition-colors cursor-pointer"
+          class="p-1 text-[#1E3A56] dark:text-slate-200 hover:opacity-75 transition-opacity cursor-pointer"
           title="Eliminar Tarea"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4.5 h-4.5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 sm:w-5.5 sm:h-5.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
           </svg>
         </button>
@@ -1023,13 +958,142 @@ function selectTask(event, taskId) {
 let editingTaskId = null;
 let editingCategoryId = null;
 
+// ==========================================
+// Custom Category Dropdown for Task Modal
+// ==========================================
+
+function toggleCategoryDropdown(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const menu = document.getElementById('task-category-menu');
+  const chevron = document.getElementById('task-category-chevron');
+  if (!menu) return;
+
+  const isHidden = menu.classList.contains('hidden');
+  if (isHidden) {
+    renderCustomCategoryDropdownOptions();
+    menu.classList.remove('hidden');
+    if (chevron) chevron.classList.add('rotate-180');
+  } else {
+    menu.classList.add('hidden');
+    if (chevron) chevron.classList.remove('rotate-180');
+  }
+}
+window.toggleCategoryDropdown = toggleCategoryDropdown;
+
+function closeCategoryDropdown() {
+  const menu = document.getElementById('task-category-menu');
+  const chevron = document.getElementById('task-category-chevron');
+  if (menu) menu.classList.add('hidden');
+  if (chevron) chevron.classList.remove('rotate-180');
+}
+window.closeCategoryDropdown = closeCategoryDropdown;
+
+function selectCategoryOption(catId) {
+  const hiddenSelect = document.getElementById('task-category');
+  if (hiddenSelect) {
+    hiddenSelect.value = catId;
+  }
+  syncCustomCategorySelect(catId);
+  closeCategoryDropdown();
+}
+window.selectCategoryOption = selectCategoryOption;
+
+function syncCustomCategorySelect(selectedId) {
+  const hiddenSelect = document.getElementById('task-category');
+  const currentId = selectedId || (hiddenSelect ? hiddenSelect.value : (categories[0] ? categories[0].id : ''));
+  const foundCat = categories.find(c => c.id === currentId) || categories[0];
+
+  const dotEl = document.getElementById('task-category-dot');
+  const labelEl = document.getElementById('task-category-label');
+
+  if (foundCat) {
+    const colorStyles = PASTEL_COLOR_MAP[foundCat.color] || PASTEL_COLOR_MAP['pastel-pink'];
+    if (dotEl) dotEl.style.backgroundColor = colorStyles.dot || '#F472B6';
+    if (labelEl) labelEl.textContent = foundCat.name;
+    if (hiddenSelect) hiddenSelect.value = foundCat.id;
+  }
+}
+window.syncCustomCategorySelect = syncCustomCategorySelect;
+
+function renderCustomCategoryDropdownOptions() {
+  const menu = document.getElementById('task-category-menu');
+  if (!menu) return;
+
+  const hiddenSelect = document.getElementById('task-category');
+  const currentId = hiddenSelect ? hiddenSelect.value : (categories[0] ? categories[0].id : '');
+
+  let html = '';
+  categories.forEach(cat => {
+    const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
+    const isSelected = cat.id === currentId;
+    html += `
+      <button type="button" onclick="selectCategoryOption('${cat.id}')"
+        class="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-[#FCD3DE]/40 dark:hover:bg-dark-hover transition-colors cursor-pointer select-none group text-left ${isSelected ? 'bg-[#FCD3DE]/40 dark:bg-dark-hover/80 font-bold' : ''}">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-4 h-4 rounded-full shrink-0 shadow-2xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
+          <span class="font-title text-2xl sm:text-3xl text-[#1E3A56] dark:text-slate-100 truncate leading-none">
+            ${escapeHTML(cat.name)}
+          </span>
+        </div>
+        ${isSelected ? `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="#CE1483" class="w-5 h-5 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+        ` : ''}
+      </button>
+    `;
+  });
+
+  menu.innerHTML = html;
+}
+
+let initialTaskModalState = {
+  title: '',
+  desc: '',
+  categoryId: '',
+  priority: false
+};
+
+function hasTaskModalChanges() {
+  const currentTitle = document.getElementById('task-title') ? document.getElementById('task-title').value.trim() : '';
+  const currentDesc = document.getElementById('task-desc') ? document.getElementById('task-desc').value.trim() : '';
+  const currentCategory = document.getElementById('task-category') ? document.getElementById('task-category').value : '';
+  const currentPriority = document.getElementById('task-priority-toggle') ? document.getElementById('task-priority-toggle').dataset.priority === 'true' : false;
+
+  return (
+    currentTitle !== initialTaskModalState.title.trim() ||
+    currentDesc !== initialTaskModalState.desc.trim() ||
+    (initialTaskModalState.categoryId && currentCategory !== initialTaskModalState.categoryId) ||
+    currentPriority !== initialTaskModalState.priority
+  );
+}
+
 function openAddModal() {
   editingTaskId = null;
   document.getElementById('modal-title').textContent = 'Nueva Tarea';
   document.getElementById('task-title').value = '';
   document.getElementById('task-desc').value = '';
+  
+  const defaultCatId = categories.length > 0 ? categories[0].id : '';
+  if (categories.length > 0) {
+    const hiddenSelect = document.getElementById('task-category');
+    if (hiddenSelect) hiddenSelect.value = defaultCatId;
+  }
+  syncCustomCategorySelect();
+  closeCategoryDropdown();
+
   document.getElementById('task-priority-toggle').dataset.priority = 'false';
   updateModalPriorityStar();
+
+  initialTaskModalState = {
+    title: '',
+    desc: '',
+    categoryId: defaultCatId,
+    priority: false
+  };
 
   const deleteBtn = document.getElementById('btn-modal-delete-task');
   if (deleteBtn) deleteBtn.classList.add('hidden');
@@ -1047,9 +1111,21 @@ function openEditModal(event, id) {
   document.getElementById('modal-title').textContent = 'Editar Tarea';
   document.getElementById('task-title').value = task.title;
   document.getElementById('task-desc').value = task.description || '';
-  document.getElementById('task-category').value = task.categoryId;
+  
+  const hiddenSelect = document.getElementById('task-category');
+  if (hiddenSelect) hiddenSelect.value = task.categoryId;
+  syncCustomCategorySelect(task.categoryId);
+  closeCategoryDropdown();
+
   document.getElementById('task-priority-toggle').dataset.priority = task.priority.toString();
   updateModalPriorityStar();
+
+  initialTaskModalState = {
+    title: task.title || '',
+    desc: task.description || '',
+    categoryId: task.categoryId || '',
+    priority: !!task.priority
+  };
 
   const deleteBtn = document.getElementById('btn-modal-delete-task');
   if (deleteBtn) deleteBtn.classList.remove('hidden');
@@ -1060,19 +1136,34 @@ function openEditModal(event, id) {
 
 function deleteEditingTask() {
   if (!editingTaskId) return;
+  if (!confirm('¿Estás seguro de que deseas eliminar esta tarea?')) return;
   const taskId = editingTaskId;
   tasks = tasks.filter(t => t.id !== taskId);
   if (selectedTaskId === taskId) selectedTaskId = null;
   saveTasks();
-  closeModal();
+  closeModal(true);
   renderTasks();
 }
 
-function closeModal() {
+function closeModal(force = false) {
+  if (!force && hasTaskModalChanges()) {
+    const confirmLeave = confirm('¿Deseas salir? Tienes cambios sin guardar y se perderá lo que has escrito.');
+    if (!confirmLeave) return false;
+  }
   document.getElementById('task-modal').classList.add('hidden');
   document.getElementById('task-modal').classList.remove('flex');
+  closeCategoryDropdown();
   editingTaskId = null;
+  return true;
 }
+window.closeModal = closeModal;
+
+function handleTaskModalBackdropClick(event) {
+  if (event && event.target === document.getElementById('task-modal')) {
+    closeModal();
+  }
+}
+window.handleTaskModalBackdropClick = handleTaskModalBackdropClick;
 
 function toggleModalPriority() {
   const toggleBtn = document.getElementById('task-priority-toggle');
@@ -1128,7 +1219,7 @@ function saveTaskAction() {
   }
 
   saveTasks();
-  closeModal();
+  closeModal(true);
   renderTasks({ justMovedId: selectedTaskId });
 }
 
@@ -1205,7 +1296,7 @@ function toggleTaskComplete(event, id) {
       checkboxEl.classList.remove('border-slate-300', 'dark:border-slate-600', 'hover:border-pastel-pink-300');
       checkboxEl.classList.add('bg-pastel-pink-300', 'border-pastel-pink-300', 'dark:bg-pastel-pink-500', 'dark:border-pastel-pink-500', 'text-white', 'check-pop-animate');
       checkboxEl.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-2.5 h-2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
         </svg>
       `;
@@ -1322,6 +1413,7 @@ function toggleTaskPriority(event, id) {
 
 function deleteTask(event, id) {
   if (event) event.stopPropagation();
+  if (!confirm('¿Estás seguro de que deseas eliminar esta tarea?')) return;
   const cardEl = document.getElementById(`card-${id}`);
   if (cardEl) {
     cardEl.classList.add('task-collapsing');
@@ -1345,83 +1437,123 @@ function setFilter(filterId) {
   renderTasks();
 }
 
+function getCategoryNameInputElement() {
+  return document.getElementById('cat-name-input') || document.getElementById('new-cat-name');
+}
+
+function getCategoryColorInputElement() {
+  return document.getElementById('new-cat-color');
+}
+
+function getCategoryLegendElement() {
+  return document.getElementById('cat-form-legend') || document.getElementById('cat-form-title');
+}
+
+function hasCategoryModalChanges() {
+  const nameInput = getCategoryNameInputElement();
+  const currentName = nameInput ? nameInput.value.trim() : '';
+  if (editingCategoryId) {
+    const cat = categories.find(c => c.id === editingCategoryId);
+    return cat ? currentName !== cat.name.trim() : currentName.length > 0;
+  }
+  return currentName.length > 0;
+}
+
 function openManageCategories() {
   cancelCategoryEdit();
   document.getElementById('categories-modal').classList.remove('hidden');
   document.getElementById('categories-modal').classList.add('flex');
 }
+window.openManageCategories = openManageCategories;
 
-function closeManageCategories() {
+function closeManageCategories(force = false) {
+  if (!force && hasCategoryModalChanges()) {
+    const confirmLeave = confirm('¿Deseas salir? Tienes texto escrito sin guardar y se perderá.');
+    if (!confirmLeave) return false;
+  }
   cancelCategoryEdit();
   document.getElementById('categories-modal').classList.add('hidden');
   document.getElementById('categories-modal').classList.remove('flex');
+  return true;
 }
+window.closeManageCategories = closeManageCategories;
+
+function handleCategoriesModalBackdropClick(event) {
+  if (event && event.target === document.getElementById('categories-modal')) {
+    closeManageCategories();
+  }
+}
+window.handleCategoriesModalBackdropClick = handleCategoriesModalBackdropClick;
 
 function startEditCategory(id) {
   const cat = categories.find(c => c.id === id);
   if (!cat) return;
 
   editingCategoryId = id;
-  const nameInput = document.getElementById('new-cat-name');
-  const colorSelect = document.getElementById('new-cat-color');
-  const formTitle = document.getElementById('cat-form-title');
+  const nameInput = getCategoryNameInputElement();
+  const colorSelect = getCategoryColorInputElement();
+  const formTitle = getCategoryLegendElement();
   const submitBtn = document.getElementById('cat-form-submit');
   const cancelBtn = document.getElementById('cat-form-cancel');
 
   if (nameInput) nameInput.value = cat.name;
   if (colorSelect) colorSelect.value = cat.color;
   syncCategorySwatchActive(cat.color);
-  if (formTitle) formTitle.textContent = `Editar Materia: ${cat.name}`;
+  if (formTitle) formTitle.textContent = `Editar: ${cat.name}`;
   if (submitBtn) submitBtn.textContent = 'Guardar Cambios';
   if (cancelBtn) cancelBtn.classList.remove('hidden');
 
   if (nameInput) nameInput.focus();
 }
+window.startEditCategory = startEditCategory;
 
 function selectCategoryColorSwatch(colorVal) {
-  const colorSelect = document.getElementById('new-cat-color');
+  const colorSelect = getCategoryColorInputElement();
   if (colorSelect) {
     colorSelect.value = colorVal;
   }
   syncCategorySwatchActive(colorVal);
 }
+window.selectCategoryColorSwatch = selectCategoryColorSwatch;
 
 function syncCategorySwatchActive(colorVal) {
   const swatches = document.querySelectorAll('.cat-swatch');
-  const selectEl = document.getElementById('new-cat-color');
+  const selectEl = getCategoryColorInputElement();
   const currentVal = colorVal || (selectEl ? selectEl.value : 'pastel-pink');
 
   swatches.forEach(swatch => {
     const fnAttr = swatch.getAttribute('onclick') || '';
     if (fnAttr.includes(`'${currentVal}'`)) {
-      swatch.classList.add('ring-2', 'ring-brand-rose-medium', 'scale-115');
+      swatch.classList.add('ring-2', 'ring-[#CE1483]', 'scale-115');
     } else {
-      swatch.classList.remove('ring-2', 'ring-brand-rose-medium', 'scale-115');
+      swatch.classList.remove('ring-2', 'ring-[#CE1483]', 'scale-115');
     }
   });
 }
+window.syncCategorySwatchActive = syncCategorySwatchActive;
 
 function cancelCategoryEdit() {
   editingCategoryId = null;
-  const nameInput = document.getElementById('new-cat-name');
-  const colorSelect = document.getElementById('new-cat-color');
-  const formTitle = document.getElementById('cat-form-title');
+  const nameInput = getCategoryNameInputElement();
+  const colorSelect = getCategoryColorInputElement();
+  const formTitle = getCategoryLegendElement();
   const submitBtn = document.getElementById('cat-form-submit');
   const cancelBtn = document.getElementById('cat-form-cancel');
 
   if (nameInput) nameInput.value = '';
   if (colorSelect) colorSelect.value = 'pastel-pink';
   syncCategorySwatchActive('pastel-pink');
-  if (formTitle) formTitle.textContent = 'Nueva Materia / Categoría';
+  if (formTitle) formTitle.textContent = 'Nueva Materia';
   if (submitBtn) submitBtn.textContent = '+ Agregar Materia';
   if (cancelBtn) cancelBtn.classList.add('hidden');
 }
+window.cancelCategoryEdit = cancelCategoryEdit;
 
 function saveCategoryFormAction() {
-  const nameInput = document.getElementById('new-cat-name');
-  const colorSelect = document.getElementById('new-cat-color');
-  const name = nameInput.value.trim();
-  const color = colorSelect.value;
+  const nameInput = getCategoryNameInputElement();
+  const colorSelect = getCategoryColorInputElement();
+  const name = nameInput ? nameInput.value.trim() : '';
+  const color = colorSelect ? colorSelect.value : 'pastel-pink';
 
   if (!name) {
     alert('Introduce un nombre para la materia.');
@@ -1450,6 +1582,7 @@ function saveCategoryFormAction() {
     renderCategories();
   }
 }
+window.saveCategoryFormAction = saveCategoryFormAction;
 
 function addCategoryAction() {
   saveCategoryFormAction();
@@ -1461,7 +1594,7 @@ function deleteCategory(id) {
     return;
   }
 
-  if (confirm('Al eliminar esta categoría, las tareas asociadas pasarán a la primera categoría disponible. ¿Deseas continuar?')) {
+  if (confirm('¿Estás seguro de que deseas eliminar esta materia? Las tareas asociadas pasarán a la primera materia disponible.')) {
     categories = categories.filter(c => c.id !== id);
     const fallbackId = categories[0].id;
 
@@ -1509,13 +1642,18 @@ function updateAuthUI() {
   const isGuestActive = sessionStorage.getItem('start_guest_session') === 'true';
   isSessionUnlocked = hasActiveUser || isGuestActive;
 
-  if (gatewayScreen && mainAppView) {
+  const settingsView = document.getElementById('settings-view');
+  const profileView = document.getElementById('profile-view');
+
+  if (gatewayScreen) {
     if (isSessionUnlocked) {
       gatewayScreen.classList.add('hidden');
-      mainAppView.classList.remove('hidden');
+      navigateTo(currentView || 'home');
     } else {
       gatewayScreen.classList.remove('hidden');
-      mainAppView.classList.add('hidden');
+      if (mainAppView) mainAppView.classList.add('hidden');
+      if (settingsView) settingsView.classList.add('hidden');
+      if (profileView) profileView.classList.add('hidden');
     }
   }
 
@@ -1525,7 +1663,7 @@ function updateAuthUI() {
 
     if (displayNameEl) displayNameEl.textContent = name;
     if (avatarIconEl) {
-      avatarIconEl.innerHTML = `<span class="w-5 h-5 rounded-full bg-pastel-pink-300 text-white text-[10px] font-bold flex items-center justify-center">${initial}</span>`;
+      avatarIconEl.innerHTML = `<span class="w-full h-full rounded-full bg-slate-300 dark:bg-slate-700 text-[#1E3A56] dark:text-slate-100 text-lg font-title font-bold flex items-center justify-center">${initial}</span>`;
     }
     if (welcomeSubtitleEl) {
       welcomeSubtitleEl.textContent = `¡Hola de nuevo, ${name}! Tus tareas están listas.`;
@@ -1537,9 +1675,9 @@ function updateAuthUI() {
 
     updateSyncStatus('synced');
   } else {
-    if (displayNameEl) displayNameEl.textContent = 'Modo Local';
+    if (displayNameEl) displayNameEl.textContent = 'amigo';
     if (avatarIconEl) {
-      avatarIconEl.innerHTML = `<span class="w-5 h-5 rounded-full bg-slate-200 dark:bg-dark-border text-slate-600 dark:text-slate-300 text-[10px] font-bold flex items-center justify-center">L</span>`;
+      avatarIconEl.innerHTML = `<span class="w-full h-full rounded-full bg-slate-300 dark:bg-slate-700 text-[#1E3A56] dark:text-slate-100 text-lg font-title font-bold flex items-center justify-center">A</span>`;
     }
     if (welcomeSubtitleEl) {
       welcomeSubtitleEl.textContent = 'Write like you are running out of time.';
@@ -1547,11 +1685,43 @@ function updateAuthUI() {
 
     if (profileNameEl) profileNameEl.textContent = 'Invitado (Modo Local)';
     if (profileEmailEl) profileEmailEl.textContent = 'Datos guardados localmente';
-    if (profileAvatarEl) profileAvatarEl.textContent = 'L';
+    if (profileAvatarEl) profileAvatarEl.textContent = 'A';
 
     updateSyncStatus('local');
   }
+
+  // Toggle Password Change section vs Guest Prompt section
+  const pwdSections = document.querySelectorAll('.profile-pwd-section');
+  const guestSections = document.querySelectorAll('.profile-guest-section');
+  const signoutLabels = document.querySelectorAll('.profile-signout-label');
+
+  if (currentUser) {
+    pwdSections.forEach(el => el.classList.remove('hidden'));
+    guestSections.forEach(el => el.classList.add('hidden'));
+    signoutLabels.forEach(el => el.textContent = 'Cerrar Sesión');
+  } else {
+    pwdSections.forEach(el => el.classList.add('hidden'));
+    guestSections.forEach(el => el.classList.remove('hidden'));
+    signoutLabels.forEach(el => el.textContent = 'Salir del Modo Local');
+  }
 }
+
+function openAuthGateway() {
+  const gatewayScreen = document.getElementById('auth-gateway-screen');
+  const mainAppView = document.getElementById('app-main-view');
+  const settingsView = document.getElementById('settings-view');
+  const profileView = document.getElementById('profile-view');
+
+  if (gatewayScreen) {
+    gatewayScreen.classList.remove('hidden');
+    if (mainAppView) mainAppView.classList.add('hidden');
+    if (settingsView) settingsView.classList.add('hidden');
+    if (profileView) profileView.classList.add('hidden');
+    isSessionUnlocked = false;
+  }
+  closeProfileModal();
+}
+window.openAuthGateway = openAuthGateway;
 
 function openAuthOrProfileModal() {
   if (currentUser) {
@@ -1616,96 +1786,96 @@ function renderProfileDashboard() {
 
   dashboardContainer.innerHTML = `
     <!-- Tasks Progress Card -->
-    <div class="p-4 rounded-2xl bg-gradient-to-br from-pastel-pink-50 via-white to-pastel-pink-100/50 dark:from-dark-hover dark:via-dark-card dark:to-dark-card border border-pastel-pink-200/80 dark:border-dark-border shadow-sm flex flex-col gap-2.5">
+    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-pastel-pink-50 via-white to-pastel-pink-100/50 dark:from-dark-hover dark:via-dark-card dark:to-dark-card border border-pastel-pink-200/80 dark:border-dark-border shadow-sm flex flex-col gap-3">
       <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <span class="text-sm font-title font-bold text-slate-800 dark:text-slate-100">Progreso de Tareas</span>
-          <span class="text-[10px] font-title font-bold px-2 py-0.5 rounded-full bg-pastel-pink-200 dark:bg-pastel-pink-900/60 text-brand-rose-medium dark:text-pastel-pink-300">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl sm:text-2xl font-title font-bold text-slate-800 dark:text-slate-100">Progreso de Tareas</span>
+          <span class="text-sm sm:text-base font-title font-bold px-3 py-0.5 rounded-full bg-pastel-pink-200 dark:bg-pastel-pink-900/60 text-brand-rose-medium dark:text-pastel-pink-300">
             ${statusBadge}
           </span>
         </div>
-        <span class="font-title text-base font-extrabold text-brand-rose-medium dark:text-pastel-pink-300">
+        <span class="font-title text-2xl sm:text-3xl font-extrabold text-brand-rose-medium dark:text-pastel-pink-300">
           ${percentage}%
         </span>
       </div>
 
       <!-- Animated Progress Bar -->
-      <div class="w-full h-2.5 rounded-full bg-slate-100 dark:bg-dark-border overflow-hidden shadow-inner">
+      <div class="w-full h-3 rounded-full bg-slate-100 dark:bg-dark-border overflow-hidden shadow-inner">
         <div 
           class="h-full rounded-full bg-gradient-to-r from-pastel-pink-300 via-pastel-pink-400 to-brand-rose-medium transition-all duration-700 ease-out"
           style="width: ${percentage}%"
         ></div>
       </div>
 
-      <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+      <div class="flex items-center justify-between text-base sm:text-lg text-slate-500 dark:text-slate-400 font-sans">
         <span><strong>${completedTasks.length}</strong> de <strong>${totalTasks}</strong> tareas completadas</span>
-        <span class="text-[11px] text-slate-400 dark:text-slate-500">${statusMessage}</span>
+        <span class="text-sm sm:text-base text-slate-400 dark:text-slate-500">${statusMessage}</span>
       </div>
     </div>
 
     <!-- 4-KPI Grid -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
       <!-- Total Tasks -->
-      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-1">
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-slate-400 dark:text-slate-500">
-          <span class="text-[10px] font-bold uppercase tracking-wider">Total</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 0 1 8.75 1h2.5A2.75 2.75 0 0 1 14 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v9.43a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 2 16.5V7.07c0-1.32.947-2.488 2.294-2.677.566-.078 1.134-.145 1.706-.2V3.75Zm4.25-1.25a1.25 1.25 0 0 0-1.25 1.25v.277c.414-.018.83-.027 1.25-.027.42 0 .836.009 1.25.027V3.75a1.25 1.25 0 0 0-1.25-1.25Z" clip-rule="evenodd" /></svg>
+          <span class="text-sm sm:text-base font-title font-bold uppercase tracking-wider">Total</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M6 3.75A2.75 2.75 0 0 1 8.75 1h2.5A2.75 2.75 0 0 1 14 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v9.43a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 2 16.5V7.07c0-1.32.947-2.488 2.294-2.677.566-.078 1.134-.145 1.706-.2V3.75Zm4.25-1.25a1.25 1.25 0 0 0-1.25 1.25v.277c.414-.018.83-.027 1.25-.027.42 0 .836.009 1.25.027V3.75a1.25 1.25 0 0 0-1.25-1.25Z" clip-rule="evenodd" /></svg>
         </div>
-        <span class="font-title text-xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">${totalTasks}</span>
-        <span class="text-[10px] text-slate-400 dark:text-slate-500">registradas</span>
+        <span class="font-title text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">${totalTasks}</span>
+        <span class="text-base font-sans text-slate-400 dark:text-slate-500">registradas</span>
       </div>
 
       <!-- Completed Tasks -->
-      <div class="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/30 flex flex-col gap-1">
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/30 flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
-          <span class="text-[10px] font-bold uppercase tracking-wider">Hechas</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>
+          <span class="text-sm sm:text-base font-title font-bold uppercase tracking-wider">Hechas</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>
         </div>
-        <span class="font-title text-xl font-extrabold text-emerald-700 dark:text-emerald-300 leading-none">${completedTasks.length}</span>
-        <span class="text-[10px] text-emerald-600/70 dark:text-emerald-400/60">completadas</span>
+        <span class="font-title text-2xl sm:text-3xl font-extrabold text-emerald-700 dark:text-emerald-300 leading-none">${completedTasks.length}</span>
+        <span class="text-base font-sans text-emerald-600/70 dark:text-emerald-400/60">completadas</span>
       </div>
 
       <!-- Pending Tasks -->
-      <div class="p-3 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30 flex flex-col gap-1">
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30 flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-amber-600 dark:text-amber-400">
-          <span class="text-[10px] font-bold uppercase tracking-wider">Pendientes</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" /></svg>
+          <span class="text-sm sm:text-base font-title font-bold uppercase tracking-wider">Pendientes</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" /></svg>
         </div>
-        <span class="font-title text-xl font-extrabold text-amber-700 dark:text-amber-300 leading-none">${activeTasks.length}</span>
-        <span class="text-[10px] text-amber-600/70 dark:text-amber-400/60">por realizar</span>
+        <span class="font-title text-2xl sm:text-3xl font-extrabold text-amber-700 dark:text-amber-300 leading-none">${activeTasks.length}</span>
+        <span class="text-base font-sans text-amber-600/70 dark:text-amber-400/60">por realizar</span>
       </div>
 
       <!-- Priority Tasks -->
-      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-1">
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-dark-hover border border-slate-100 dark:border-dark-border flex flex-col gap-1.5">
         <div class="flex items-center justify-between text-slate-400 dark:text-slate-500">
-          <span class="text-[10px] font-bold uppercase tracking-wider">Prioridad</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#F7BA00" class="w-3.5 h-3.5"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.402Z" clip-rule="evenodd" /></svg>
+          <span class="text-sm sm:text-base font-title font-bold uppercase tracking-wider">Prioridad</span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="#F7BA00" class="w-4 h-4"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.402Z" clip-rule="evenodd" /></svg>
         </div>
-        <span class="font-title text-xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">${priorityTasks.length}</span>
-        <span class="text-[10px] text-slate-400 dark:text-slate-500">con estrella</span>
+        <span class="font-title text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100 leading-none">${priorityTasks.length}</span>
+        <span class="text-base font-sans text-slate-400 dark:text-slate-500">con estrella</span>
       </div>
     </div>
 
     <!-- Category Breakdown -->
     ${categoryStats.length > 0 ? `
-      <div class="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-dark-hover/40 border border-slate-100 dark:border-dark-border flex flex-col gap-2.5">
+      <div class="p-4 rounded-2xl bg-slate-50/70 dark:bg-dark-hover/40 border border-slate-100 dark:border-dark-border flex flex-col gap-3">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-700 dark:text-slate-200 font-title">Tareas por Materia</span>
-          <span class="text-[10px] text-slate-400 dark:text-slate-500">Hechas / Total</span>
+          <span class="text-lg sm:text-xl font-bold text-slate-700 dark:text-slate-200 font-title">Tareas por Materia</span>
+          <span class="text-sm sm:text-base text-slate-400 dark:text-slate-500 font-sans">Hechas / Total</span>
         </div>
-        <div class="flex flex-col gap-2 max-h-40 overflow-y-auto pr-1">
+        <div class="flex flex-col gap-2.5 max-h-48 overflow-y-auto pr-1">
           ${categoryStats.map(cat => `
             <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between text-xs">
-                <span class="inline-flex items-center gap-1.5 font-medium text-slate-700 dark:text-slate-200 truncate">
-                  <span class="w-2 h-2 rounded-full ${cat.colorStyles.bg} shrink-0"></span>
-                  <span class="truncate">${escapeHTML(cat.name)}</span>
+              <div class="flex items-center justify-between text-base">
+                <span class="inline-flex items-center gap-2 font-medium text-slate-700 dark:text-slate-200 truncate">
+                  <span class="w-2.5 h-2.5 rounded-full ${cat.colorStyles.bg} shrink-0"></span>
+                  <span class="truncate font-sans text-lg">${escapeHTML(cat.name)}</span>
                 </span>
-                <span class="font-title font-bold text-slate-600 dark:text-slate-300 shrink-0 text-[11px]">
+                <span class="font-title font-bold text-slate-600 dark:text-slate-300 shrink-0 text-base sm:text-lg">
                   ${cat.doneCount}/${cat.tasksCount} (${cat.percent}%)
                 </span>
               </div>
-              <div class="w-full h-1.5 rounded-full bg-slate-200/70 dark:bg-dark-border overflow-hidden">
+              <div class="w-full h-2 rounded-full bg-slate-200/70 dark:bg-dark-border overflow-hidden">
                 <div class="h-full rounded-full bg-pastel-pink-400 dark:bg-pastel-pink-300 transition-all duration-500" style="width: ${cat.percent}%"></div>
               </div>
             </div>
@@ -1797,7 +1967,7 @@ function switchAuthTab(tab) {
 
   clearAuthAlert();
 
-  const activeClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-[#31648A] shadow-sm cursor-pointer';
+  const activeClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 bg-white dark:bg-dark-card text-[#33658A] shadow-sm cursor-pointer';
   const inactiveClass = 'flex-1 py-2 rounded-xl text-xs font-title font-bold transition-all duration-200 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer';
 
   if (loginTab) loginTab.className = tab === 'login' ? activeClass : inactiveClass;
@@ -1965,10 +2135,13 @@ function setupEventListeners() {
     });
   }
 
-  // Close palette dropdown on outside click
+  // Close dropdowns on outside click
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#palette-dropdown-wrapper')) {
       closePaletteDropdown();
+    }
+    if (!e.target.closest('#task-category-wrapper')) {
+      closeCategoryDropdown();
     }
   });
 
@@ -2080,3 +2253,208 @@ function setupPWA() {
     installBtn.classList.add('hidden');
   });
 }
+
+// ==========================================
+// 13. Full Page Navigation & View Routing
+// Configuración y Perfil como páginas completas independientes
+// ==========================================
+
+let currentView = 'home'; // 'home' | 'settings' | 'profile'
+
+function navigateTo(viewName) {
+  currentView = viewName;
+
+  const mainView = document.getElementById('app-main-view');
+  const settingsView = document.getElementById('settings-view');
+  const profileView = document.getElementById('profile-view');
+
+  if (!mainView) return;
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (viewName === 'settings') {
+    if (mainView) mainView.classList.add('hidden');
+    if (profileView) profileView.classList.add('hidden');
+    if (settingsView) {
+      settingsView.classList.remove('hidden');
+      settingsView.classList.add('flex');
+    }
+    syncSettingsThemeUI();
+    renderManageCategoriesInline();
+  } else if (viewName === 'profile') {
+    if (mainView) mainView.classList.add('hidden');
+    if (settingsView) settingsView.classList.add('hidden');
+    if (profileView) {
+      profileView.classList.remove('hidden');
+      profileView.classList.add('flex');
+    }
+    renderProfileDashboard();
+  } else {
+    // Default: 'home'
+    if (settingsView) settingsView.classList.add('hidden');
+    if (profileView) profileView.classList.add('hidden');
+    if (mainView) {
+      mainView.classList.remove('hidden');
+      mainView.classList.add('flex');
+    }
+    renderTasks();
+  }
+
+  // Update hash for browser back/forward history
+  if (window.location.hash !== `#${viewName}`) {
+    history.pushState({ view: viewName }, '', `#${viewName}`);
+  }
+}
+
+// Browser navigation history support (Back / Forward buttons)
+window.addEventListener('popstate', (e) => {
+  const hash = (window.location.hash || '').replace('#', '') || 'home';
+  if (['home', 'settings', 'profile'].includes(hash)) {
+    navigateTo(hash);
+  } else {
+    navigateTo('home');
+  }
+});
+
+// Backward-compatible triggers for existing onclick handlers
+function openSettingsModal() {
+  navigateTo('settings');
+}
+
+function closeSettingsModal() {
+  navigateTo('home');
+}
+
+function openProfileModal() {
+  navigateTo('profile');
+}
+
+function closeProfileModal() {
+  navigateTo('home');
+}
+
+function syncSettingsThemeUI() {
+  // Theme palette switching removed per unified 5-color palette identity
+}
+
+function renderManageCategoriesInline() {
+  const container = document.getElementById('settings-categories-list');
+  if (!container) return;
+
+  let html = '';
+  categories.forEach(cat => {
+    const colorStyles = PASTEL_COLOR_MAP[cat.color] || PASTEL_COLOR_MAP['pastel-pink'];
+    html += `
+      <div class="flex items-center justify-between p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card hover:bg-slate-50 dark:hover:bg-dark-hover transition-colors shadow-2xs">
+        <div class="flex items-center gap-3.5 min-w-0">
+          <span class="w-4.5 h-4.5 rounded-full shrink-0 shadow-xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
+          <span class="text-xl sm:text-2xl font-title font-bold text-slate-700 dark:text-slate-200 truncate leading-none">${escapeHTML(cat.name)}</span>
+        </div>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button type="button" onclick="startEditCategory('${cat.id}')" class="p-2 text-slate-400 hover:text-[#33658A] dark:hover:text-sky-300 rounded-xl hover:bg-slate-100 dark:hover:bg-dark-border transition-colors cursor-pointer" title="Editar Materia">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+            </svg>
+          </button>
+          ${categories.length > 1 ? `
+            <button type="button" onclick="deleteCategory('${cat.id}')" class="p-2 text-slate-400 hover:text-red-500 dark:hover:text-red-300 rounded-xl hover:bg-slate-100 dark:hover:bg-dark-border transition-colors cursor-pointer" title="Eliminar Materia">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function triggerPWAInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      deferredPrompt = null;
+    });
+  } else {
+    alert('Para instalar StarT en tu dispositivo, abre las opciones de tu navegador y selecciona "Agregar a la pantalla de inicio" o "Instalar aplicación".');
+  }
+}
+
+// ==========================================
+// 14. Password Change Handler
+// ==========================================
+
+function handleChangePassword(event) {
+  if (event) event.preventDefault();
+
+  const newPassInput = document.getElementById('profile-new-password');
+  const confirmPassInput = document.getElementById('profile-confirm-password');
+  const alertEl = document.getElementById('profile-pwd-alert');
+  const submitBtn = document.getElementById('profile-change-pwd-btn');
+
+  if (!newPassInput || !confirmPassInput) return;
+
+  const newPass = newPassInput.value.trim();
+  const confirmPass = confirmPassInput.value.trim();
+
+  function showAlert(msg, type) {
+    if (!alertEl) return;
+    alertEl.textContent = msg;
+    alertEl.className = 'p-2.5 rounded-xl text-base font-sans text-center transition-all leading-tight';
+    if (type === 'error') {
+      alertEl.classList.add('bg-red-100', 'text-red-700');
+    } else {
+      alertEl.classList.add('bg-emerald-100', 'text-emerald-700');
+    }
+    alertEl.classList.remove('hidden');
+  }
+
+  if (!newPass || newPass.length < 6) {
+    showAlert('La contraseña debe tener al menos 6 caracteres.', 'error');
+    return;
+  }
+
+  if (newPass !== confirmPass) {
+    showAlert('Las contraseñas no coinciden.', 'error');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span>Actualizando...</span>`;
+  }
+
+  if (window.firebase && firebase.auth && firebase.auth().currentUser) {
+    firebase.auth().currentUser.updatePassword(newPass)
+      .then(() => {
+        showAlert('¡Contraseña actualizada con éxito!', 'success');
+        document.getElementById('profile-password-form').reset();
+      })
+      .catch((error) => {
+        if (error.code === 'auth/requires-recent-login') {
+          showAlert('Por seguridad, debes cerrar y volver a iniciar sesión para cambiar la contraseña.', 'error');
+        } else {
+          showAlert(error.message || 'Error al cambiar la contraseña.', 'error');
+        }
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Actualizar Contraseña</span>`;
+        }
+      });
+  } else {
+    // Modo local / invitado
+    setTimeout(() => {
+      showAlert('¡Contraseña actualizada con éxito en modo local!', 'success');
+      document.getElementById('profile-password-form').reset();
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Actualizar Contraseña</span>`;
+      }
+    }, 400);
+  }
+}
+
