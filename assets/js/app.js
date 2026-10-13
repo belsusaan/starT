@@ -56,68 +56,55 @@ const DEFAULT_CATEGORIES = [
 
 // Expanded pastel & modern color mapping aligned strictly with the 5 official palette colors:
 // #CE1483 (Violet Red), #F5F2B8 (Lemon Chiffon), #33658A (Baltic Blue), #00120B (Onyx), #FCD3DE (Petal Frost)
+// In dark mode, tones are lightened and enriched for clear visibility and beauty
 const PASTEL_COLOR_MAP = {
   // Rosa Más Fuerte (Vibrante / Magenta #CE1483 - Especialmente para Personal)
-  'pastel-pink': { bg: 'bg-[#FBBFD5] dark:bg-[#4E132F]', cardBg: 'bg-[#FBBFD5] dark:bg-[#48122B]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-400', dot: '#CE1483', name: 'Rosa Más Fuerte' },
-  'pastel-pink-strong': { bg: 'bg-[#FBBFD5] dark:bg-[#4E132F]', cardBg: 'bg-[#FBBFD5] dark:bg-[#48122B]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-400', dot: '#CE1483', name: 'Rosa Más Fuerte' },
+  'pastel-pink': { bg: 'bg-[#FBBFD5] dark:bg-[#661E40]', cardBg: 'bg-[#FBBFD5] dark:bg-[#5C1B3A]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-400', dot: '#CE1483', name: 'Rosa Más Fuerte' },
+  'pastel-pink-strong': { bg: 'bg-[#FBBFD5] dark:bg-[#661E40]', cardBg: 'bg-[#FBBFD5] dark:bg-[#5C1B3A]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-400', dot: '#CE1483', name: 'Rosa Más Fuerte' },
 
   // Rosa Pálido (Petal Frost #FCD3DE - Suave)
-  'pastel-mint': { bg: 'bg-[#FFF0F4] dark:bg-[#2C1420]', cardBg: 'bg-[#FFF0F4] dark:bg-[#25101A]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-200', dot: '#F8A5BF', name: 'Rosa Pálido' },
-  'pastel-coral': { bg: 'bg-[#FFF2F6] dark:bg-[#2C1420]', cardBg: 'bg-[#FFF2F6] dark:bg-[#25101A]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-200', dot: '#F472B6', name: 'Rosa Suave' },
-  'pastel-rose': { bg: 'bg-[#FDE2EC] dark:bg-[#381424]', cardBg: 'bg-[#FDE2EC] dark:bg-[#30101E]', text: 'text-[#1E3A56] dark:text-rose-100', border: 'border-rose-300', dot: '#E03B7C', name: 'Rosa Medio' },
+  'pastel-mint': { bg: 'bg-[#FFF0F4] dark:bg-[#462133]', cardBg: 'bg-[#FFF0F4] dark:bg-[#3D1D2C]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-200', dot: '#F8A5BF', name: 'Rosa Pálido' },
+  'pastel-coral': { bg: 'bg-[#FFF2F6] dark:bg-[#4C2138]', cardBg: 'bg-[#FFF2F6] dark:bg-[#421D30]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-200', dot: '#F472B6', name: 'Rosa Suave' },
+  'pastel-rose': { bg: 'bg-[#FDE2EC] dark:bg-[#54233B]', cardBg: 'bg-[#FDE2EC] dark:bg-[#481E32]', text: 'text-[#1E3A56] dark:text-rose-100', border: 'border-rose-300', dot: '#E03B7C', name: 'Rosa Medio' },
 
   // Baltic Blue (#33658A) & Derivados
-  'pastel-blue': { bg: 'bg-[#E1EFF8] dark:bg-[#152838]', cardBg: 'bg-[#E1EFF8] dark:bg-[#10202E]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#33658A', name: 'Baltic Blue' },
-  'pastel-indigo': { bg: 'bg-[#E4ECF8] dark:bg-[#182840]', cardBg: 'bg-[#E4ECF8] dark:bg-[#132034]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#4682B4', name: 'Azul Acero' },
-  'pastel-teal': { bg: 'bg-[#DCEBF4] dark:bg-[#132331]', cardBg: 'bg-[#DCEBF4] dark:bg-[#0F1D28]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#234A68', name: 'Azul Profundo' },
+  'pastel-blue': { bg: 'bg-[#E1EFF8] dark:bg-[#1D405D]', cardBg: 'bg-[#E1EFF8] dark:bg-[#18354D]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#33658A', name: 'Baltic Blue' },
+  'pastel-indigo': { bg: 'bg-[#E4ECF8] dark:bg-[#234065]', cardBg: 'bg-[#E4ECF8] dark:bg-[#1D3554]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#4682B4', name: 'Azul Acero' },
+  'pastel-teal': { bg: 'bg-[#DCEBF4] dark:bg-[#1B3E52]', cardBg: 'bg-[#DCEBF4] dark:bg-[#163445]', text: 'text-[#1E3A56] dark:text-sky-100', border: 'border-sky-300', dot: '#234A68', name: 'Azul Profundo' },
 
   // Lemon Chiffon (#F5F2B8) & Cremas
-  'pastel-yellow': { bg: 'bg-[#FDFBE1] dark:bg-[#35331E]', cardBg: 'bg-[#FDFBE1] dark:bg-[#2B2918]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#C99E18', name: 'Lemon Chiffon' },
-  'pastel-peach': { bg: 'bg-[#FAF4DB] dark:bg-[#35331E]', cardBg: 'bg-[#FAF4DB] dark:bg-[#2A2917]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#D99824', name: 'Crema Suave' },
+  'pastel-yellow': { bg: 'bg-[#FDFBE1] dark:bg-[#474325]', cardBg: 'bg-[#FDFBE1] dark:bg-[#3E3A20]', text: 'text-[#1E3A56] dark:text-amber-100', border: 'border-amber-300', dot: '#C99E18', name: 'Lemon Chiffon' },
+  'pastel-peach': { bg: 'bg-[#FFEADB] dark:bg-[#582D18]', cardBg: 'bg-[#FFEADB] dark:bg-[#4D2614]', text: 'text-[#1E3A56] dark:text-orange-100', border: 'border-orange-300', dot: '#F79F67', name: 'Durazno Suave' },
 
   // Lavandas & Vinos
-  'pastel-lavender': { bg: 'bg-[#F0EBFC] dark:bg-[#2C2142]', cardBg: 'bg-[#F0EBFC] dark:bg-[#231A35]', text: 'text-[#1E3A56] dark:text-purple-100', border: 'border-purple-300', dot: '#8B5CF6', name: 'Lavanda' },
-  'pastel-purple': { bg: 'bg-[#F3E5FC] dark:bg-[#2D1B3A]', cardBg: 'bg-[#F3E5FC] dark:bg-[#24152E]', text: 'text-[#1E3A56] dark:text-violet-100', border: 'border-violet-300', dot: '#7C3AED', name: 'Morado' },
-  'pastel-emerald': { bg: 'bg-[#F9E2EC] dark:bg-[#381628]', cardBg: 'bg-[#F9E2EC] dark:bg-[#2C101F]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#9D174D', name: 'Vino Magenta' }
+  'pastel-lavender': { bg: 'bg-[#F0EBFC] dark:bg-[#3C2C5A]', cardBg: 'bg-[#F0EBFC] dark:bg-[#34264E]', text: 'text-[#1E3A56] dark:text-purple-100', border: 'border-purple-300', dot: '#8B5CF6', name: 'Lavanda' },
+  'pastel-purple': { bg: 'bg-[#F3E5FC] dark:bg-[#412653]', cardBg: 'bg-[#F3E5FC] dark:bg-[#372046]', text: 'text-[#1E3A56] dark:text-violet-100', border: 'border-violet-300', dot: '#7C3AED', name: 'Morado' },
+  'pastel-emerald': { bg: 'bg-[#F9E2EC] dark:bg-[#521E3B]', cardBg: 'bg-[#F9E2EC] dark:bg-[#461932]', text: 'text-[#1E3A56] dark:text-pink-100', border: 'border-pink-300', dot: '#9D174D', name: 'Vino Magenta' }
 };
 
 // Default sample tasks for a rich first-use experience
 const DEFAULT_TASKS = [
   { id: 'task-1', title: 'Completar guía de cálculo', description: 'Esta es la descripción de mi guía.', categoryId: 'cat-1', completed: false, priority: true, order: 1 },
   { id: 'task-2', title: 'Repasar derivadas e integrales', description: 'Ejercicios de la página 45 a la 50.', categoryId: 'cat-1', completed: false, priority: true, order: 2 },
-  { id: 'task-3', title: 'Lectura de artículo científico', description: 'Efectos del cambio climático en arrecifes de coral.', categoryId: 'cat-2', completed: false, priority: false, order: 3 },
-  { id: 'task-4', title: 'Vocabulario de inglés', description: 'Estudiar las 30 palabras nuevas para el examen.', categoryId: 'cat-3', completed: false, priority: true, order: 4 },
+  { id: 'task-4', title: 'Vocabulario de inglés', description: 'Estudiar las 30 palabras nuevas para el examen.', categoryId: 'cat-3', completed: false, priority: true, order: 3 },
+  { id: 'task-3', title: 'Lectura de artículo científico', description: 'Efectos del cambio climático en arrecifes de coral.', categoryId: 'cat-2', completed: false, priority: false, order: 4 },
   { id: 'task-5', title: 'Organizar mi habitación', description: 'Doblar ropa y limpiar el escritorio.', categoryId: 'cat-4', completed: false, priority: false, order: 5 }
 ];
 
-// Custom SVG star using logo.svg paths with safe padding viewBox
+// Custom SVG star (clean star only, without face or blush)
 function getStarSVG(isActive, isDarkTheme) {
   const fillColor = isActive ? '#F7BA00' : 'transparent';
   const strokeColor = isActive ? '#F7BA00' : (isDarkTheme ? '#FFEBB8' : '#601D49');
-  const strokeWidth = isActive ? 6 : 14;
-
-  let faceContent = '';
-  if (isActive) {
-    faceContent = `
-      <!-- Ojos > < -->
-      <path d="M200.193 126.88L216.693 133.38L203.693 145.88M240.193 126.88L232.193 134.38L251.693 140.88" stroke="#113646" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Sonrisa -->
-      <path d="M209.693 172.38L210.193 179.88C210.193 179.88 210.535 182.411 211.193 183.88C212.777 187.418 217.193 189.88 218.693 190.38C220.193 190.88 224.193 191.38 226.193 190.38C228.193 189.38 228.693 188.38 230.193 186.38C231.693 184.38 232.153 181.92 232.693 178.88C233.342 175.228 232.693 169.38 232.693 169.38" stroke="#113646" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-      <!-- Mejillas rosadas -->
-      <path d="M185.193 152.38L176.693 164.88L174.193 155.88L163.193 170.38L170.693 172.88L167.693 185.38L175.193 177.38L178.193 187.38L192.193 155.88L186.193 158.88L185.193 152.38Z" fill="#D82167" stroke="#D82167" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" class="star-blush"/>
-      <path d="M259.193 156.38L267.693 168.88L270.193 159.88L281.193 174.38L273.693 176.88L276.693 189.38L269.193 181.38L266.193 191.38L252.193 159.88L258.193 162.88L259.193 156.38Z" fill="#D82167" stroke="#D82167" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" class="star-blush"/>
-    `;
-  }
+  const strokeWidth = isActive ? 8 : 14;
 
   return `
     <svg viewBox="-15 -15 460 400" class="w-8 h-8 select-none transition-transform duration-300 hover:scale-110 active:scale-95 cursor-pointer">
       <path d="M179.193 111.38L185.455 54.062C185.613 52.6119 185.93 51.1835 186.399 49.8023L193.87 27.8033C194.416 26.1946 195.165 24.662 196.099 23.2426L203.502 11.9908C205.897 8.35039 209.415 5.59179 213.522 4.13457L217.702 2.6513C220.973 1.49068 224.489 1.20119 227.906 1.8113L230.509 2.27604C234.535 2.99495 238.243 4.93072 241.135 7.82246L246.044 12.7317C247.14 13.8271 248.104 15.046 248.918 16.364L256.773 29.0816C257.715 30.6072 258.448 32.2526 258.952 33.9735L264.193 51.8804L282.193 116.38H336.677C338.017 116.38 339.355 116.515 340.669 116.783L363.964 121.528C365.114 121.763 366.242 122.098 367.333 122.53L389.693 131.38L401.386 136.809C402.918 137.52 404.353 138.423 405.658 139.495L415.65 147.702C417.006 148.816 418.21 150.104 419.23 151.532L422.469 156.067C424.261 158.575 425.448 161.464 425.939 164.507L426.834 170.053C427.396 173.542 427.024 177.118 425.756 180.417L424.438 183.842C423.291 186.824 421.447 189.488 419.059 191.611L416.174 194.175C414.531 195.635 412.659 196.815 410.632 197.666L390.484 206.128C389.293 206.629 388.056 207.012 386.791 207.274L359.693 212.88L300.693 223.88L302.693 278.38L299.78 329.834C299.722 330.863 299.584 331.887 299.368 332.895L297.289 342.596C296.894 344.443 296.238 346.224 295.343 347.888L291.916 354.252C290.454 356.967 288.383 359.308 285.867 361.091L281.909 363.894C279.144 365.853 275.926 367.077 272.558 367.451L266.061 368.173C264.818 368.311 263.565 368.332 262.319 368.236L255.967 367.748C252.829 367.506 249.791 366.527 247.102 364.891L241.741 361.627C240.38 360.799 239.124 359.811 237.998 358.685L223.063 343.751C221.822 342.509 220.749 341.11 219.873 339.588L211.693 325.38L204.193 306.88L193.693 269.88L153.193 286.38L111.193 296.88L88.1929 299.38L67.3614 298.494C65.5902 298.419 63.837 298.108 62.1476 297.571L55.9172 295.588C54.4393 295.118 53.0212 294.477 51.6913 293.679L46.3862 290.496C44.6016 289.426 42.995 288.083 41.6246 286.517L39.2226 283.771C37.5514 281.862 36.259 279.651 35.4143 277.258L33.6929 272.38L31.8514 265.383C31.4142 263.721 31.1929 262.011 31.1929 260.293V255.607C31.1929 253.797 31.4383 251.997 31.9225 250.254L32.8954 246.751C33.4241 244.848 34.2319 243.033 35.2925 241.367L38.6427 236.102C39.9973 233.973 41.7423 232.12 43.7858 230.641L52.6299 224.236C54.328 223.007 56.2089 222.052 58.2037 221.406L72.1929 216.88L45.2499 205.267C43.8828 204.678 42.5858 203.938 41.383 203.061L20.6832 187.967C19.6918 187.244 18.7689 186.431 17.9264 185.539L12.8338 180.147C11.4151 178.645 10.2377 176.932 9.3436 175.069L5.53434 167.133C4.97468 165.967 4.52944 164.75 4.20486 163.498L2.14023 155.534C1.51419 153.12 1.34542 150.609 1.64263 148.132L2.69287 139.38L5.42662 127.762C6.25525 124.24 8.02361 121.009 10.5433 118.413L20.0174 108.652C22.1076 106.499 24.6556 104.843 27.4726 103.808L44.6924 97.4826C46.6801 96.7524 48.7712 96.3425 50.8874 96.2683L76.1929 95.3804H103.693L131.693 100.88L179.193 111.38Z" 
-      fill="${fillColor}" 
-      stroke="${strokeColor}" 
-      stroke-width="${strokeWidth}" 
-      stroke-linejoin="round" />
-    ${faceContent}
-  </svg>
+        fill="${fillColor}" 
+        stroke="${strokeColor}" 
+        stroke-width="${strokeWidth}" 
+        stroke-linejoin="round" />
+    </svg>
   `;
 }
 
@@ -561,12 +548,15 @@ function renderTasks(options = {}) {
   }
 
   const activeTasks = filtered.filter(t => !t.completed).sort((a, b) => {
-    // 1. Tareas con prioridad siempre al inicio
+    // 1. El orden explícito definido por el usuario tiene prioridad total
+    if ((a.order || 0) !== (b.order || 0)) {
+      return (a.order || 0) - (b.order || 0);
+    }
+    // 2. En caso de empate en orden, las prioritarias se muestran primero
     if (Boolean(a.priority) !== Boolean(b.priority)) {
       return a.priority ? -1 : 1;
     }
-    // 2. Orden personalizado
-    return (a.order || 0) - (b.order || 0);
+    return 0;
   });
   const completedTasks = filtered.filter(t => t.completed).sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -759,6 +749,32 @@ function renderTaskCard(task, isJustMoved = false) {
 
       <!-- Actions: Mascot Star, Edit Pencil, Delete Trash -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 pointer-events-auto">
+        ${isSelected ? `
+          <!-- Flechas para cambiar el orden de la tarea seleccionada -->
+          <div class="flex items-center gap-0.5 bg-black/5 dark:bg-white/10 rounded-xl p-0.5 mr-0.5 animate-task-appear">
+            <button 
+              type="button"
+              onclick="moveTaskOrder('${task.id}', -1, event)"
+              class="p-1 text-[#1E3A56] dark:text-slate-200 hover:text-[#CE1483] dark:hover:text-[#FCD3DE] hover:scale-115 active:scale-90 transition-all cursor-pointer rounded-lg"
+              title="Mover arriba (o tecla Flecha Arriba)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 sm:w-4.5 sm:h-4.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+              </svg>
+            </button>
+            <button 
+              type="button"
+              onclick="moveTaskOrder('${task.id}', 1, event)"
+              class="p-1 text-[#1E3A56] dark:text-slate-200 hover:text-[#CE1483] dark:hover:text-[#FCD3DE] hover:scale-115 active:scale-90 transition-all cursor-pointer rounded-lg"
+              title="Mover abajo (o tecla Flecha Abajo)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 sm:w-4.5 sm:h-4.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            </button>
+          </div>
+        ` : ''}
+
         <!-- Mascot Star Priority Button -->
         <button 
           id="star-btn-${task.id}"
@@ -986,6 +1002,81 @@ function selectTask(event, taskId) {
   }, 10);
 }
 
+function moveTaskOrder(taskId, direction, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  // Filter list matching the task's completion status and current filter
+  let list = tasks.filter(t => t.completed === task.completed);
+  if (currentFilter !== 'all') {
+    list = list.filter(t => t.categoryId === currentFilter);
+  }
+
+  // Sort by current active rendering order
+  list.sort((a, b) => {
+    if ((a.order || 0) !== (b.order || 0)) {
+      return (a.order || 0) - (b.order || 0);
+    }
+    if (Boolean(a.priority) !== Boolean(b.priority)) {
+      return a.priority ? -1 : 1;
+    }
+    return 0;
+  });
+
+  const index = list.findIndex(t => t.id === taskId);
+  if (index === -1) return;
+
+  const targetIndex = index + direction;
+  if (targetIndex < 0 || targetIndex >= list.length) return;
+
+  const otherTask = list[targetIndex];
+
+  // Re-index all tasks in status group to guarantee unique contiguous orders
+  const allSameStatus = tasks.filter(t => t.completed === task.completed).sort((a, b) => {
+    if ((a.order || 0) !== (b.order || 0)) {
+      return (a.order || 0) - (b.order || 0);
+    }
+    if (Boolean(a.priority) !== Boolean(b.priority)) {
+      return a.priority ? -1 : 1;
+    }
+    return 0;
+  });
+
+  const currentIdxAll = allSameStatus.findIndex(t => t.id === taskId);
+  const targetIdxAll = allSameStatus.findIndex(t => t.id === otherTask.id);
+
+  if (currentIdxAll !== -1 && targetIdxAll !== -1) {
+    const [item] = allSameStatus.splice(currentIdxAll, 1);
+    allSameStatus.splice(targetIdxAll, 0, item);
+    allSameStatus.forEach((t, i) => {
+      t.order = i + 1;
+    });
+  } else {
+    const [item] = list.splice(index, 1);
+    list.splice(targetIndex, 0, item);
+    list.forEach((t, i) => {
+      t.order = i + 1;
+    });
+  }
+
+  saveTasks();
+  selectedTaskId = taskId;
+  renderTasks({ justMovedId: taskId });
+
+  setTimeout(() => {
+    const cardEl = document.getElementById(`card-${taskId}`);
+    if (cardEl) {
+      cardEl.focus();
+      cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, 20);
+}
+window.moveTaskOrder = moveTaskOrder;
+
 let editingTaskId = null;
 let editingCategoryId = null;
 
@@ -1000,13 +1091,36 @@ function toggleCategoryDropdown(event) {
   }
   const menu = document.getElementById('task-category-menu');
   const chevron = document.getElementById('task-category-chevron');
+  const trigger = document.getElementById('task-category-trigger');
   if (!menu) return;
 
   const isHidden = menu.classList.contains('hidden');
   if (isHidden) {
     renderCustomCategoryDropdownOptions();
+
+    // Check available space below trigger vs above to avoid clipping inside modal
+    if (trigger) {
+      const modalScroll = trigger.closest('.overflow-y-auto') || trigger.closest('#task-modal');
+      const triggerRect = trigger.getBoundingClientRect();
+      const modalRect = modalScroll ? modalScroll.getBoundingClientRect() : { bottom: window.innerHeight, top: 0 };
+      const spaceBelow = modalRect.bottom - triggerRect.bottom;
+      const spaceAbove = triggerRect.top - modalRect.top;
+
+      if (spaceBelow < 220 && spaceAbove > 180) {
+        menu.classList.remove('top-full', 'mt-2');
+        menu.classList.add('bottom-full', 'mb-2');
+      } else {
+        menu.classList.remove('bottom-full', 'mb-2');
+        menu.classList.add('top-full', 'mt-2');
+      }
+    }
+
     menu.classList.remove('hidden');
     if (chevron) chevron.classList.add('rotate-180');
+
+    setTimeout(() => {
+      menu.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 40);
   } else {
     menu.classList.add('hidden');
     if (chevron) chevron.classList.remove('rotate-180');
@@ -1062,15 +1176,15 @@ function renderCustomCategoryDropdownOptions() {
     const isSelected = cat.id === currentId;
     html += `
       <button type="button" onclick="selectCategoryOption('${cat.id}')"
-        class="w-full flex items-center justify-between px-4 py-3 rounded-xl hover:bg-[#FCD3DE]/40 dark:hover:bg-dark-hover transition-colors cursor-pointer select-none group text-left ${isSelected ? 'bg-[#FCD3DE]/40 dark:bg-dark-hover/80 font-bold' : ''}">
-        <div class="flex items-center gap-3 min-w-0">
-          <span class="w-4 h-4 rounded-full shrink-0 shadow-2xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
-          <span class="font-title text-2xl sm:text-3xl text-[#1E3A56] dark:text-slate-100 truncate leading-none">
+        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-[#FCD3DE]/40 dark:hover:bg-dark-hover transition-colors cursor-pointer select-none group text-left ${isSelected ? 'bg-[#FCD3DE]/40 dark:bg-dark-hover/80 font-bold' : ''}">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="w-3.5 h-3.5 rounded-full shrink-0 shadow-2xs" style="background-color: ${colorStyles.dot || '#F472B6'}"></span>
+          <span class="font-title text-2xl text-[#1E3A56] dark:text-slate-100 truncate leading-none">
             ${escapeHTML(cat.name)}
           </span>
         </div>
         ${isSelected ? `
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="#CE1483" class="w-5 h-5 shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="#CE1483" class="w-4.5 h-4.5 shrink-0">
             <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
           </svg>
         ` : ''}
@@ -1102,6 +1216,25 @@ function hasTaskModalChanges() {
   );
 }
 
+// ==========================================
+// Modal Scroll Locking
+// ==========================================
+function lockBodyScroll() {
+  document.body.classList.add('overflow-hidden');
+  document.documentElement.classList.add('overflow-hidden');
+}
+
+function unlockBodyScroll() {
+  const taskModal = document.getElementById('task-modal');
+  const catModal = document.getElementById('categories-modal');
+  const isTaskOpen = taskModal && !taskModal.classList.contains('hidden');
+  const isCatOpen = catModal && !catModal.classList.contains('hidden');
+  if (!isTaskOpen && !isCatOpen) {
+    document.body.classList.remove('overflow-hidden');
+    document.documentElement.classList.remove('overflow-hidden');
+  }
+}
+
 function openAddModal() {
   editingTaskId = null;
   document.getElementById('modal-title').textContent = 'Nueva Tarea';
@@ -1131,6 +1264,7 @@ function openAddModal() {
 
   document.getElementById('task-modal').classList.remove('hidden');
   document.getElementById('task-modal').classList.add('flex');
+  lockBodyScroll();
 }
 
 function openEditModal(event, id) {
@@ -1163,6 +1297,7 @@ function openEditModal(event, id) {
 
   document.getElementById('task-modal').classList.remove('hidden');
   document.getElementById('task-modal').classList.add('flex');
+  lockBodyScroll();
 }
 
 function deleteEditingTask() {
@@ -1185,6 +1320,7 @@ function closeModal(force = false) {
   document.getElementById('task-modal').classList.remove('flex');
   closeCategoryDropdown();
   editingTaskId = null;
+  unlockBodyScroll();
   return true;
 }
 window.closeModal = closeModal;
@@ -1494,6 +1630,7 @@ function openManageCategories() {
   cancelCategoryEdit();
   document.getElementById('categories-modal').classList.remove('hidden');
   document.getElementById('categories-modal').classList.add('flex');
+  lockBodyScroll();
 }
 window.openManageCategories = openManageCategories;
 
@@ -1505,6 +1642,7 @@ function closeManageCategories(force = false) {
   cancelCategoryEdit();
   document.getElementById('categories-modal').classList.add('hidden');
   document.getElementById('categories-modal').classList.remove('flex');
+  unlockBodyScroll();
   return true;
 }
 window.closeManageCategories = closeManageCategories;
@@ -2166,13 +2304,17 @@ function setupEventListeners() {
     });
   }
 
-  // Close dropdowns on outside click
+  // Close dropdowns and deselect card on outside click
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#palette-dropdown-wrapper')) {
       closePaletteDropdown();
     }
     if (!e.target.closest('#task-category-wrapper')) {
       closeCategoryDropdown();
+    }
+    if (!e.target.closest('.task-card') && !e.target.closest('#floating-add-btn') && selectedTaskId) {
+      selectedTaskId = null;
+      renderTasks();
     }
   });
 
@@ -2182,65 +2324,25 @@ function setupEventListeners() {
       return;
     }
 
+    if (e.key === 'Escape') {
+      if (selectedTaskId) {
+        selectedTaskId = null;
+        renderTasks();
+      }
+      closeModal();
+      closeManageCategories();
+      return;
+    }
+
     if (!selectedTaskId) return;
-    const task = tasks.find(t => t.id === selectedTaskId);
-    if (!task) return;
 
-    let list = tasks;
-    if (currentFilter !== 'all') {
-      list = tasks.filter(t => t.categoryId === currentFilter);
-    }
-
-    const activeTasksList = list.filter(t => !t.completed).sort((a, b) => a.order - b.order);
-    const completedTasksList = list.filter(t => t.completed).sort((a, b) => a.order - b.order);
-
-    const targetList = task.completed ? completedTasksList : activeTasksList;
-    const index = targetList.findIndex(t => t.id === selectedTaskId);
-    if (index === -1) return;
-
-    // Ctrl + Up / Down to reorder via keyboard
-    if (e.ctrlKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+    // Al seleccionar una tarea, mover el orden directamente con las flechas
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
       e.preventDefault();
-      let swapWithIndex = -1;
-      if (e.key === 'ArrowUp' && index > 0) swapWithIndex = index - 1;
-      else if (e.key === 'ArrowDown' && index < targetList.length - 1) swapWithIndex = index + 1;
-
-      if (swapWithIndex !== -1) {
-        const otherTask = targetList[swapWithIndex];
-        const tempOrder = task.order;
-        task.order = otherTask.order;
-        otherTask.order = tempOrder;
-
-        saveTasks();
-        renderTasks();
-
-        setTimeout(() => {
-          const cardEl = document.getElementById(`card-${selectedTaskId}`);
-          if (cardEl) {
-            cardEl.focus();
-            cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        }, 30);
-      }
-    }
-    // Arrow Up / Down to navigate
-    else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      moveTaskOrder(selectedTaskId, -1);
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
       e.preventDefault();
-      const fullList = [...activeTasksList, ...completedTasksList];
-      const fullIndex = fullList.findIndex(t => t.id === selectedTaskId);
-
-      let newSelectIndex = -1;
-      if (e.key === 'ArrowUp' && fullIndex > 0) newSelectIndex = fullIndex - 1;
-      else if (e.key === 'ArrowDown' && fullIndex < fullList.length - 1) newSelectIndex = fullIndex + 1;
-
-      if (newSelectIndex !== -1) {
-        selectedTaskId = fullList[newSelectIndex].id;
-        renderTasks();
-        setTimeout(() => {
-          const cardEl = document.getElementById(`card-${selectedTaskId}`);
-          if (cardEl) cardEl.focus();
-        }, 10);
-      }
+      moveTaskOrder(selectedTaskId, 1);
     }
   });
 }

@@ -196,14 +196,14 @@
 
     .task-card-selected {
       border-color: var(--color-brand-rose-medium) !important;
-      box-shadow: 0 0 15px rgba(206, 20, 131, 0.45), 0 0 25px rgba(206, 20, 131, 0.25);
-      transform: scale(1.015);
+      box-shadow: 0 0 8px rgba(206, 20, 131, 0.22), 0 4px 12px rgba(206, 20, 131, 0.1);
+      transform: scale(1.01);
       z-index: 10;
     }
 
     .dark .task-card-selected {
       border-color: var(--color-brand-rose-light) !important;
-      box-shadow: 0 0 16px rgba(206, 20, 131, 0.55), 0 0 28px rgba(252, 211, 222, 0.3);
+      box-shadow: 0 0 8px rgba(206, 20, 131, 0.28), 0 4px 12px rgba(252, 211, 222, 0.12);
     }
 
     .task-card {
@@ -700,7 +700,7 @@
 
               <!-- Custom Dropdown Menu -->
               <div id="task-category-menu"
-                class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-dark-card rounded-2xl shadow-xl border border-slate-200 dark:border-dark-border p-2 max-h-56 overflow-y-auto animate-task-appear scrollbar-none">
+                class="hidden absolute left-0 right-0 z-50 bg-white dark:bg-dark-card rounded-2xl shadow-xl border border-slate-200 dark:border-dark-border p-1.5 max-h-60 overflow-y-auto animate-task-appear scrollbar-none">
                 <!-- Populated dynamically with category options -->
               </div>
             </div>
@@ -793,7 +793,7 @@
               <button type="button" onclick="selectCategoryColorSwatch('pastel-coral')" class="cat-swatch w-7 h-7 rounded-full bg-[#F472B6] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Rosa Pastel"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-indigo')" class="cat-swatch w-7 h-7 rounded-full bg-[#4682B4] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Azul Acero"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-teal')" class="cat-swatch w-7 h-7 rounded-full bg-[#234A68] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Azul Profundo"></button>
-              <button type="button" onclick="selectCategoryColorSwatch('pastel-peach')" class="cat-swatch w-7 h-7 rounded-full bg-[#E6DE7A] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Crema Suave"></button>
+              <button type="button" onclick="selectCategoryColorSwatch('pastel-peach')" class="cat-swatch w-7 h-7 rounded-full bg-[#F79F67] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Durazno Suave"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-lavender')" class="cat-swatch w-7 h-7 rounded-full bg-[#8B5CF6] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Lavanda"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-purple')" class="cat-swatch w-7 h-7 rounded-full bg-[#7C3AED] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Morado"></button>
               <button type="button" onclick="selectCategoryColorSwatch('pastel-emerald')" class="cat-swatch w-7 h-7 rounded-full bg-[#9D174D] border-2 border-white dark:border-dark-card shadow-sm hover:scale-110 transition-transform cursor-pointer" title="Vino Magenta"></button>
